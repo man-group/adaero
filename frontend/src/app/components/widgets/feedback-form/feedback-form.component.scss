@@ -1,0 +1,34 @@
+#feedback-form-footer {
+  color: lightslategray;
+  font-size: smaller;
+  padding-top: 1em;
+}
+
+#feedback-form-info {
+  border-top: lightgray 1px solid;
+  border-bottom: lightgray 1px solid;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+#feedback-form-title {
+  padding-bottom: 0.5em;
+}
+
+#feedback-form-form {
+  padding-top: 0.5em;
+}
+
+.readonly-answer {
+  white-space: pre-line;
+}
+
+label {
+  font-weight: bold;
+}
+
+@media print {
+  .caption, .raw-answer, .summary-label {
+    display: none;
+  }
+}

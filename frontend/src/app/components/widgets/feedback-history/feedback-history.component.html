@@ -1,0 +1,20 @@
+<div class='container' *ngIf="this.data; else loading">
+  <h2 class='title'>{{ title }}</h2>
+  <p *ngFor="let d of description" class='history-info'>{{ d }}</p>
+  <ngb-accordion [closeOthers]="false" activeIds="static-1">
+    <ngb-panel *ngFor="let period of this.data.feedback.items; let i = index" 
+     id="static-{{ i + 1}}"
+     title="{{ period.periodDescription }}"
+     [disabled]="period.items.length === 0">
+      <ng-template ngbPanelContent>
+        <form>
+           <div class="form-group" *ngFor="let row of period.items; let number = index">
+            <label for="question{{number + 1}}">{{ number + 1}}. {{row.question}}</label>
+            <textarea readonly class="form-control" id="answer{{number + 1}}" [(ngModel)]="row.answer" name="answer{{number + 1}}" rows="6"></textarea>
+          </div>
+        </form>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+</div>
+<ng-template #loading>Loading Data...</ng-template>

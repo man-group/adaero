@@ -1,0 +1,47 @@
+<nav id="navbar" class="navbar">
+  <div class="navbar-header">
+    <a href="#" class="navbar-left"><img src="api/v1/logo.png" onerror="this.src='assets/logo.png'" alt="Feedback Tool Logo"></a>
+    <div *ngIf="this.metadata.businessUnit" class="unit-name-box">
+      <div class="unit-name">
+        {{ this.metadata?.businessUnit }}
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <h2>Sign In</h2>
+  <div *ngIf="this.isDisconnected">
+    <div i18n="support message|Message to show users when frontend is unable to contact backend" class="alert alert-info" role="alert">
+      Browser unable to contact the backend service. Please contact your support for this application.
+    </div>
+  </div>
+  <div *ngIf="this.message">
+    <div class="alert alert-info" role="alert">
+      {{ this.message }}
+    </div>
+  </div>
+  <div *ngIf="this.warnMessage">
+    <div class="alert alert-warning" role="alert">
+      {{ this.warnMessage }}
+    </div>
+  </div>
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input name="username" [(ngModel)]="form.username" type="text" class="form-control" id="username" aria-describedby="username-help" placeholder="Enter username" required>
+      <small id="username-help" class="form-text text-muted">{{ this.metadata?.loginUsernameMessage }}</small>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Password</label>
+      <input name="password" ngModel type="password" class="form-control" id="exampleInputPassword1" aria-describedby="password-help" placeholder="Enter password">
+      <small id="password-help" class="form-text text-muted">{{ this.metadata?.loginPasswordMessage }}</small>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input name="rememberMe" [(ngModel)]="form.rememberMe" (change)="onRememberMeToggle($event.currentTarget.checked)" type="checkbox" class="form-check-input">
+        Remember me
+      </label>
+    </div>
+    <button id="login-button" type="submit" class="btn btn-primary" [disabled]="!f.form.valid && !this.submitting">Login</button>
+  </form>
+</div>

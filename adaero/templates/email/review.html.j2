@@ -1,0 +1,10 @@
+{% extends 'email/base.html.j2' %}
+{% block content %}
+<p>
+Hi {{ user.first_name }},</p>
+<p>
+Thank you for requesting feedback. You can access your feedback here: <a href="{{ app_host }}/feedback-about-me">{{ app_host }}/feedback-about-me</a> (please open with Google Chrome). Some things to consider that will help you get the most value from your feedback are:</p>
+<p>*	Schedule time to debrief with your manager</p>
+<p>*	Identify the areas you are motivated to work on and put a plan in place to act on the feedback</p>
+<p>*	Remember your strengths, these are often your differentiators so you should find opportunities to use them</p>
+{% endblock %}

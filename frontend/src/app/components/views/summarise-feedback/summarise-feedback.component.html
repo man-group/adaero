@@ -1,0 +1,12 @@
+<app-feedback-form 
+ #formComponent
+ [form]="form"
+ [formState]="formState"
+ [successButtonLink]="successButtonLink"
+ (submitRequest)="onSubmit($event)"
+ [formInfo]="formInfo"
+ [successTitle]="successTitle"
+ [successInfo]="successInfo()"
+ [successButton]="successButton"
+ [saveCaption]="saveCaption()">
+</app-feedback-form>

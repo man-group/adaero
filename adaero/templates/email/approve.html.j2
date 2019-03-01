@@ -1,0 +1,12 @@
+{% extends 'email/base.html.j2' %}
+{% block content %}
+<p>
+Hi {{ user.first_name }},</p>
+<p>
+We have now reached the end of this feedback period and you have direct report(s) who have requested feedback
+on how they are performing. You should review and summarise feedback at <a href="{{ app_host }}/team-feedback">{{ app_host }}/team-feedback</a>
+(please open with Google Chrome) by {{ period.approval_end_utc | datetimeformat(user) }}.</p>
+<p>
+Remember that feedback should motivate, improve performance and support continuous learning, so consider how the
+feedback you are sharing does this.</p>
+{% endblock %}

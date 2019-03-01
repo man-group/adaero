@@ -1,0 +1,17 @@
+strict digraph {
+  {
+    l [label="LDAP", shape=cylinder]
+    generate_population_process [style=filled, fillcolor=grey, label="talent manager invokes /api/v1/generate-population.csv via web frontend"]
+    raw_csv [label="Raw staff list CSV", shape=note]
+    modify_csv_process [style=filled, fillcolor=grey, label="talent manager manually edits CSV"]
+    processed_csv [label="Curated staff list CSV", shape=note]
+    upload_csv_process [style=filled, fillcolor=grey, label="talent manager uploaded processed CSV using /api/v1/upload-new-population-csv via web frontend"]
+    database [shape=cylinder, label="Databse with staff information fixed at point of time of CSV upload"]
+  }
+  l -> generate_population_process
+  generate_population_process -> raw_csv
+  raw_csv -> modify_csv_process
+  modify_csv_process -> processed_csv
+  processed_csv -> upload_csv_process
+  upload_csv_process -> database
+}

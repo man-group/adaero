@@ -1,0 +1,7 @@
+<div *ngIf="this.isLoaded" class="container">
+  <h2>{{ this.data.heading }}</h2>
+  <p>{{ this.data.body }}</p>
+  <ng-container *ngIf="this.data.buttonLink || this.data.canNominate">
+  <button (click)="onClick()" class="btn btn-success">{{ this.data.buttonText }}</button>
+  </ng-container>
+</div>

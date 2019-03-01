@@ -1,0 +1,12 @@
+{% extends 'email/base.html.j2' %}
+{% block content %}
+<p>
+Hi {{ user.first_name }},</p>
+<p>
+How well are you performing? How well do you understand your strengths and areas of improvement? Are there things you
+could do to improve your performance?</p>
+<p>
+If now would be a useful time to receive feedback from your colleagues, then enrol in the next
+feedback period here: <a href="{{ app_host }}/self-nominate">{{ app_host }}/self-nominate</a>
+(please open with Google Chrome) by {{ period.entry_start_utc | datetimeformat(user) }}.</p>
+{% endblock %}
