@@ -1,0 +1,96 @@
+<div *ngIf="this.data | async as data; else loading">
+  <div class="row">
+    <div class="col-2">
+      <table class="table table-striped" #nameTable>
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col" id="name-cell-padding"></th>
+          </tr>
+          <tr>
+            <th scope="col">Feedback History</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr></tr>
+          <!-- change row coloring without needing to use CSS -->
+          <tr *ngFor="let row of data.stats.values">
+            <td class="name-cell">
+              <a routerLink='/team-feedback/{{ row[0].username }}/history'>{{ row[0].displayName }}</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-10">
+      <div class="table-responsive" #statsTable>
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th class="stats-header" scope="col" colspan="2" *ngFor="let periodName of data.stats.periods; let i = index">
+                {{ periodName }}
+                <ng-container *ngIf="data.stats.periods.length - 1 === i"> in progress</ng-container>
+              </th>
+              <th class="stats-header" scope="col">
+                Action for {{ data.stats.periods[data.stats.periods.length-1] }}
+              </th>
+            </tr>
+            <tr>
+              <ng-container *ngFor="let periodName of data.stats.periods;">
+                <th class="stats-header" scope="col">{{ data.stats.periodColumns[0] }}</th>
+                <th class="stats-header" scope="col">{{ data.stats.periodColumns[1] }}</th>
+              </ng-container>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr></tr>
+            <!-- change row coloring without needing to use CSS -->
+            <tr *ngFor="let row of data.stats.values">
+              <td class="stats-cell" *ngFor="let cell of row | slice:1:-1; let i = index">
+                <!-- even numbers are received, odd numbers are sent (contributed) -->
+                <div class='stats-counter sent' [class.contributed]="cell > 0" *ngIf="i % 2 == 0;">
+                  {{ cell }}
+                </div>
+                <div class='stats-counter received' [class.nominated]="cell >= 0" *ngIf="i % 2 == 1;">
+                  {{ cell }}
+                </div>
+              </td>
+              <td class="stats-cell">
+                <button routerLink="/team-feedback/{{ row[row.length - 1].username }}/summarise" class='btn btn-block' [class.btn-success]="row[row.length - 1].enable && !row[row.length - 1].hasExistingSummary"
+                  [class.btn-warning]="row[row.length - 1].enable && row[row.length - 1].hasExistingSummary" [class.btn-disabled]="!row[row.length - 1].enable"
+                  [disabled]="!row[row.length - 1].enable">
+                  {{ row[row.length - 1].buttonText }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="stats-legend">
+    <div class="stats-legend-title">
+      Legend:
+    </div>
+    <div class="stats-legend-content">
+      <ul>
+        <li>
+          <span class='stats-counter sent'>0</span> Did not give any feedback
+        </li>
+        <li>
+          <span class='stats-counter sent contributed'>5</span> Has given feedback to 5 colleagues
+        </li>
+        <li>
+          <span class='stats-counter received'>-1</span> Did not request feedback
+        </li>
+        <li>
+          <span class='stats-counter received nominated'>0</span> Requested feedback, but did not receive any feedback
+        </li>
+        <li>
+          <span class='stats-counter received nominated'>3</span> Requested feedback, received feedback from 3 colleagues
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<ng-template #loading>Loading Data...</ng-template>

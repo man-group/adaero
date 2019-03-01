@@ -1,0 +1,125 @@
+dn: ou=People,dc=example,dc=org
+changetype: add
+objectClass: organizationalunit
+objectClass: top
+ou: People
+
+dn: uid=alovelace,ou=People,dc=example,dc=org
+changetype: add
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: posixAccount
+objectClass: top
+uid: abarnes
+homeDirectory: /home/abarnes
+userpassword: password
+givenname: Ada
+cn: Ada Lovelace
+sn: Lovelace
+mail: alovelace@example.com
+l: London
+ou: Payroll
+ou: People
+uidNumber: 4000
+gidNumber: 1000
+o: Engineering
+departmentNumber: 123
+title: Software Engineer I
+manager: uid=dthomas,ou=People,dc=example,dc=org
+
+dn: uid=bsmith,ou=People,dc=example,dc=org
+changetype: add
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: posixAccount
+objectClass: top
+uid: bsmith
+homeDirectory: /home/bsmith
+userpassword: password
+givenname: Bob
+cn: Bob Smith
+sn: Smith
+mail: bsmith@example.com
+l: Boston
+ou: Product Testing
+ou: People
+uidNumber: 5000
+gidNumber: 1000
+o: Engineering
+departmentNumber: 123
+title: Software Engineer II
+manager: uid=dthomas,ou=People,dc=example,dc=org
+
+dn: uid=cdalton,ou=People,dc=example,dc=org
+changetype: add
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: posixAccount
+objectClass: top
+uid: cdalton
+homeDirectory: /home/cdalton
+userpassword: password
+givenname: Charles
+cn: Charles Dalton
+sn: Dalton
+mail: cdalton@example.com
+l: London
+ou: Payroll
+ou: People
+uidNumber: 6000
+gidNumber: 1000
+o: Engineering
+departmentNumber: 123
+title: Software Engineer III
+manager: uid=dthomas,ou=People,dc=example,dc=org
+
+dn: uid=dthomas,ou=People,dc=example,dc=org
+changetype: add
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: posixAccount
+objectClass: top
+uid: dthomas
+homeDirectory: /home/dthomas
+userpassword: password
+givenname: Dan
+cn: Dan Thomas
+sn: Thomas
+mail: dthomas@example.com
+l: London
+ou: Accounting
+ou: People
+uidNumber: 7000
+gidNumber: 1000
+o: Engineering
+departmentNumber: 123
+title: Team Leader
+manager: uid=eforshaw,ou=People,dc=example,dc=org
+
+dn: uid=eforshaw,ou=People,dc=example,dc=org
+changetype: add
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: posixAccount
+objectClass: top
+uid: eforshaw
+homeDirectory: /home/eforshaw
+userpassword: password
+givenname: Elaine
+cn: Elaine Forshaw
+sn: Forshaw
+mail: eforshaw@example.com
+l: London
+ou: Accounting
+ou: People
+uidNumber: 8000
+gidNumber: 1000
+o: Engineering
+departmentNumber: 123
+title: Vice President
+

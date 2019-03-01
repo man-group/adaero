@@ -1,0 +1,53 @@
+<div *ngIf="this.data | async as data; else loading">
+  <div [ngSwitch]="data.nominees !== undefined">
+  <ng-container *ngSwitchCase="true">
+  <h3>Colleagues that have requested feedback</h3>
+  <input #quickSearch id="nominee-quick-search-input" type="text" class="form-control" placeholder="Quick search" aria-label="search" (keyup)="0">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th class='nominee-header' scope="col">Name</th>
+        <th class='nominee-header' scope="col">Position</th>
+        <th class='nominee-header' scope="col">Department</th>
+        <th class='nominee-header' scope="col">Manager</th>
+        <th class='nominee-action-header' scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr></tr><!-- change row coloring without needing to use CSS -->
+      <tr *ngIf="(data.nominees | nomineeFilter: quickSearch.value)?.length === 0">
+        <td>No nominees found!</td>
+      </tr>
+      <tr *ngFor="let employee of data.nominees | nomineeFilter: quickSearch.value">
+        <td>{{employee.displayName}}</td>
+        <td>{{employee.position}}</td>
+        <td>{{employee.department}}</td>
+        <td>{{employee.managerDisplayName}}</td>
+        <td><div *ngIf="employee.hasExistingFeedback; then edit else new"></div></td>
+        <ng-template #new>
+          <a class="btn btn-block btn-success" routerLink="/feedback/{{employee.username}}">
+            Give feedback
+          </a>
+        </ng-template>
+        <ng-template #edit>
+          <a class="btn btn-block btn-warning" routerLink="/feedback/{{employee.username}}">
+            View and edit
+          </a>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+  </ng-container>
+  <ng-container *ngSwitchCase="false">
+  <div class="container">
+    <h2>{{ data.heading }}</h2>
+    <p>{{ data.body }}</p>
+    <ng-container *ngIf="this.data.buttonLink || this.data.canNominate">
+    <button [routerLink]="data.buttonLink" class="btn btn-success">{{ data.buttonText }}</button>
+    </ng-container>
+  </div>
+  </ng-container>
+  </div>
+</div>   
+<ng-template #loading>Loading Data...</ng-template>
+

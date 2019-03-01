@@ -1,0 +1,72 @@
+@import '~styles.scss';
+
+$fixedColumnWidth: 5em;
+
+.stats-header {
+  text-align: center;
+  margin: auto;
+}
+
+#name-cell-padding {
+  padding: 1.5em;
+  background-color: white;
+  border-color: white;
+}
+
+.name-cell {
+  white-space: nowrap;
+}
+
+.stats-cell {
+  text-align: center;
+}
+
+.stats-counter {
+  border-radius: 50%;
+  background: white;
+  color: white;
+  margin: auto;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  width: 2em;
+  height: 2em;
+}
+
+.received {
+  border: 2px solid green;
+}
+.nominated {
+  background: green;
+}
+
+.sent {
+  border: 2px solid grey;
+ }
+.contributed {
+  background: grey;
+}
+
+.stats-legend {
+  display: flex;
+  padding-top: 1em;
+  font-size: smaller;
+}
+
+.stats-legend-title {
+  padding-top: 0.5em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  padding-left: 0.5em;
+}
+
+.stats-legend-content {
+  ul {
+    padding-left: 0em;
+    list-style-type: none;
+    li {
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
+    }
+  }
+}

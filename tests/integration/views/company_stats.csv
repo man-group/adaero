@@ -1,0 +1,6 @@
+employee_id,last_name,first_name,email,business_unit,location,line_manager_name,line_manager_email,2014-Q1_contributed,2017-Q4_contributed,2014-Q1_received,2017-Q4_received
+123456,Boggs,Barney,bboggs@example.com,Alpha,London,Charlie Smith,chasmith@example.com,2,0,-1,0
+878787,Dodson,Dominic,ddodson@example.com,Alpha,London,Charlie Smith,chasmith@example.com,0,0,-1,-1
+999999,Lovelace,Lady,llovelace@example.com,Alpha,London,,,3,10,8,2
+123123,Sholes,Șarah,ssholes@example.com,Alpha,London,Charlie Smith,chasmith@example.com,7,2,3,4
+321321,Smith,Charlie,chasmith@example.com,Alpha,Hong Kong,Lady Lovelace,llovelace@example.com,0,0,-1,-1

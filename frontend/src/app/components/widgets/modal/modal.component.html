@@ -1,0 +1,8 @@
+<div class="modal-body">
+  <p>{{ dialog }}</p>
+  <p *ngIf="metadata" class="metadata">{{ metadata }}</p>
+</div>
+<div class="modal-footer">
+  <button *ngIf="cancelText" type="button" (click)="activeModal.dismiss()" class="btn btn-danger">{{ cancelText }}</button>
+  <button type="button" (click)="activeModal.close()" class="btn btn-success">{{ confirmText }}</button>
+</div>

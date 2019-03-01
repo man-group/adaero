@@ -1,0 +1,14 @@
+{% extends 'email/base.html.j2' %}
+{% block content %}
+<p>
+Hi {{ invitee.first_name }},</p>
+<p>
+You have been invited by {{ inviter.display_name }} from {{ inviter.business_unit }} to give feedback on their performance
+over the recent months. You can give them feedback here: <a href="{{ app_host }}/feedback/{{ inviter.username }}">{{ app_host }}/feedback/{{ inviter.username }}</a> (please open with Google Chrome).
+</p>
+Guidelines:</p>
+<p>1.	There are only a few simple questions. You can leave as much or as little feedback as you choose to.</p>
+<p>2.   Remember that feedback should motivate, improve performance and support continuous learning. Please consider this when providing feedback.</p>
+<p>
+The "Give feedback" period will close by {{ period.approval_start_utc | datetimeformat(invitee) }}.</p>
+{% endblock %}

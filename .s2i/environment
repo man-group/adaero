@@ -1,0 +1,8 @@
+APP_HOME=feedback_tool
+APP_CONFIG=feedback_tool/gunicorn/config.py
+APP_MODULE=feedback_tool.gunicorn.wsgi:application
+# TODO: enable concurrency by introducing locking mechanism for scheduled tasks
+WEB_CONCURRENCY=1
+
+DEV_MODE="true"
+

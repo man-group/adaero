@@ -1,0 +1,16 @@
+{% extends 'email/base.html.j2' %}
+{% block content %}
+<p>
+Hi {{ user.first_name }},</p>
+<p>
+Some of your colleagues would like to receive feedback on how they are performing. You are able to give feedback about anyone that has enrolled. You should prioritise people that you regularly work with.</p>
+<p>1.   You can give feedback to your colleagues here: <a href="{{ app_host }}/feedback">{{ app_host }}/feedback</a> (please open with Google Chrome).</p>
+<p>2.	If you have requested feedback for this period and would like to receive feedback from outside {{ business_unit }} (but within {{ company_name}}), you can invite them here: <a href="{{ app_host }}/invite-outside-reviewers">{{ app_host }}/invite-outside-reviewers</a>.</p>
+<p>
+Guidelines:</p>
+<p>1.	There are only a few simple questions. You can leave as much or as little feedback as you choose to.</p>
+<p>2.	Everyone should contribute to improving the performance of their colleagues, so we recommend you invest time to give feedback to colleagues you have worked with in recent months.
+<p>3.   Remember that feedback should motivate, improve performance and support continuous learning. Please consider this when providing feedback.</p>
+<p>
+The "Give feedback" period will close by {{ period.approval_start_utc | datetimeformat(user) }}.</p>
+{% endblock %}

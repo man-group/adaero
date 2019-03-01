@@ -1,0 +1,48 @@
+<nav id="navbar" class="navbar">
+  <div class="navbar-header">
+    <a href="#" class="navbar-left"><img src="assets/logo.png" alt="Feedback Tool Logo"></a>
+    <div class="unit-name-box">
+      <div class="unit-name">
+        {{ this.metadata?.businessUnit }}
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="user" id="logged-in-user-info" class="d-flex flex-column">
+    <h5>{{ user.displayName }}</h5>
+    <p>{{ user.title }}</p>
+    <button class='btn btn-secondary'(click)="this.api.logout($event)">Logout</button>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row flex">
+    <div class="col-2 wrapper">
+      <!-- roles are aligned with feedback_tool/security/__init__.py -->
+      <div *ngIf="user" class="nav flex-column nav-pills" aria-orientation="vertical" id="sidebar">
+        <div *ngIf="user.principals.indexOf('role:external_business_unit') >= 0">
+          <a routerLink="/feedback" routerLinkActive="active" class="nav-link">Give feedback</a>
+        </div>
+        <div *ngIf="user.principals.indexOf('role:employee') >= 0">
+          <a routerLink="/self-nominate" routerLinkActive="active" class="nav-link">Request feedback</a>
+          <a routerLink="/feedback" routerLinkActive="active" class="nav-link">Give feedback</a>
+          <a routerLink="/feedback-about-me" routerLinkActive="active" class="nav-link">Review my feedback</a>
+          <a routerLink="/invite-outside-reviewers" routerLinkActive="active" class="nav-link">Invite additional reviewers</a>
+        </div>
+        <div *ngIf="user.principals.indexOf('role:manager') >= 0">
+          <a routerLink="/team-feedback" routerLinkActive="active" class="nav-link">My team stats</a>
+        </div>
+        <div *ngIf="user.principals.indexOf('role:talent_manager') >= 0">
+          <a routerLink="/talent-manager-panel" routerLinkActive="active" class="nav-link">Talent Manager Panel</a>
+          <a routerLink="/company-feedback" routerLinkActive="active" class="nav-link">My company stats</a>
+          <a href="/api/v1/company-feedback-stats.csv" routerLinkActive="active" class="nav-link">Download company stats report</a>
+          <a href="/api/v1/company-raw-feedback.csv" routerLinkActive="active" class="nav-link">Download raw feedback report</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-10">
+      <div class="container-fluid" id='content'>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

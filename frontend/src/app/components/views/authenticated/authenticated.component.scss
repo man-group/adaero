@@ -1,0 +1,43 @@
+@import '~styles.scss';
+
+.wrapper {
+    border-right: 0.1em solid black;
+}
+
+#sidebar {
+    padding: 0.5em;
+    height: 88vh;
+    .nav-pills, .nav-link {
+        border-radius: 0em;
+        color: black;
+    }
+    .active {
+        background-color: $grey;
+        font-weight: bold;
+    }
+}
+
+#content {
+    padding: 1em;
+    height: 100%;
+}
+
+#logged-in-user-info {
+    padding: 0em 0.5em;
+    color: white;
+    text-align: right;
+}
+
+.nav > li > a {
+    color: black;
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+    font-weight: bold;
+}
+
+@media print {
+    nav, .wrapper {
+        display: none;
+    }
+}

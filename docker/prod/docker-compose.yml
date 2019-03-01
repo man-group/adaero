@@ -1,0 +1,69 @@
+version: '2.4'
+services:
+  webserver:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/feedback-tool.conf:/etc/nginx/sites-enabled/feedback-tool.conf:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - web
+    depends_on:
+      - webapp
+  webapp:
+    image: feedback-tool-app:latest
+    networks:
+      - web
+      - db
+      - ldap
+    depends_on:
+      db:
+        condition: service_healthy
+      ldap:
+        condition: service_healthy
+  db:
+    image: postgres:10
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U postgres -c \"select 'OK';\""]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  ldap:
+    image: osixia/openldap:latest
+    volumes:
+#      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif
+      - ../shared/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    networks:
+      - ldap
+    ports:
+      - "389:389"
+    healthcheck:
+      test: ["CMD-SHELL", "ldapsearch -x -H ldap://localhost -b dc=example,dc=org -D \"cn=admin,dc=example,dc=org\" -w admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    command: --copy-service --loglevel debug
+  ldap-ui:
+    image: osixia/phpldapadmin:latest
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+    ports:
+      - "6443:443"
+    networks:
+      - ldap
+    depends_on:
+      - ldap
+
+networks:
+  ldap:
+  web:
+  db:
+
+

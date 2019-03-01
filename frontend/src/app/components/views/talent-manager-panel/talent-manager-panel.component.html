@@ -1,0 +1,45 @@
+<div class="container">
+  <ng-container *ngIf="errorMsg">
+    <div class="alert alert-danger" [innerHTML]="errorMsg" role="alert">
+    </div>
+  </ng-container>
+  <ng-container *ngIf="successMsg">
+    <div class="alert alert-success" [innerHTML]="successMsg" role="alert">
+    </div>
+  </ng-container>
+  <h2>Send emails</h2>
+  <p>Initial emails are automatically sent by the system but you can use this page to send the reminders.</p>
+  <div *ngFor="let info of reminderButtonInfo">
+    <button class='btn btn-warning email-btn' (click)="onClick($event, info.templateKey)">{{ info.text }}</button>
+  </div>
+  <p>If there is an issue with the system and you would like to send out the initial emails again, you can use these to send them out manually.</p>
+  <div *ngFor="let info of initialButtonInfo">
+    <button class='btn btn-danger email-btn' (click)="onClick($event, info.templateKey)">{{ info.text }}</button>
+  </div>
+  <br/>
+  <h2>Manage users</h2>
+  <h3>Download current user population</h3>
+  <ng-container *ngIf="data">
+    <p>
+      There are currently {{ data?.userCount }} users stored in the database.
+    </p>
+      <p><a href="/api/v1/get-current-population.csv" class='btn btn-success'>Download current users</a></p>
+  </ng-container>
+  <h3>Generate population CSV template</h3>
+  <p>{{ data?.generatePopulationMsg }}</p>
+  <form #f="ngForm" (ngSubmit)="onGeneratePopulationCSV(f)">
+    <div class="form-group">
+      <input name="businessUnit" [(ngModel)]="csvGenerationForm.businessUnit" type="text" class="form-control" id="businessUnit" aria-describedby="businessUnit-help" placeholder="Enter business unit" required>
+    </div>
+    <button type="submit" class="btn btn-success" [disabled]="!f.form.valid || this.csvGenerationSubmitting">{{ !this.csvGenerationSubmitting ? "Generate and download": "Generating..." }}</button>
+  </form>
+  <br />
+  <h3>Upload new population CSV</h3>
+  <p>{{ data?.uploadNewPopulationMsg }}</p>
+  <form #f2="ngForm" (ngSubmit)="onUploadNewPopulationCSV(f2)">
+    <div class="form-group">
+      <input type="file" name="populationFile" [(ngModel)]="csvUploadForm.populationFile" class="form-control-file" id="populationFile" (change)="onFileChange($event)" required #inputFile/>
+    </div>
+    <button type="submit" class="btn btn-success" [disabled]="!f2.form.valid || this.csvUploadSubmitting">{{ !this.csvUploadSubmitting ? "Upload and process": "Processing..." }}</button>
+  </form>
+</div>

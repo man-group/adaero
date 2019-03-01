@@ -1,0 +1,11 @@
+first_name,last_name,position,employee_id,business_unit,email,department,is_staff,manager_id
+Alice,Alison,Marketing Co-Ordinator,939393,Bravo,aalison@example.com,App Development,True,
+Barney,Boggs,Developer,123456,Alpha,bboggs@example.com,App Development,True,321321
+Dominic,Dodson,Developer,878787,Alpha,ddodson@example.com,App Development,True,321321
+Other,Employee,OE,102938,Alpha,otheremployee@example.com,Compliance - Bravo,True,102939
+Lady,Lovelace,Bigger boss,999999,Alpha,llovelace@example.com,App Development,True,135790
+Central,Manager,CEO,135790,Central,centralmanager@man.com,Central Management,True,
+Other,Manager,OM,102939,Alpha,othermanager@example.com,Compliance - Bravo,True,102939
+Șarah,Sholes,Business Manager,123123,Alpha,ssholes@example.com,App Development,True,321321
+Charlie,Smith,Boss,321321,Alpha,chasmith@example.com,App Development,True,999999
+Outside,TM,Talent Manager,989898,HR,outsidetm@man.com,Human Resources,True,

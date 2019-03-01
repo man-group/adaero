@@ -1,0 +1,7 @@
+{% extends 'email/base.html.j2' %}
+{% block content %}
+<p>
+Hi {{ talent_manager.first_name }},</p>
+<p>
+This is an automated response from the 360 Feedback system. Emails with the subject "{{ subject }}" were sent out to {{ num_emails }} email addresses at {{ datetime_sent_utc | datetimeformat(talent_manager) }}.</p>
+{% endblock %}

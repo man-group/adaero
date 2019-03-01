@@ -1,0 +1,40 @@
+<div class="container" *ngIf="this.form; else loading">
+  <div [ngSwitch]="formState">
+    <ng-container *ngSwitchCase="formStates.Editing">
+      <div id="feedback-form-title">
+        <h2>Feedback on {{ form.employee.displayName }} for {{ form.periodName }}</h2>
+      </div>
+      <div id="feedback-form-info" *ngIf="form.readOnly; then empty else text"></div>
+      <ng-template #text><div id="feedback-form-info" [innerHTML]="formInfo"></div></ng-template>
+      <form id="feedback-form-form" #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <div class="form-group" *ngFor="let row of form.items; let number = index">
+          <p *ngIf="row.caption" class="caption">{{ row.caption }}</p>
+          <label for="question{{number + 1}}">{{ number + 1}}. {{row.question}}</label>
+          <ng-container *ngIf="row.rawAnswer !== null && row.rawAnswer !== undefined">
+          <div class="raw-answer">
+            <h6>Contributions by peers (in random order):</h6>
+            <textarea readonly class="form-control" id="answer{{number + 1}}" value="{{ row.rawAnswer }}" rows="6"></textarea>
+            <br/>
+          </div>
+          <h6 class="summary-label">Summary:</h6>
+          </ng-container>
+          <textarea *ngIf="!form.readOnly" class="form-control" id="answer{{number + 1}}" [(ngModel)]="row.answer" name="answer{{number + 1}}" rows="6"></textarea>
+          <p class="readonly-answer" *ngIf="form.readOnly">{{row.answer}}</p> 
+        </div>
+        <button *ngIf="!form.readOnly" type="submit" class="btn btn-success" [disabled]="!f.form.valid && !this.submitting">Save</button>
+      </form>
+      <p *ngIf="!form.readOnly" id="feedback-form-footer">
+        {{ saveCaption }}
+      </p>
+    </ng-container>
+    <ng-container *ngSwitchCase="formStates.Success">
+      <div class="container">
+        <h2>{{ successTitle }}</h2>
+        <p>{{ successInfo }}</p>
+        <a [routerLink]="successButtonLink" class="btn btn-success">{{ successButton }}</a>
+      </div>
+    </ng-container>
+  </div>
+</div>
+<ng-template #loading>Loading Data...</ng-template>
+<ng-template #empty></ng-template>

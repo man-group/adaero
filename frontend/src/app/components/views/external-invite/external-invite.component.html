@@ -1,0 +1,40 @@
+<div class="container" *ngIf="this.status; else loading">
+  <div [ngSwitch]="this.status.canInvite">
+    <ng-container *ngSwitchCase="true">
+      <h2>Invite additional reviewers</h2>
+      <p>
+        You are welcome to invite reviewers from across {{ this.metadata.companyName }} by entering their email address below. An email will be sent, asking them to give you feedback.
+      </p>
+      <ng-container *ngIf="errorMsg">
+        <div class="alert alert-danger" role="alert">
+          {{ errorMsg }}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="successMsg">
+        <div class="alert alert-success" role="alert">
+          {{ successMsg }}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="this.status.invitees.length > 0">
+        <p>Your existing invites:</p>
+        <ul *ngFor="let invitee of this.status.invitees">
+          <li>{{ invitee.displayName }} &lt;{{ invitee.email }}&gt;, {{ invitee.businessUnit }}, {{ invitee.department }}</li>
+        </ul>
+        <p>If you wish to send a reminder email, then simply re-enter their email address below.</p>
+      </ng-container>
+      <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" class="form-control" placeholder="Their {{ this.metadata.companyName }} email address" aria-label="email" name="email" [(ngModel)]="email"
+            email required>
+        </div>
+        <button type="submit" class="btn btn-success" [disabled]="!f.form.valid && !this.submitting">Invite and send email</button>
+      </form>
+    </ng-container>
+    <ng-container *ngSwitchCase="false">
+      <h2>{{ this.status.heading }}</h2>
+      <p>{{ this.status.body }}</p>
+    </ng-container>
+  </div>
+</div>
+<ng-template #loading>Loading Data...</ng-template>
