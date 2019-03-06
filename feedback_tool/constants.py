@@ -53,7 +53,7 @@ LOGIN_USERNAME_MSG_KEY = "feedback_tool.login_username_msg"
 LOGIN_PASSWORD_MSG_KEY = "feedback_tool.login_password_msg"
 TM_UPLOAD_NEW_POPULATION_MSG_KEY = "feedback_tool.tm_upload_new_population_msg"
 TM_GENERATE_POPULATION_MSG_KEY = "feedback_tool.tm_generate_population_msg"
-
+LOGO_FILENAME_KEY = "feedback_tool.logo_filename_key"
 
 DEFAULT_DISPLAY_DATETIME_FORMAT = "%H:%M%p, %d %B %Y"
 ENROL_START = "enrol_start"

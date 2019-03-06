@@ -28,3 +28,16 @@ def test_can_get_correct_metadata_from_environment():
     os.environ["ALLOW_PASSWORDLESS_ACCESS"] = "true"
     response = app.get("/api/v1/metadata")
     assert response.json_body["metadata"]["passwordlessAccess"]
+
+
+@pytest.mark.parametrize('file_name, status_code', (
+    ('logo.png', 302),
+))
+def test_can_get_correct_logo_according_to_business_unit():  # noqa: E501
+    dev_settings = copy.copy(DEFAULT_TEST_SETTINGS)
+    dev_settings[feedback_tool.constants.LOGO_FILENAME_KEY] = "test.png"
+    app = webtest.TestApp(feedback_tool.main({}, **dev_settings))
+    resp = app.get('/api/v1/logo.png')
+    assert resp.status_code == 302
+    assert resp.headers['Location'] == 'https://localhost/assets/%s' \
+        % dev_settings[feedback_tool.constants.LOGO_FILENAME_KEY]

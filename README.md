@@ -168,3 +168,6 @@ Attribute that the username is assigned to in a DN
 
 #### `feedback_tool.ldap_dn_username_regex`
 Regex for extraction of a username from a DN
+
+#### `feedback_tool.logo_filename`
+If the file exists in the assets folder on the backend, serve this up to the frontend.

@@ -38,3 +38,4 @@ feedback_tool/test.ini
 frontend/package-lock.json
 
 .tox
+venv
