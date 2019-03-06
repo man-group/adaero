@@ -5,16 +5,15 @@ import tempfile
 
 from sqlalchemy.orm import configure_mappers, sessionmaker, Session
 from sqlalchemy.engine import create_engine
-from sqlalchemy.pool import QueuePool
 import transaction
 import zope.sqlalchemy
 
 from logging import getLogger as get_logger
 
 from feedback_tool.constants import MISCONFIGURATION_MESSAGE
+from feedback_tool.database import prepare_db
 from feedback_tool.security import ldapauth
 from feedback_tool import constants
-from feedback_tool import config
 from feedback_tool.config import get_config_value, check_if_production
 
 # Import or define all models here to ensure they are attached to the
@@ -56,22 +55,6 @@ def get_engine(settings):
     engine = prepare_db(settings)
     engine.connect()
     return engine
-
-
-def prepare_db(settings):
-    db_url = config.get_config_value(
-        settings, constants.DB_URL_KEY, raise_if_not_set=True
-    )
-    log.info("Connecting to DB %s", db_url)
-    return create_engine(
-        db_url,
-        pool_size=5,
-        max_overflow=40,
-        echo_pool=True,
-        pool_recycle=300,
-        poolclass=QueuePool,
-        echo=False,
-    )
 
 
 def _get_sqlite_engine(filepath):
