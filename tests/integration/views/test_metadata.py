@@ -30,10 +30,7 @@ def test_can_get_correct_metadata_from_environment():
     assert response.json_body["metadata"]["passwordlessAccess"]
 
 
-@pytest.mark.parametrize('file_name, status_code', (
-    ('logo.png', 302),
-))
-def test_can_get_correct_logo_according_to_business_unit():  # noqa: E501
+def test_can_get_correct_logo():  # noqa: E501
     dev_settings = copy.copy(DEFAULT_TEST_SETTINGS)
     dev_settings[feedback_tool.constants.LOGO_FILENAME_KEY] = "test.png"
     app = webtest.TestApp(feedback_tool.main({}, **dev_settings))
