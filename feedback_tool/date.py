@@ -15,6 +15,7 @@ HONG_KONG = "Hong Kong"
 GBR = "GBR"
 BOSTON = "Boston"
 PFAFFIKON = "Pfäffikon"
+USA = "USA"
 CUSTOM_LOC_TO_PYTZ_LOC = {
     LONDON: "Europe/London",
     NEW_YORK: "America/New_York",
@@ -24,11 +25,12 @@ CUSTOM_LOC_TO_PYTZ_LOC = {
     GBR: "Europe/London",
     BOSTON: "US/Eastern",
     PFAFFIKON: "Europe/Zurich",
+    USA: "US/Eastern",
 }
 
 
 def datetimeformat(
-    utc_naive_dt, user, format_="%-d %B 18:00 (%Z)", fallback_location="London"
+    utc_naive_dt, user, format_="%-d %B 18:00 (%Z)", fallback_location=LONDON
 ):
     """
     By default, 1 April 18:00 (HKT)
@@ -44,17 +46,21 @@ def datetimeformat(
         utc_naive_dt -= timedelta(minutes=utc_naive_dt.minute)
     elif 30 < utc_naive_dt.minute <= 59:
         utc_naive_dt -= timedelta(minutes=utc_naive_dt.minute - 30)
-    if user.location:
-        man_location = user.location
+    if user.location and user.location in list(CUSTOM_LOC_TO_PYTZ_LOC.keys()):
+        valid_loc = user.location
     else:
-        man_location = fallback_location
-    tz = timezone(CUSTOM_LOC_TO_PYTZ_LOC[man_location])
+        valid_loc = fallback_location
+    tz = timezone(CUSTOM_LOC_TO_PYTZ_LOC[valid_loc])
     return tz.localize(utc_naive_dt).strftime(format_)
 
 
-def adjust_dt_for_location(dt, location):
+def adjust_dt_for_location(dt, location, fallback_location=LONDON):
+    if location and location in list(CUSTOM_LOC_TO_PYTZ_LOC.keys()):
+        valid_loc = location
+    else:
+        valid_loc = fallback_location
     return (
-        timezone(CUSTOM_LOC_TO_PYTZ_LOC[location])
+        timezone(CUSTOM_LOC_TO_PYTZ_LOC[valid_loc])
         .localize(dt)
         .astimezone(timezone("UTC"))
         .replace(tzinfo=None)

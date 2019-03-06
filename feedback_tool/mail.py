@@ -254,22 +254,31 @@ def check_and_send_email(
     for user in users:
         if not user.email:
             continue
-        # because of the modelling of User <-> Manager, attempting to fetch
-        # manager directly despite being joinloaded will result in an SELECT
-        # to prevent db access by testing against local manager_username
-        template = env.get_template(os.path.join("email", template_info["template"]))
-        rendered_html = template.render(
-            user=user,
-            period=current_period,
-            app_host=app_host,
-            company_name=company_name,
-        )
-        message_root = _generate_message_root(rendered_html, from_email, subject)
+        try:
+            # because of the modelling of User <-> Manager, attempting to fetch
+            # manager directly despite being joinloaded will result in an SELECT
+            # to prevent db access by testing against local manager_username
+            template = env.get_template(
+                os.path.join("email", template_info["template"])
+            )
+            rendered_html = template.render(
+                user=user,
+                period=current_period,
+                app_host=app_host,
+                company_name=company_name,
+            )
+            message_root = _generate_message_root(rendered_html, from_email, subject)
 
-        if emailing_enabled:
-            s.sendmail(from_email, [user.email], message_root.as_string())
-            have_sent_emails = True
-        log.debug("Email sent to %s" % user.email)
+            if emailing_enabled:
+                s.sendmail(from_email, [user.email], message_root.as_string())
+                have_sent_emails = True
+            log.debug("Email sent to %s" % user.email)
+        except Exception as e:
+            log.exception(e)
+            log.error(
+                "Exception occured with sending email to %s, "
+                "skipping over and continuing..." % user.email
+            )
         time.sleep(delay_between_s)
 
     tm_usernames = settings[constants.TALENT_MANAGER_USERNAMES_KEY]
@@ -279,34 +288,43 @@ def check_and_send_email(
         talent_managers = settings[constants.TALENT_MANAGER_USERNAMES_KEY]
 
     for tm_username in talent_managers:
-        tm_ldap = ldapsource.get_ldap_user_by_username(tm_username)
-        if not tm_ldap:
-            log.warning(
-                "Unable to find LDAP info for talent manager with "
-                "username {}, unable to send confirmation "
-                "email.".format(tm_username)
+        try:
+            tm_ldap = ldapsource.get_ldap_user_by_username(tm_username)
+            if not tm_ldap:
+                log.warning(
+                    "Unable to find LDAP info for talent manager with "
+                    "username {}, unable to send confirmation "
+                    "email.".format(tm_username)
+                )
+                continue
+            tm = User.create_from_ldap_details(ldapsource, tm_ldap)
+
+            # send confirmation email
+            template = env.get_template(
+                os.path.join("email", "tm_confirmation.html.j2")
             )
-            continue
-        tm = User.create_from_ldap_details(ldapsource, tm_ldap)
+            rendered_html = template.render(
+                talent_manager=tm,
+                subject=subject,
+                num_emails=len(users_with_emails),
+                datetime_sent_utc=datetime.utcnow(),
+                app_host=app_host,
+            )
+            message_root = _generate_message_root(
+                rendered_html,
+                from_email,
+                _build_full_subject(company_name, "Emails sent"),
+            )
+            if emailing_enabled and have_sent_emails:
+                s.sendmail(from_email, [tm.email], message_root.as_string())
+        except Exception as e:
+            log.exception(e)
+            log.error(
+                "Exception occured with sending tm email to %s, "
+                "skipping over and continuing..." % tm_username
+            )
 
-        # send confirmation email
-        template = env.get_template(os.path.join("email", "tm_confirmation.html.j2"))
-        rendered_html = template.render(
-            talent_manager=tm,
-            subject=subject,
-            num_emails=len(users_with_emails),
-            datetime_sent_utc=datetime.utcnow(),
-            app_host=app_host,
-        )
-        message_root = _generate_message_root(
-            rendered_html,
-            from_email,
-            _build_full_subject(company_name, "Emails " "sent"),
-        )
-        if emailing_enabled and have_sent_emails:
-            s.sendmail(from_email, [tm.email], message_root.as_string())
-
-        s.close()
+    s.close()
 
     log.info("Sent %s emails!" % (len(users_with_emails) + 1))
     with transaction.manager:
@@ -355,7 +373,7 @@ def email_job(settings):
 def email_event_handler(event):
     """Handle apscheduler event"""
     if event.exception:
-        log.exception("The job crashed with %s" % event.exception)
+        log.exception("The job crashed with %s" % event.traceback)
 
 
 def includeme(config):

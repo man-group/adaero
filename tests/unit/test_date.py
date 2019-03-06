@@ -126,6 +126,12 @@ from feedback_tool.models import User
         ),
         (datetime(2018, 1, 3, 9, 0, 0, 0), None, None, "2 January 18:00 (GMT)"),
         (datetime(2017, 3, 26, 10, 0, 0, 0), "Boston", None, "25 March 18:00 (EDT)"),
+        (
+            datetime(2016, 3, 2, 10, 24, 29, 123),
+            "Invalid location",
+            "%Y-%m-%d %H:%M (%Z)",
+            "2016-03-02 10:00 (GMT)",
+        ),
     ),
 )
 def test_datetimeformat_works(value, man_location, format_, expected):
