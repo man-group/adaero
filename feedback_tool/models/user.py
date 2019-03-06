@@ -48,7 +48,7 @@ class User(Base, Serializable):
         backref=backref("manager", remote_side=[username]),
     )
 
-    employee_id = Column(Integer)
+    employee_id = Column(Unicode(length=16))
     business_unit = Column(Unicode(length=32))
     location = Column(Unicode(length=64))
     email = Column(Unicode(length=256))
@@ -75,7 +75,7 @@ class User(Base, Serializable):
             return None
         username = ldap_details[ldapsource.username_key]
         employee_id = ldap_details.get(ldapsource.uid_key)
-        if not employee_id or not employee_id.isdigit():
+        if not employee_id:
             log.warning(
                 "Unable to create User Object for user %s "
                 "as unlikely a real employee because of malformed or "
@@ -89,7 +89,7 @@ class User(Base, Serializable):
                 last_name=ldap_details["sn"],
                 position=ldap_details["title"],
                 manager_username=ldap_details[ldapsource.manager_key],
-                employee_id=int(ldap_details[ldapsource.uid_key]),
+                employee_id=ldap_details[ldapsource.uid_key],
                 business_unit=ldap_details[ldapsource.business_unit_key],
                 location=ldap_details[ldapsource.location_key],
                 email=ldap_details["mail"],
