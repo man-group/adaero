@@ -38,7 +38,12 @@ DEFAULT_EMAIL_DELAY_BETWEEN_S = 0.5
 
 def get_employee_users(dbsession):
     with transaction.manager:
-        return dbsession.query(User).options(joinedload("manager")).all()
+        return (
+            dbsession.query(User)
+            .options(joinedload("manager"))
+            .filter(User.is_staff == True)  # noqa
+            .all()
+        )
 
 
 def get_non_nominated_users(dbsession):

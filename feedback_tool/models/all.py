@@ -79,6 +79,7 @@ class Serializable(object):
     """
     Mixin that makes it easy to serialise SQLAlchemy model objects to JSON
     """
+
     RELATIONSHIPS_TO_DICT = False
 
     def __iter__(self):
@@ -196,6 +197,7 @@ class FeedbackTemplate(Base, Checkable, Serializable):
     """
     Allows for reuse of questions as well as order to be displayed.
     """
+
     __tablename__ = "templates"
     id = Column(Integer, TEMPLATE_ID_SEQ, primary_key=True)
     rows = relationship("FeedbackTemplateRow", back_populates="template")
@@ -234,6 +236,7 @@ class FeedbackQuestion(Base, Checkable, Serializable):
 class FeedbackAnswer(Base, Checkable, Serializable):
     """Represents an answer for a particular question from one colleague
     to another."""
+
     __tablename__ = "answers"
     id = Column(Integer, ANSWER_ID_SEQ, primary_key=True)
     form_id = Column(Integer, ForeignKey("forms.id"))
@@ -252,6 +255,7 @@ class ExternalInvite(Base, Checkable, Serializable):
     in the configured LDAP source (with the population being a subset of the
     users in the LDAP source)
     """
+
     __tablename__ = "einvites"
     id = Column(Integer, EXTERNAL_REQUEST_ID_SEQ, primary_key=True)
     to_username = Column(Unicode(length=32))

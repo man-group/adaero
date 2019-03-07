@@ -233,6 +233,24 @@ TEST_LDAP_FULL_DETAILS = {
         DIRECT_REPORTS_KEY: ["otheremployee"],
     },
 }
+
+TEST_NON_STAFF_USER = {
+    "distinguishedName": "Bob",
+    "displayName": "Bob",
+    "givenName": "Bob",
+    "mail": "bob@example.com",
+    TEST_DEPARTMENT_KEY: "Accounting",
+    "uid": 10,
+    "sn": "Manager",
+    "title": "OM",
+    TEST_UID_KEY: "104001",
+    TEST_BUSINESS_UNIT_KEY: "Alpha",
+    TEST_LOCATION_KEY: "London",
+    TEST_USERNAME_KEY: "bob",
+    MANAGER_KEY: "othermanager",
+    DIRECT_REPORTS_KEY: ["otheremployee"],
+}
+
 QUESTION_IDS_AND_TEMPLATES = [
     # note utf8 accent in 'doing' of first question
     (89, "What should {display_name} START dòing in {period_name}?", None),
@@ -243,7 +261,7 @@ QUESTION_IDS_AND_TEMPLATES = [
         "Test caption",
     ),
 ]
-TEST_AHL_EMPLOYEES = [
+TEST_EMPLOYEES = [
     TEST_EMPLOYEE_USERNAME,
     TEST_MANAGER_USERNAME,
     TEST_TALENT_MANAGER_USERNAME,

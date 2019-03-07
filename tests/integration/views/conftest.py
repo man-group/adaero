@@ -47,7 +47,7 @@ from ..constants import (
     TEST_EMPLOYEE_2_USERNAME,
     TEST_PREVIOUS_PERIOD_ID,
     TEST_SUMMARY_ANSWERS,
-    TEST_AHL_EMPLOYEES,
+    TEST_EMPLOYEES,
     TEST_TEMPLATE_ID,
     TEST_BUSINESS_UNIT_KEY,
 )
@@ -67,7 +67,7 @@ def get_ldap_by_email_mock_fn(self, email):
     ahl_emails = [
         u["mail"]
         for u in TEST_LDAP_FULL_DETAILS.values()
-        if u[tests.integration.constants.TEST_USERNAME_KEY] in TEST_AHL_EMPLOYEES
+        if u[tests.integration.constants.TEST_USERNAME_KEY] in TEST_EMPLOYEES
     ]
     return (
         TEST_LDAP_FULL_DETAILS[TEST_COMPANY_COLLEAGUE_USERNAME]
@@ -117,7 +117,7 @@ def new_ldap_mocked_app_with_users(dbsession, request):
                 # User table
                 if (
                     user_details[tests.integration.constants.TEST_USERNAME_KEY]
-                    not in TEST_AHL_EMPLOYEES
+                    not in TEST_EMPLOYEES
                 ):
                     continue
                 user = User.create_from_ldap_details(ldapsource, user_details)

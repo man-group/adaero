@@ -21,7 +21,7 @@ from feedback_tool.constants import (
     DISPLAYED_HOSTNAME_KEY,
 )
 from feedback_tool.date import LONDON, HONG_KONG, BOSTON
-from feedback_tool.models import Period
+from feedback_tool.models import Period, User
 from feedback_tool.security import ldapauth
 from tests.settings import DEFAULT_TEST_SETTINGS
 from tests.integration.views.conftest import get_dbsession
@@ -36,10 +36,11 @@ from tests.integration.constants import (
     TEST_UTCNOW,
     TEST_NON_NOMINATED_USERS,
     TEST_TALENT_MANAGER_USERNAME,
-    TEST_AHL_EMPLOYEES,
+    TEST_EMPLOYEES,
     TEST_PRODUCTION_HOSTNAME,
     TEST_PRODUCTION_USER,
     TEST_OTHER_MANAGER_USERNAME,
+    TEST_NON_STAFF_USER
 )
 
 
@@ -47,7 +48,11 @@ def test_get_employee_users(app_with_nominees_inside_entry_subperiod):
     app = app_with_nominees_inside_entry_subperiod
     dbsession = get_dbsession(app)
     users = mail.get_employee_users(dbsession)
-    assert {u.username for u in users} == {k for k in TEST_AHL_EMPLOYEES}
+    ldapsource = ldapauth.build_ldapauth_from_settings(DEFAULT_TEST_SETTINGS)
+    with transaction.manager:
+        non_staff_user = User.create_from_ldap_details(ldapsource, TEST_NON_STAFF_USER)
+        dbsession.add(non_staff_user)
+    assert {u.username for u in users} == {k for k in TEST_EMPLOYEES}
 
 
 def test_get_non_nominated_users(app_with_nominees_inside_entry_subperiod):
@@ -87,7 +92,7 @@ def ldapsource():
             "ust01",
             ENROL_START,
             False,
-            [TEST_LDAP_FULL_DETAILS[k] for k in TEST_AHL_EMPLOYEES],
+            [TEST_LDAP_FULL_DETAILS[k] for k in TEST_EMPLOYEES],
         ),
         (
             Period.ENROLLMENT_SUBPERIOD,
@@ -111,7 +116,7 @@ def ldapsource():
             "ust03",
             ENTRY_START,
             False,
-            [TEST_LDAP_FULL_DETAILS[k] for k in TEST_AHL_EMPLOYEES],
+            [TEST_LDAP_FULL_DETAILS[k] for k in TEST_EMPLOYEES],
         ),
         (
             Period.ENTRY_SUBPERIOD,
@@ -119,7 +124,7 @@ def ldapsource():
             "ust04",
             ENTRY_REMINDER,
             True,
-            [TEST_LDAP_FULL_DETAILS[k] for k in TEST_AHL_EMPLOYEES],
+            [TEST_LDAP_FULL_DETAILS[k] for k in TEST_EMPLOYEES],
         ),
         (
             Period.APPROVAL_SUBPERIOD,
