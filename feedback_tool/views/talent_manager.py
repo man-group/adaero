@@ -123,7 +123,12 @@ def get_company_feedback_stats_csv(request):
     `feedback_tool/stats.py` for more information on feedback statistics.
     """
     with transaction.manager:
-        all_usernames = [u.username for u in request.dbsession.query(User).all()]
+        all_usernames = [
+            u.username
+            for u in request.dbsession.query(User)
+            .filter(User.is_staff == True)  # noqa
+            .all()
+        ]
     df = build_stats_dataframe(
         request, username_list=all_usernames, user_columns=USER_ORDERED_COLUMNS
     )

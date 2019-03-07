@@ -52,6 +52,7 @@ def get_non_nominated_users(dbsession):
         users = (
             dbsession.query(User)
             .options(joinedload("nominations"), joinedload("manager"))
+            .filter(User.is_staff == True)  # noqa
             .all()
         )
         return [

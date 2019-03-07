@@ -49,9 +49,6 @@ def test_get_employee_users(app_with_nominees_inside_entry_subperiod):
     dbsession = get_dbsession(app)
     users = mail.get_employee_users(dbsession)
     ldapsource = ldapauth.build_ldapauth_from_settings(DEFAULT_TEST_SETTINGS)
-    with transaction.manager:
-        non_staff_user = User.create_from_ldap_details(ldapsource, TEST_NON_STAFF_USER)
-        dbsession.add(non_staff_user)
     assert {u.username for u in users} == {k for k in TEST_EMPLOYEES}
 
 

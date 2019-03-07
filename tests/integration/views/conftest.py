@@ -50,6 +50,7 @@ from ..constants import (
     TEST_EMPLOYEES,
     TEST_TEMPLATE_ID,
     TEST_BUSINESS_UNIT_KEY,
+    TEST_NON_STAFF_USER,
 )
 
 
@@ -113,8 +114,6 @@ def new_ldap_mocked_app_with_users(dbsession, request):
 
         with transaction.manager:
             for user_details in TEST_LDAP_FULL_DETAILS.values():
-                # Employees outside business unit are never stored in
-                # User table
                 if (
                     user_details[tests.integration.constants.TEST_USERNAME_KEY]
                     not in TEST_EMPLOYEES
@@ -123,6 +122,10 @@ def new_ldap_mocked_app_with_users(dbsession, request):
                 user = User.create_from_ldap_details(ldapsource, user_details)
                 set_as_staff(user, user_details)
                 dbsession.add(user)
+
+            # Add non-staff member e.g. upper management
+            non_staff_user = User.create_from_ldap_details(ldapsource, TEST_NON_STAFF_USER)
+            dbsession.add(non_staff_user)
 
         freezer = freeze_time(TEST_UTCNOW)
         freezer.start()
