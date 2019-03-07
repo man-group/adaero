@@ -68,16 +68,15 @@ def get_external_invite_status(request):
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
     current_period = Period.get_current_period(request.dbsession)
-    unit_name = get_config_value(request.registry.settings, constants.BUSINESS_UNIT_KEY)
     if current_period.subperiod(location) in [
         Period.APPROVAL_SUBPERIOD,
         Period.REVIEW_SUBPERIOD,
     ]:
-        return interpolate_template(ENTRY_ENDED_TEMPLATE, business_unit=unit_name)
+        return interpolate_template(ENTRY_ENDED_TEMPLATE)
     elif current_period.subperiod(location) in [Period.ENROLLMENT_SUBPERIOD]:
         dt = date.datetimeformat(current_period.entry_start_utc, request.user)
         return interpolate_template(
-            PRIOR_ENTRY_TEMPLATE, business_unit=unit_name, entry_start=dt
+            PRIOR_ENTRY_TEMPLATE, entry_start=dt
         )
 
     with transaction.manager:
@@ -89,7 +88,7 @@ def get_external_invite_status(request):
         )
 
     if not is_nominated:
-        return interpolate_template(NOT_ENROLLED_TEMPLATE, business_unit=unit_name)
+        return interpolate_template(NOT_ENROLLED_TEMPLATE)
 
     invitee_users = []
     with transaction.manager:
