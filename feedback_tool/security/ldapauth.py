@@ -150,7 +150,7 @@ class LDAPAuth(object):
         except ldap.INVALID_CREDENTIALS:
             log.info("Invalid credentials for %s", username)
         finally:
-            self._conn.unbind()
+            self._unbind()
         return result
 
     def _get_users(self, fields, search_args):
@@ -167,6 +167,10 @@ class LDAPAuth(object):
         if len(users) == 1:
             users = users[0]
         return users
+
+    def _unbind(self):
+        self._conn.unbind()
+        self._conn = ldap.initialize(self._uri, trace_level=0)
 
     def normalize_manager(self, user):
         """
