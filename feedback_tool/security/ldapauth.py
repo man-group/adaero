@@ -137,17 +137,15 @@ class LDAPAuth(object):
 
     def auth_user(self, username, password):
         result = False
-        encoded_password = password.encode(encoding="UTF-8")
         if self._user_bind_template:
             bind_dn = self._user_bind_template.format(username=username)
         else:
             bind_dn = username
-        encoded_bind_dn = bind_dn.encode(encoding="UTF-8")
         if password == "":
             return result
         try:
-            self._conn.simple_bind_s(encoded_bind_dn, encoded_password)
-            log.debug("Login %s", encoded_bind_dn)
+            self._conn.simple_bind_s(bind_dn, password)
+            log.debug("Login %s", bind_dn)
             result = True
         except ldap.INVALID_CREDENTIALS:
             log.info("Invalid credentials for %s", username)
