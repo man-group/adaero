@@ -34,7 +34,7 @@ def not_found(exc, request):
 @forbidden_view_config(renderer="json")
 def forbidden(request):
     if request.unauthenticated_userid:
-        log.warning("Forbidden: %s", request.path_url)
+        log.warning("Forbidden: %s for %s", request.path_url, request.user.username)
         request.response.status_int = 403
         payload = {"message": "You are not allowed to perform this action"}
         if request.registry.settings.get("feedback_tool.debug_all"):
