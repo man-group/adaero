@@ -162,6 +162,8 @@ def check_and_send_email(
     ----------
     dbsession:
       sqlalchemy session
+    ldapsource:
+      used for fetching talent manager email information
     settings:
       configpaste settings
     template_key:

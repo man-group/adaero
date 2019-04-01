@@ -75,9 +75,7 @@ def get_external_invite_status(request):
         return interpolate_template(ENTRY_ENDED_TEMPLATE)
     elif current_period.subperiod(location) in [Period.ENROLLMENT_SUBPERIOD]:
         dt = date.datetimeformat(current_period.entry_start_utc, request.user)
-        return interpolate_template(
-            PRIOR_ENTRY_TEMPLATE, entry_start=dt
-        )
+        return interpolate_template(PRIOR_ENTRY_TEMPLATE, entry_start=dt)
 
     with transaction.manager:
         is_nominated = (

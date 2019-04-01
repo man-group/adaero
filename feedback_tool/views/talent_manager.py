@@ -222,6 +222,7 @@ class SendEmail(Root):
 def send_email(_, request):
     check_and_send_email(
         request.dbsession,
+        request.ldapsource,
         request.registry.settings,
         template_key=request.json_body["templateKey"],
         force=True,

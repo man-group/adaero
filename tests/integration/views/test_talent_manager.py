@@ -1,9 +1,20 @@
 import os.path
 
+from mock import patch
+import pytest
 import transaction
 
+from feedback_tool.security import (
+    ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
+    ANGULAR_2_XSRF_TOKEN_HEADER_NAME
+)
 from feedback_tool.models import FeedbackForm, FeedbackAnswer, Period
-from tests.integration.views.conftest import successfully_login, get_dbsession
+from tests.integration.views.conftest import (
+    add_test_template,
+    add_test_period_with_template,
+    get_dbsession,
+    successfully_login,
+)
 from tests.integration.constants import (
     TEST_EMPLOYEE_USERNAME,
     TEST_MANAGER_USERNAME,
@@ -17,8 +28,12 @@ from tests.integration.constants import (
     TEST_SUMMARY_2,
     TEST_SUMMARY_3,
     TEST_COMPANY_COLLEAGUE_USERNAME,
+    TEST_PRODUCTION_HOSTNAME,
+    TEST_PRODUCTION_USER,
 )
-
+from feedback_tool.constants import (
+    EMAIL_TEMPLATE_MAP,
+)
 from tests.integration.views.test_manager import (
     add_test_data_for_stats,
     TEST_NUM_FORMS_RECEIVED,
@@ -205,3 +220,22 @@ def test_talent_manager_can_correct_summarised_feedback_from_another_manager(
     for exp, gen in zip(expected, generated):
         assert exp["questionId"] == gen["questionId"]
         assert exp["answer"] == gen["answer"]
+
+
+@pytest.mark.parametrize("template_key", tuple(EMAIL_TEMPLATE_MAP.keys()))
+def test_talent_manager_can_mass_email(ldap_mocked_app_with_users, template_key):
+    with patch("smtplib.SMTP"), patch(
+        "socket.gethostname"
+    ) as gethostname_mock, patch("getpass.getuser") as getuser_mock:
+        gethostname_mock.return_value = TEST_PRODUCTION_HOSTNAME
+        getuser_mock.return_value = TEST_PRODUCTION_USER
+        app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
+        dbsession = get_dbsession(app)
+        template_id = add_test_template(dbsession)
+        add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
+        csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
+        response = app.post_json(
+            "/api/v1/send-email", {"templateKey": template_key}, headers={ANGULAR_2_XSRF_TOKEN_HEADER_NAME: csrf_token},
+        )
+        assert response.json_body["success"]
+

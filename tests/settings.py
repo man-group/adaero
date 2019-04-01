@@ -28,6 +28,7 @@ DEFAULT_TEST_SETTINGS = {
     "feedback_tool.ldap_base_dn": "O=foo",
     "feedback_tool.ldap_dn_username_attribute": "cn",
     "feedback_tool.ldap_dn_username_regex": r"CN=([\w\s\\\,\(\)]*),OU=",
+    "feedback_tool.enable_send_email": True,
     "beaker.session.type": "memory",
     "beaker.session.secret": "secret",
     "rest_toolkit.debug": True,
