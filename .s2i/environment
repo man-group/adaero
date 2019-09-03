@@ -1,5 +1,6 @@
 APP_HOME=feedback_tool
-APP_CONFIG=feedback_tool/gunicorn/config.py
+# TODO: fix this so it doesn't need absolute path - this working means this will only work running in docker container now
+APP_CONFIG=/opt/app-root/src/feedback_tool/gunicorn/config.py
 APP_MODULE=feedback_tool.gunicorn.wsgi:application
 # TODO: enable concurrency by introducing locking mechanism for scheduled tasks
 WEB_CONCURRENCY=1
