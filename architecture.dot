@@ -1,0 +1,13 @@
+strict graph {
+  {
+    "Web Frontend" [shape=box]
+    "API Backend" [shape=box]
+    "Database" [shape=cylinder]
+    "LDAP" [shape=cylinder]
+    "User" [shape=point]
+  }
+  "API Backend" -- "Database"
+  "API Backend" -- "LDAP" [label="Only for authentication, NOT authorization"]
+  "User" -- "Web Frontend"
+  "Web Frontend" -- "API Backend"
+} 

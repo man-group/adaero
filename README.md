@@ -11,7 +11,9 @@ organisation.
 
 2. Run the application on local Docker
 ```
-s2i build . feedback-tool-dev-frontend
+cd frontend
+s2i build . centos/nodejs-8-centos7 feedback-tool-dev-frontend
+cd ..
 s2i build . centos/python-36-centos7 feedback-tool-app 
 cd docker/dev
 docker-compose up -d
@@ -21,6 +23,7 @@ docker-compose up -d
 ```
 cd ../..
 python setup.py develop
+pip install faker freezegun webtest mock 
 python tests/scripts/configure_db.py --config host_example.ini add-test-periods
 ```
 
@@ -173,3 +176,44 @@ Regex for extraction of a username from a DN
 
 #### `feedback_tool.logo_filename`
 If the file exists in the assets folder on the backend, serve this up to the frontend.
+
+## Design
+This section will explain how the application is designed in terms of strucutures and processes, and some reasons why it is done this way.
+
+### Architecture
+![Architecture diagram](architecture.png)
+
+We use:
+* Backend - Pyramid
+* Frontend - Angular
+* Database - Agnostic due to use of SQLAlchemy library
+
+The choices of these were simply because this was a hard requirement to match the internal technology stack at inception of the project.
+
+The backend is a just an API service that also serves the productionised HTML/CSS/JS Angular frontend plus other static assets such as images.
+
+Refer to below for why LDAP is only used for authentication and NOT authorization.
+
+#### Staff list generation process
+
+The available users in the feedback tool are **statically generated and fixed until manually updated.** This is desired despite having active access to the LDAP server. The reason for this is that during a feedback cycle, we do not want to have users entering or leaving the feedback cycle unintentionally, which would happen if we used LDAP as a source of truth.
+
+On top of this, the reporting structure in LDAP doesn't necessarily match the real world, and may change temporarily due to transient staff issues. Putting the power into the talent manager's hands makes dealing with such situations easier, without required developer intervention.
+
+Therefore, the process as is follows:
+
+![Staff list generation process](population.png)
+
+The CSV lists the relationships between staff member, therefore marking who is a staff member and who is a 
+manager. This information is used for authorization.
+
+## Documentation
+
+Graph source are in the `*.dot* files. To regenerate graph PNGs.
+
+1. Install graphviz
+2. Run
+   ```plain
+   dot -Tpng architecture.dot -o architecture.png
+   dot -Tpng population.dot -o population.png
+   ```
