@@ -25,7 +25,7 @@ setup(
     download_url='https://github.com/manahl/feedback_tool/archive/v1.0.0.tar.gz',
 
     # Author details
-    author='Charlie Smith',
+    author='Man Alpha Tech',
     author_email='charlie.smith@man.com',
 
     # Choose your license
