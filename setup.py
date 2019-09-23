@@ -5,6 +5,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
+description = 'A platform for managing peer-to-peer feedback within an organisation.'
 
 def readme():
     try:
@@ -18,7 +19,7 @@ setup(
 
     version='1.0.0',
 
-    description='',
+    description=description,
     long_description=readme(),
     # The project's main homepage.
     url='https://github.com/manahl/feedback_tool',
