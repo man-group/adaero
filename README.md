@@ -209,7 +209,7 @@ manager. This information is used for authorization.
 
 ## Documentation
 
-Graph source are in the `*.dot* files. To regenerate graph PNGs.
+Graph source are in the `*.dot*` files. To regenerate graph PNGs.
 
 1. Install graphviz
 2. Run
