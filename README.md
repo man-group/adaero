@@ -1,6 +1,6 @@
 # `feedback_tool` - Simple peer-to-peer feedback platform
 
-[![CircleCI](https://circleci.com/gh/manahl/feedback_tool.svg?style=svg)](https://circleci.com/gh/manahl/feedback_tool)
+[![Build status](https://circleci.com/gh/manahl/feedback_tool.svg?style=svg)](https://circleci.com/gh/manahl/feedback_tool)
 
 `feedback_tool` is a platform for managing peer-to-peer feedback within an 
 organisation.
