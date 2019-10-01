@@ -35,10 +35,8 @@ setup(
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        'Development Status :: 3 - Beta',
-
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GPL License',
-
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 2.7',
