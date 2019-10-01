@@ -21,6 +21,7 @@ setup(
 
     description=description,
     long_description=readme(),
+    long_description_content_type='text/markdown',
     # The project's main homepage.
     url='https://github.com/manahl/feedback_tool',
     download_url='https://github.com/manahl/feedback_tool/archive/v1.0.0.tar.gz',
