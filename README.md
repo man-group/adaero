@@ -7,7 +7,10 @@ organisation.
 
 ## Docker Quickstart
 
-1. Install [source-to-image](https://github.com/openshift/source-to-image#installation)
+1. Install ``feedback tool`` from [pypi](https://pypi.org/) with [pip](https://pypi.org/project/pip/).
+```
+> pip install feedback_tool
+```
 
 2. Run the application on local Docker
 ```
