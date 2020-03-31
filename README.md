@@ -1,4 +1,13 @@
-# `feedback_tool` - Simple peer-to-peer feedback platform
+# `Adaero` - A simple peer-to-peer feedback platform
+
+Talent management is extremely important to us at Man Group. We do our best to nurture our employees’ development at every opportunity. Receiving feedback is a crucial part of gaining the self-awareness necessary to direct our careers toward our aspirations.
+
+Getting meaningful feedback can be difficult: colleagues can feel uncomfortable delivering necessary but unwelcome truths, collecting feedback from multiple parts of the business can be onerous, and analysing the resultant data is not straightforward. Adaero, [Latin for “Appraise”], enables employees to anonymously enter feedback about their colleagues as part of an initiative to improve an organisations feedback culture.
+
+We found that off-the-shelf tools weren’t cutting it, and so we built our own solution - and as active contributors to the open source community have made it openly available for use by others. 
+
+* Read our [tech blog](https://www.man.com/what-do-your-colleagues-really-think-of-you) for further details on what we've achieved with this tool and why we made the design decision we did. 
+* HR or Talent Professionals looking for further details on how the tool works should read our [User Guide](https://www.man.com/man-feedback-app-tool-guide)
 
 [![Build status](https://circleci.com/gh/manahl/feedback_tool.svg?style=svg)](https://circleci.com/gh/manahl/feedback_tool)
 
