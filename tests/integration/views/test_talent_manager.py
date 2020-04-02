@@ -4,11 +4,11 @@ from mock import patch
 import pytest
 import transaction
 
-from feedback_tool.security import (
+from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
     ANGULAR_2_XSRF_TOKEN_HEADER_NAME
 )
-from feedback_tool.models import FeedbackForm, FeedbackAnswer, Period
+from adaero.models import FeedbackForm, FeedbackAnswer, Period
 from tests.integration.views.conftest import (
     add_test_template,
     add_test_period_with_template,
@@ -31,7 +31,7 @@ from tests.integration.constants import (
     TEST_PRODUCTION_HOSTNAME,
     TEST_PRODUCTION_USER,
 )
-from feedback_tool.constants import (
+from adaero.constants import (
     EMAIL_TEMPLATE_MAP,
 )
 from tests.integration.views.test_manager import (

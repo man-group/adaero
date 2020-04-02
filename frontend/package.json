@@ -1,5 +1,5 @@
 {
-  "name": "feedback-tool-frontend",
+  "name": "adaero-frontend",
   "version": "0.0.0",
   "license": "GPL 2.0",
   "scripts": {
@@ -7,8 +7,8 @@
     "start": "ng serve --watch --host 0.0.0.0 --disable-host-check --poll 1 --proxy-config proxy.conf.json",
     "local-dev-server": "ng serve --watch --host 0.0.0.0 --disable-host-check --proxy-config proxy.local.conf.json",
     "build": "ng build",
-    "dev-dist": "ng build && cp -r dist/* ../feedback_tool/static/",
-    "prod-dist": "ng build --prod && cp -r dist/* ../feedback_tool/static/",
+    "dev-dist": "ng build && cp -r dist/* ../adaero/static/",
+    "prod-dist": "ng build --prod && cp -r dist/* ../adaero/static/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

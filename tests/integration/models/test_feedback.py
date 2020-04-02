@@ -1,10 +1,10 @@
 import pytest
 import transaction
 
-from feedback_tool.models import User, FeedbackAnswer, FeedbackForm
-from feedback_tool.models.all import CheckError
-from feedback_tool.constants import ANSWER_CHAR_LIMIT
-from feedback_tool.security import ldapauth
+from adaero.models import User, FeedbackAnswer, FeedbackForm
+from adaero.models.all import CheckError
+from adaero.constants import ANSWER_CHAR_LIMIT
+from adaero.security import ldapauth
 
 from ..views.test_manager import add_test_data_for_stats
 from ..constants import (

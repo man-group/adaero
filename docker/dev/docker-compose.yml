@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   webserver:
-    image: feedback-tool-dev-frontend:latest
+    image: adaero-dev-frontend:latest
     volumes:
       - ../../frontend/src:/opt/app-root/src/src
     ports:
@@ -18,7 +18,7 @@ services:
     logging:
       driver: "none"
   webapp:
-    image: feedback-tool-app:latest
+    image: adaero-app:latest
     networks:
       - web
       - db

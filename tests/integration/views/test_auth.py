@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from feedback_tool.security import (
+from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
     ANGULAR_2_XSRF_TOKEN_HEADER_NAME,
 )

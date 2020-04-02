@@ -17,7 +17,7 @@
 <div class="container-fluid">
   <div class="row flex">
     <div class="col-2 wrapper">
-      <!-- roles are aligned with feedback_tool/security/__init__.py -->
+      <!-- roles are aligned with adaero/security/__init__.py -->
       <div *ngIf="user" class="nav flex-column nav-pills" aria-orientation="vertical" id="sidebar">
         <div *ngIf="user.principals.indexOf('role:external_business_unit') >= 0">
           <a routerLink="/feedback" routerLinkActive="active" class="nav-link">Give feedback</a>

@@ -6,10 +6,10 @@ import transaction
 import webtest
 from mock import patch
 
-import feedback_tool
+import adaero
 import tests.integration.constants
-from feedback_tool.security import ldapauth
-from feedback_tool.models import (
+from adaero.security import ldapauth
+from adaero.models import (
     FeedbackQuestion,
     FeedbackTemplateRow,
     FeedbackTemplate,
@@ -90,25 +90,25 @@ def new_ldap_mocked_app_with_users(dbsession, request):
     settings = DEFAULT_TEST_SETTINGS
     ldapsource = ldapauth.build_ldapauth_from_settings(DEFAULT_TEST_SETTINGS)
     if request.config.getoption("--use-sqlite3"):
-        settings["feedback_tool.use_local_sqlite3"] = True
+        settings["adaero.use_local_sqlite3"] = True
 
     # need yield_fixture as we need the patch applied over the lifetime of
     # the testapp instance
     with patch(
-        "feedback_tool.security.ldapauth.LDAPAuth.auth_user",
+        "adaero.security.ldapauth.LDAPAuth.auth_user",
         side_effect=auth_user_mock_fn,
         autospec=True,
     ), patch(
-        "feedback_tool.security.ldapauth.LDAPAuth." "get_ldap_user_by_username",
+        "adaero.security.ldapauth.LDAPAuth." "get_ldap_user_by_username",
         side_effect=get_ldap_user_by_username_mock_fn,
         autospec=True,
     ), patch(
-        "feedback_tool.security.ldapauth.LDAPAuth." "get_ldap_user_by_email",
+        "adaero.security.ldapauth.LDAPAuth." "get_ldap_user_by_email",
         side_effect=get_ldap_by_email_mock_fn,
         autospec=True,
     ):
 
-        app = webtest.TestApp(feedback_tool.main({}, **settings))
+        app = webtest.TestApp(adaero.main({}, **settings))
 
         dbsession = get_dbsession(app)
 

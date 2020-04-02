@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, time
 from freezegun import freeze_time
 import pytest
 
-import feedback_tool.date
-from feedback_tool.models.period import Period
+import adaero.date
+from adaero.models.period import Period
 
 TEST_YEAR = 2017
 TEST_MONTH = 2
@@ -29,7 +29,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(4, 9, 0),
             ),
             Period.INACTIVE_SUBPERIOD,
-            feedback_tool.date.LONDON,
+            adaero.date.LONDON,
             time(hour=8, minute=59),
             TEST_DATETIME,
         ),
@@ -42,7 +42,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(4, 9, 0, TEST_DAYLIGHT_SAVINGS),
             ),
             Period.ENROLLMENT_SUBPERIOD,
-            feedback_tool.date.LONDON,
+            adaero.date.LONDON,
             time(hour=8, minute=59),
             TEST_DAYLIGHT_SAVINGS,
         ),
@@ -54,7 +54,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(3, 9, 0),
             ),
             Period.ENROLLMENT_SUBPERIOD,
-            feedback_tool.date.LONDON,
+            adaero.date.LONDON,
             time(hour=9, minute=00),
             TEST_DATETIME,
         ),
@@ -66,7 +66,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(3, 9, 0),
             ),
             Period.ENROLLMENT_SUBPERIOD,
-            feedback_tool.date.LONDON,
+            adaero.date.LONDON,
             time(hour=8, minute=59),
             TEST_DATETIME,
         ),
@@ -78,7 +78,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(2, 9, 0),
             ),
             Period.ENTRY_SUBPERIOD,
-            feedback_tool.date.LONDON,
+            adaero.date.LONDON,
             time(hour=9, minute=59),
             TEST_DATETIME,
         ),
@@ -90,7 +90,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(3, 9, 0),
             ),
             Period.ENTRY_SUBPERIOD,
-            feedback_tool.date.BOSTON,
+            adaero.date.BOSTON,
             time(hour=9, minute=59),
             TEST_DATETIME,
         ),
@@ -102,7 +102,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(3, 9, 0),
             ),
             Period.APPROVAL_SUBPERIOD,
-            feedback_tool.date.BOSTON,
+            adaero.date.BOSTON,
             time(hour=14, minute=59),
             TEST_DATETIME,
         ),
@@ -114,7 +114,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(0, 9, 0),
             ),
             Period.APPROVAL_SUBPERIOD,
-            feedback_tool.date.HONG_KONG,
+            adaero.date.HONG_KONG,
             time(hour=0, minute=12),
             TEST_DATETIME,
         ),
@@ -126,7 +126,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
                 approval_end_utc=date_offset_by(0, 9, 0),
             ),
             Period.REVIEW_SUBPERIOD,
-            feedback_tool.date.HONG_KONG,
+            adaero.date.HONG_KONG,
             time(hour=1, minute=10),
             TEST_DATETIME,
         ),

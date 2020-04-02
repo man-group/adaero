@@ -9,7 +9,7 @@ import { catchError, map, tap, share } from 'rxjs/operators';
 import { CookieService } from './cookie.service';
 
 
-// refer to feedback_tool/views/auth.py:login
+// refer to adaero/views/auth.py:login
 export class UserData {
   displayName: string;
   title: string;  // e.g. Software Developer
@@ -22,7 +22,7 @@ export class LoginSuccessPayload {
   data: UserData;
 }
 
-// refer to feedback_tool/views/nomination.py
+// refer to adaero/views/nomination.py
 export class MessageTemplatePayload {
   heading: string;
   body: string;
@@ -45,7 +45,7 @@ export class NomineePayload {
   nominees: NomineeItem[];
 }
 
-// refer to feedback_tool/views/feedback.py
+// refer to adaero/views/feedback.py
 export class FeedbackFormItem {
   questionId: string;
   question: string;
@@ -85,7 +85,7 @@ export class FeedbackHistoryPayload {
   };
 }
 
-// refer to feedback_tool/views/manager.py
+// refer to adaero/views/manager.py
 export class StatsPayload {
   stats: {
     periods: [string],
@@ -98,7 +98,7 @@ export class SummaryFeedbackPayload {
   summary: FeedbackForm;
 }
 
-// refer to feedback_tool/views/external.py
+// refer to adaero/views/external.py
 export class ExternalFeedbackStatusPayload {
   canInvite: boolean;
   heading?: string;
@@ -113,7 +113,7 @@ export class Invitee {
   department: string;
 }
 
-// refer to feedback_tool/views/metadata.py
+// refer to adaero/views/metadata.py
 export class MetadataPayload {
   metadata: Metadata;
 }
@@ -133,7 +133,7 @@ export class TalentManagerPanelData {
   uploadNewPopulationMsg: string;
 }
 
-// refer to feedback_tool/views/talent_manager.py
+// refer to adaero/views/talent_manager.py
 export class CSVUploadStatusPayload {
   messages: [string];
 }
@@ -290,7 +290,7 @@ export class ApiService {
   generatePopulationCSV(businessUnit: string): Observable<string> {
     return this.http.get(this.rootUrl + `/generate-population.csv?businessUnit=${encodeURIComponent(businessUnit)}`, {responseType: 'text'})
     .pipe(
-      tap( 
+      tap(
         data => data,
         error => error
       )
@@ -307,7 +307,7 @@ export class ApiService {
   getCurrentPopulationCSV(): Observable<string> {
     return this.http.get(this.rootUrl + '/get-current-population.csv', {responseType: 'text'})
     .pipe(
-      tap( 
+      tap(
         data => data,
         error => error
       )

@@ -5,12 +5,12 @@ from datetime import timedelta
 
 from logging import getLogger as get_logger
 
-from feedback_tool.security import (
+from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
     ANGULAR_2_XSRF_TOKEN_HEADER_NAME,
 )
-from feedback_tool.models import User
-from feedback_tool.date import datetimeformat
+from adaero.models import User
+from adaero.date import datetimeformat
 
 from tests.integration.constants import (
     TEST_EMPLOYEE_USERNAME,

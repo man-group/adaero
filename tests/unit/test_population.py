@@ -7,9 +7,9 @@ import os
 import mock
 import pytest
 
-from feedback_tool import population
-from feedback_tool.security import ldapauth
-from feedback_tool.models import User
+from adaero import population
+from adaero.security import ldapauth
+from adaero.models import User
 from ..integration.constants import (
     TEST_LDAP_FULL_DETAILS,
     NOMINATED_USERNAME,
@@ -44,16 +44,16 @@ def build_ldapsource():
 
 
 @mock.patch(
-    "feedback_tool.security.ldapauth.LDAPAuth.get_all_ldap_users",
+    "adaero.security.ldapauth.LDAPAuth.get_all_ldap_users",
     return_value=TEST_LDAP_FULL_DETAILS.values(),
 )
-@mock.patch("feedback_tool.population.find_external_managers", return_value=[])
+@mock.patch("adaero.population.find_external_managers", return_value=[])
 @mock.patch(
-    "feedback_tool.security.ldapauth.LDAPAuth.get_ldap_user_by_username",
+    "adaero.security.ldapauth.LDAPAuth.get_ldap_user_by_username",
     side_effect=_get_ldap_user_by_username_mck,
 )
 @mock.patch(
-    "feedback_tool.security.ldapauth.LDAPAuth.get_ldap_user_by_uid",
+    "adaero.security.ldapauth.LDAPAuth.get_ldap_user_by_uid",
     side_effect=_get_ldap_user_by_uid_mck,
 )
 def test_correct_csv_is_generated(mck_3_, mck_2_, fem_mck, galu_mck):
@@ -88,7 +88,7 @@ def _generate_user_rows():
 
 
 @mock.patch(
-    "feedback_tool.security.ldapauth.LDAPAuth.get_ldap_user_by_kv",
+    "adaero.security.ldapauth.LDAPAuth.get_ldap_user_by_kv",
     side_effect=_get_ldap_user_by_kv_mck,
 )
 def test_correct_list_of_users_are_parsed(_):
@@ -125,7 +125,7 @@ def test_population_conversion_catches_users_without_ldap():
         return details_by_id.get(id_)
 
     with mock.patch(
-        "feedback_tool.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
+        "adaero.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
         side_effect=_get_ldap_user_by_employee_id_mck,
     ):
         expected = _generate_user_list()
@@ -155,7 +155,7 @@ def test_population_validation_catches_duplicate_users():
         return details_by_id.get(id_)
 
     with mock.patch(
-        "feedback_tool.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
+        "adaero.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
         side_effect=_get_ldap_user_by_employee_id_mck,
     ):
         ldapsource = ldapauth.build_ldapauth_from_settings(DEFAULT_TEST_SETTINGS)
@@ -182,7 +182,7 @@ def test_population_validation_catches_duplicate_users():
 
 
 @mock.patch(
-    "feedback_tool.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
+    "adaero.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
     side_effect=_get_ldap_user_by_kv_mck,
 )
 def test_user_generation_manages_non_staff_properly(_):
@@ -216,7 +216,7 @@ def test_user_generation_manages_non_staff_properly(_):
 
 
 @mock.patch(
-    "feedback_tool.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
+    "adaero.security.ldapauth.LDAPAuth." "get_ldap_user_by_kv",
     side_effect=_get_ldap_user_by_kv_mck,
 )
 def test_user_generation_generates_missing_managers(_):

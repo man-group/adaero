@@ -6,7 +6,7 @@ RUN ./install-packages.sh
 RUN curl https://bootstrap.pypa.io/get-pip.py | python3.6
 COPY setup.py .
 RUN pip3.6 install -e .
-COPY feedback_tool feedback_tool
+COPY adaero adaero
 COPY gunicorn_starter.sh .
 
 EXPOSE 8080

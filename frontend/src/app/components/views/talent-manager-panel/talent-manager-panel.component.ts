@@ -29,7 +29,7 @@ export class TalentManagerPanelComponent implements OnInit, OnDestroy {
   @ViewChild('inputFile') private inputFile: ElementRef;
 
 
-  // button text and template key is aligned with feedback_tool/constants.py
+  // button text and template key is aligned with adaero/constants.py
   public reminderButtonInfo = [
     {'text': 'Send "Opportunity to Enrol Reminder" email to all employees not yet enrolled', 'templateKey': 'enrol_reminder'},
     {'text': 'Send "Provide Feedback Reminder" email to all employees', 'templateKey': 'entry_reminder'},

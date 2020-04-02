@@ -4,8 +4,8 @@ from datetime import datetime
 from freezegun import freeze_time
 import pytest
 
-from feedback_tool.constants import ANSWER_CHAR_LIMIT
-from feedback_tool.text import check_input
+from adaero.constants import ANSWER_CHAR_LIMIT
+from adaero.text import check_input
 
 TEST_DATE = datetime(2017, 10, 6, 22, 5)
 
