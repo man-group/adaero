@@ -1,1 +1,1 @@
-logconfig = "feedback_tool/example.ini"
+logconfig = "/opt/app-root/src/feedback_tool/example.ini"

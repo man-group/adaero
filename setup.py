@@ -65,7 +65,7 @@ setup(
         'pyramid_tm',
         'SQLAlchemy',
         'transaction',
-        'zope.sqlalchemy',
+        'zope.sqlalchemy==1.1',
         'pycrypto',
         'rest_toolkit',
         'python-dateutil',

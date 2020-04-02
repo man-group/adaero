@@ -34,10 +34,8 @@ feedback_tool/static/*.js
 feedback_tool/static/*.map
 feedback_tool/static/*.bundle.css
 feedback_tool/static/index.html
-feedback_tool/local.ini
-docker/bin/docker_common.sh
-feedback_tool/test.ini
 
 docker
 tests
-frontend/node_modules
+frontend
+venv

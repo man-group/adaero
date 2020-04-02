@@ -16,22 +16,17 @@ organisation.
 
 ## Docker Quickstart
 
-1. Install ``feedback tool`` from [pypi](https://pypi.org/) with [pip](https://pypi.org/project/pip/).
-```
-> pip install feedback_tool
-```
-
-2. Run the application on local Docker
+1. Build and Run the application on local Docker
 ```
 cd frontend
-s2i build . centos/nodejs-8-centos7 feedback-tool-dev-frontend
+docker build -t feedback-tool-dev-frontend . 
 cd ..
-s2i build . centos/python-36-centos7 feedback-tool-app 
+docker build -t feedback-tool-webapp . 
 cd docker/dev
 docker-compose up -d
 ```
 
-3. Setup a dummy template, 3 question and period data to carry out a feedback cycle.
+2. Setup a dummy template, 3 question and period data to carry out a feedback cycle.
 ```
 cd ../..
 python setup.py develop
@@ -39,7 +34,7 @@ pip install faker freezegun webtest mock
 python tests/scripts/configure_db.py --config host_example.ini add-test-periods
 ```
 
-4. Once fully started, open http://localhost:4200. Refer to `docker/shared/ldif/01-data.ldif` 
+3. Once fully started, open http://localhost:4200. Refer to `docker/shared/ldif/01-data.ldif` 
 for credentials for dummy users. Use the following commands to change phases.
 
 ```
