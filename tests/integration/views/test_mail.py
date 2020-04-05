@@ -40,27 +40,27 @@ from tests.integration.constants import (
     TEST_PRODUCTION_HOSTNAME,
     TEST_PRODUCTION_USER,
     TEST_OTHER_MANAGER_USERNAME,
-    TEST_NON_STAFF_USER
+    TEST_NON_STAFF_USER,
 )
 
 
-def test_get_employee_users(app_with_nominees_inside_entry_subperiod):
-    app = app_with_nominees_inside_entry_subperiod
+def test_get_employee_users(app_with_enrollees_inside_entry_subperiod):
+    app = app_with_enrollees_inside_entry_subperiod
     dbsession = get_dbsession(app)
     users = mail.get_employee_users(dbsession)
     ldapsource = ldapauth.build_ldapauth_from_settings(DEFAULT_TEST_SETTINGS)
     assert {u.username for u in users} == {k for k in TEST_EMPLOYEES}
 
 
-def test_get_non_nominated_users(app_with_nominees_inside_entry_subperiod):
-    app = app_with_nominees_inside_entry_subperiod
+def test_get_non_enrolled_users(app_with_enrollees_inside_entry_subperiod):
+    app = app_with_enrollees_inside_entry_subperiod
     dbsession = get_dbsession(app)
-    users = mail.get_non_nominated_users(dbsession)
+    users = mail.get_non_enrolled_users(dbsession)
     assert {u.username for u in users} == {k for k in TEST_NON_NOMINATED_USERS}
 
 
-def test_get_manager_users(app_with_nominees_inside_entry_subperiod):
-    app = app_with_nominees_inside_entry_subperiod
+def test_get_manager_users(app_with_enrollees_inside_entry_subperiod):
+    app = app_with_enrollees_inside_entry_subperiod
     dbsession = get_dbsession(app)
     users = mail.get_manager_users(dbsession)
     assert {u.username for u in users} == {k for k in TEST_MANAGER_USERS}
@@ -84,7 +84,7 @@ def ldapsource():
     "subperiod, num_times, last_sent_email_code, last_sent_template_key, force, last_users",
     (  # noqa: E501
         (
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             1,
             "ust01",
             ENROL_START,
@@ -92,7 +92,7 @@ def ldapsource():
             [TEST_LDAP_FULL_DETAILS[k] for k in TEST_EMPLOYEES],
         ),
         (
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             4,
             "ust01",
             ENROL_REMINDER,
@@ -100,7 +100,7 @@ def ldapsource():
             [],
         ),  # don't send reminders unlessed forced
         (
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             6,
             "ust02",
             ENROL_REMINDER,
@@ -250,7 +250,7 @@ def test_send_correct_emails_are_sent_during_subperiods(
 def test_hostname_override_works(ldap_mocked_app_with_users, ldapsource, with_envvar):
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
-    add_test_data_for_stats(dbsession, current_subperiod=Period.ENROLLMENT_SUBPERIOD)
+    add_test_data_for_stats(dbsession, current_subperiod=Period.ENROLMENT_SUBPERIOD)
     displayed_hostname = "notfoobar.com"
     assert displayed_hostname != TEST_PRODUCTION_HOSTNAME
     settings = {
@@ -286,6 +286,8 @@ def test_hostname_override_works(ldap_mocked_app_with_users, ldapsource, with_en
         plain = b64decode(messages[0].get_payload()).decode("utf-8")
         assert plain.count(normal_app_link) == 0
         assert plain.count(overridden_app_link) > 0
+
+    os.environ["DISPLAYED_HOSTNAME"] = ""
 
 
 def test_do_not_send_emails_when_not_in_production(
@@ -339,7 +341,7 @@ def test_emailing_works_with_different_tm_username_config(
     "subperiod, location, utc_offset_tuples",
     (  # noqa: E501
         (
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             LONDON,
             [
                 (time(hour=8, minute=59), 0),
@@ -348,7 +350,7 @@ def test_emailing_works_with_different_tm_username_config(
             ],
         ),
         (
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             HONG_KONG,
             [
                 (time(hour=0, minute=59), 0),
@@ -357,7 +359,7 @@ def test_emailing_works_with_different_tm_username_config(
             ],
         ),
         (
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             BOSTON,
             [
                 (time(hour=0, minute=59), 0),

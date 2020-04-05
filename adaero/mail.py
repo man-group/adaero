@@ -46,17 +46,17 @@ def get_employee_users(dbsession):
         )
 
 
-def get_non_nominated_users(dbsession):
+def get_non_enrolled_users(dbsession):
     with transaction.manager:
         period = Period.get_current_period(dbsession)
         users = (
             dbsession.query(User)
-            .options(joinedload("nominations"), joinedload("manager"))
+            .options(joinedload("enrollees"), joinedload("manager"))
             .filter(User.is_staff == True)  # noqa
             .all()
         )
         return [
-            u for u in users if period.id not in {n.period_id for n in u.nominations}
+            u for u in users if period.id not in {n.period_id for n in u.enrollees}
         ]
 
 
@@ -203,8 +203,8 @@ def check_and_send_email(
     subject = _build_full_subject(company_name, template_info["summary"])
     if audience == "employee":
         users = get_employee_users(dbsession)
-    elif audience == "non-nominated":
-        users = get_non_nominated_users(dbsession)
+    elif audience == "non-enrolled":
+        users = get_non_enrolled_users(dbsession)
     elif audience == "manager":
         users = get_manager_users(dbsession)
     elif audience == "summarised":

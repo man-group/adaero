@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExternalInviteComponent } from './external-invite.component';
+import { RequestComponent } from './request.component';
 
-describe('ExternalInviteComponent', () => {
-  let component: ExternalInviteComponent;
-  let fixture: ComponentFixture<ExternalInviteComponent>;
+describe('RequestComponent', () => {
+  let component: RequestComponent;
+  let fixture: ComponentFixture<RequestComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExternalInviteComponent ]
+      declarations: [ RequestComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExternalInviteComponent);
+    fixture = TestBed.createComponent(RequestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

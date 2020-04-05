@@ -51,7 +51,7 @@
                 <div class='stats-counter sent' [class.contributed]="cell > 0" *ngIf="i % 2 == 0;">
                   {{ cell }}
                 </div>
-                <div class='stats-counter received' [class.nominated]="cell >= 0" *ngIf="i % 2 == 1;">
+                <div class='stats-counter received' [class.enrolled]="cell >= 0" *ngIf="i % 2 == 1;">
                   {{ cell }}
                 </div>
               </td>
@@ -84,10 +84,10 @@
           <span class='stats-counter received'>-1</span> Did not request feedback
         </li>
         <li>
-          <span class='stats-counter received nominated'>0</span> Requested feedback, but did not receive any feedback
+          <span class='stats-counter received enrolled'>0</span> Requested feedback, but did not receive any feedback
         </li>
         <li>
-          <span class='stats-counter received nominated'>3</span> Requested feedback, received feedback from 3 colleagues
+          <span class='stats-counter received enrolled'>3</span> Requested feedback, received feedback from 3 colleagues
         </li>
       </ul>
     </div>

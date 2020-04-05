@@ -6,7 +6,7 @@ import transaction
 
 from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
-    ANGULAR_2_XSRF_TOKEN_HEADER_NAME
+    ANGULAR_2_XSRF_TOKEN_HEADER_NAME,
 )
 from adaero.models import FeedbackForm, FeedbackAnswer, Period
 from tests.integration.views.conftest import (
@@ -31,9 +31,7 @@ from tests.integration.constants import (
     TEST_PRODUCTION_HOSTNAME,
     TEST_PRODUCTION_USER,
 )
-from adaero.constants import (
-    EMAIL_TEMPLATE_MAP,
-)
+from adaero.constants import EMAIL_TEMPLATE_MAP
 from tests.integration.views.test_manager import (
     add_test_data_for_stats,
     TEST_NUM_FORMS_RECEIVED,
@@ -45,97 +43,97 @@ TEST_CSV_FILEPATH = os.path.join(dirpath, "company_stats.csv")
 
 
 def test_external_cannot_get_company_feedback_stats_csv(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/company-feedback-stats.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_company_feedback_stats_csv(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
     )
     response = app.get("/api/v1/company-feedback-stats.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_manager_cannot_get_company_feedback_stats_csv(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-feedback-stats.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_external_cannot_get_raw_feedback_csv(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/company-raw-feedback.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_raw_feedback_csv(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
     )
     response = app.get("/api/v1/company-raw-feedback.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_manager_cannot_get_raw_feedback_csv(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-raw-feedback.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_external_cannot_get_company_feedback_stats(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/company-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_company_feedback_stats(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_manager_cannot_get_company_feedback_stats(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_talent_manager_can_get_company_feedback_stats_csv(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -146,7 +144,7 @@ def test_talent_manager_can_get_company_feedback_stats_csv(
 
 
 def test_talent_manager_can_get_company_raw_feedback(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -168,14 +166,14 @@ def test_talent_manager_can_get_company_raw_feedback(
     response = app.get("/api/v1/company-raw-feedback.csv")
     assert response.content_type == "text/csv"
     num_q = 3
-    nominee_1_answers = (
+    enrollee_1_answers = (
         (7 * num_q) + (3 * num_q) + (2 * num_q) + (TEST_NUM_FORMS_RECEIVED * num_q)
     )
-    nominee_2_answers = 2 * num_q
-    nominee_3_answers = (3 * num_q) + (8 * num_q) + (10 * num_q) + (2 * num_q)
+    enrollee_2_answers = 2 * num_q
+    enrollee_3_answers = (3 * num_q) + (8 * num_q) + (10 * num_q) + (2 * num_q)
     summary_answers = 3 * len(TEST_STATS_NOMINATED_USERS)
     num_expected = (
-        nominee_1_answers + nominee_2_answers + nominee_3_answers + summary_answers
+        enrollee_1_answers + enrollee_2_answers + enrollee_3_answers + summary_answers
     )
     # remove csv header and trailing newline
     body = response.body.decode()
@@ -203,7 +201,7 @@ def test_talent_manager_can_get_company_raw_feedback(
 
 
 def test_talent_manager_can_correct_summarised_feedback_from_another_manager(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -224,18 +222,21 @@ def test_talent_manager_can_correct_summarised_feedback_from_another_manager(
 
 @pytest.mark.parametrize("template_key", tuple(EMAIL_TEMPLATE_MAP.keys()))
 def test_talent_manager_can_mass_email(ldap_mocked_app_with_users, template_key):
-    with patch("smtplib.SMTP"), patch(
-        "socket.gethostname"
-    ) as gethostname_mock, patch("getpass.getuser") as getuser_mock:
+    with patch("smtplib.SMTP"), patch("socket.gethostname") as gethostname_mock, patch(
+        "getpass.getuser"
+    ) as getuser_mock:
         gethostname_mock.return_value = TEST_PRODUCTION_HOSTNAME
         getuser_mock.return_value = TEST_PRODUCTION_USER
-        app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
+        app = successfully_login(
+            ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME
+        )
         dbsession = get_dbsession(app)
         template_id = add_test_template(dbsession)
         add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
         csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
         response = app.post_json(
-            "/api/v1/send-email", {"templateKey": template_key}, headers={ANGULAR_2_XSRF_TOKEN_HEADER_NAME: csrf_token},
+            "/api/v1/send-email",
+            {"templateKey": template_key},
+            headers={ANGULAR_2_XSRF_TOKEN_HEADER_NAME: csrf_token},
         )
         assert response.json_body["success"]
-

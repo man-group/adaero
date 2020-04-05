@@ -34,7 +34,10 @@ def test_can_get_correct_logo():  # noqa: E501
     dev_settings = copy.copy(DEFAULT_TEST_SETTINGS)
     dev_settings[adaero.constants.LOGO_FILENAME_KEY] = "test.png"
     app = webtest.TestApp(adaero.main({}, **dev_settings))
-    resp = app.get('/api/v1/logo.png')
+    resp = app.get("/api/v1/logo.png")
     assert resp.status_code == 302
-    assert resp.headers['Location'] == 'https://localhost/assets/%s' \
+    assert (
+        resp.headers["Location"]
+        == "https://localhost/assets/%s"
         % dev_settings[adaero.constants.LOGO_FILENAME_KEY]
+    )

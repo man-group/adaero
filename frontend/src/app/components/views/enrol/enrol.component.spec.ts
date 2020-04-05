@@ -3,23 +3,23 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { ApiService } from '../../../services/api.service';
 import { HttpClientModule } from '@angular/common/http';
-import { SelfNominateComponent } from './self-nominate.component';
+import { EnrolComponent } from './enrol.component';
 
-describe('SelfNominateComponent', () => {
-  let component: SelfNominateComponent;
-  let fixture: ComponentFixture<SelfNominateComponent>;
+describe('EnrolComponent', () => {
+  let component: EnrolComponent;
+  let fixture: ComponentFixture<EnrolComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientModule, RouterTestingModule ],
-      declarations: [ SelfNominateComponent ],
+      declarations: [ EnrolComponent ],
       providers: [ ApiService ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelfNominateComponent);
+    fixture = TestBed.createComponent(EnrolComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

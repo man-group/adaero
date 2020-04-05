@@ -7,7 +7,7 @@ from adaero.models import (
     get_tm_session,
     Period,
     User,
-    Nominee,
+    Enrollee,
     generate_period_dates,
 )
 from adaero.scripts.configure_db import (
@@ -43,56 +43,56 @@ def add_test_periods(ctx):
     template_id = add_template(dbsession, QUESTION_IDS_AND_TEMPLATES, 1)
     add_test_period_with_template(
         dbsession,
-        Period.ENROLLMENT_SUBPERIOD,
+        Period.ENROLMENT_SUBPERIOD,
         template_id,
         1,
         u"Q1 2018",
-        add_nominees=False,
+        add_enrollees=False,
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLLMENT_SUBPERIOD,
+        Period.ENROLMENT_SUBPERIOD,
         template_id,
         2,
         u"Q4 2017",
         offset_from_utc_now_days=-30,
-        add_nominees=False,
+        add_enrollees=False,
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLLMENT_SUBPERIOD,
+        Period.ENROLMENT_SUBPERIOD,
         template_id,
         3,
         u"Q3 2017",
         offset_from_utc_now_days=-60,
-        add_nominees=False,
+        add_enrollees=False,
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLLMENT_SUBPERIOD,
+        Period.ENROLMENT_SUBPERIOD,
         template_id,
         4,
         u"Q2 2017",
         offset_from_utc_now_days=-90,
-        add_nominees=False,
+        add_enrollees=False,
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLLMENT_SUBPERIOD,
+        Period.ENROLMENT_SUBPERIOD,
         template_id,
         5,
         u"Q1 2017",
         offset_from_utc_now_days=-120,
-        add_nominees=False,
+        add_enrollees=False,
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLLMENT_SUBPERIOD,
+        Period.ENROLMENT_SUBPERIOD,
         template_id,
         6,
         u"Q4 2016",
         offset_from_utc_now_days=-150,
-        add_nominees=False,
+        add_enrollees=False,
     )
 
 

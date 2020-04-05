@@ -13,7 +13,7 @@ from adaero import constants
 from adaero.config import get_config_value
 from adaero.forms import build_feedback_payload, update_feedback_form
 from adaero.history import fetch_feedback_history
-from adaero.models import FeedbackForm, Nominee, Period
+from adaero.models import FeedbackForm, Enrollee, Period
 from adaero.security import MANAGER_ROLE, TALENT_MANAGER_ROLE
 from adaero.stats import (
     build_stats_dataframe,
@@ -85,24 +85,24 @@ class SummariseFeedbackResource(Root):
                 explanation="Currently not in the approval or " "review period."
             )
 
-        current_nominees = (
-            request.dbsession.query(Nominee)
+        current_enrollees = (
+            request.dbsession.query(Enrollee)
             .options(joinedload("user"))
-            .filter(Nominee.period == self.current_period)
+            .filter(Enrollee.period == self.current_period)
         )
 
         if TALENT_MANAGER_ROLE not in request.effective_principals:
             direct_reports_usernames = [u.username for u in request.user.direct_reports]
-            current_nominees = current_nominees.filter(
-                Nominee.username.in_(direct_reports_usernames)
+            current_enrollees = current_enrollees.filter(
+                Enrollee.username.in_(direct_reports_usernames)
             )
 
-        if not current_nominees:
+        if not current_enrollees:
             raise HTTPNotFound(
-                explanation="User did not nominate or you do " "not manage them."
+                explanation="User did not enrol or you do " "not manage them."
             )
 
-        self.current_nominees = current_nominees
+        self.current_enrollees = current_enrollees
 
         self.to_username = request.matchdict["username"]
         self.from_username = request.user.username
@@ -134,13 +134,13 @@ class SummariseFeedbackResource(Root):
 
         self.contributor_answers = contributor_answers
 
-        self.nominee = self.current_nominees.filter(
-            Nominee.username == self.to_username
+        self.enrollee = self.current_enrollees.filter(
+            Enrollee.username == self.to_username
         ).one_or_none()
 
-        if not self.nominee:
+        if not self.enrollee:
             raise HTTPNotFound(
-                explanation='Nominee "%s" does not exist.' % self.to_username
+                explanation='Enrollee "%s" does not exist.' % self.to_username
             )
 
         summary_forms = (

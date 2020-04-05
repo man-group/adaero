@@ -1,24 +1,24 @@
 <div *ngIf="this.data | async as data; else loading">
-  <div [ngSwitch]="data.nominees !== undefined">
+  <div [ngSwitch]="data.enrollees !== undefined">
   <ng-container *ngSwitchCase="true">
   <h3>Colleagues that have requested feedback</h3>
-  <input #quickSearch id="nominee-quick-search-input" type="text" class="form-control" placeholder="Quick search" aria-label="search" (keyup)="0">
+  <input #quickSearch id="enrollee-quick-search-input" type="text" class="form-control" placeholder="Quick search" aria-label="search" (keyup)="0">
   <table class="table table-striped">
     <thead class="thead-dark">
       <tr>
-        <th class='nominee-header' scope="col">Name</th>
-        <th class='nominee-header' scope="col">Position</th>
-        <th class='nominee-header' scope="col">Department</th>
-        <th class='nominee-header' scope="col">Manager</th>
-        <th class='nominee-action-header' scope="col">Action</th>
+        <th class='enrollee-header' scope="col">Name</th>
+        <th class='enrollee-header' scope="col">Position</th>
+        <th class='enrollee-header' scope="col">Department</th>
+        <th class='enrollee-header' scope="col">Manager</th>
+        <th class='enrollee-action-header' scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
       <tr></tr><!-- change row coloring without needing to use CSS -->
-      <tr *ngIf="(data.nominees | nomineeFilter: quickSearch.value)?.length === 0">
-        <td>No nominees found!</td>
+      <tr *ngIf="(data.enrollees | enrolleeFilter: quickSearch.value)?.length === 0">
+        <td>No enrollees found!</td>
       </tr>
-      <tr *ngFor="let employee of data.nominees | nomineeFilter: quickSearch.value">
+      <tr *ngFor="let employee of data.enrollees | enrolleeFilter: quickSearch.value">
         <td>{{employee.displayName}}</td>
         <td>{{employee.position}}</td>
         <td>{{employee.department}}</td>
@@ -42,12 +42,12 @@
   <div class="container">
     <h2>{{ data.heading }}</h2>
     <p>{{ data.body }}</p>
-    <ng-container *ngIf="this.data.buttonLink || this.data.canNominate">
+    <ng-container *ngIf="this.data.buttonLink || this.data.canEnrol">
     <button [routerLink]="data.buttonLink" class="btn btn-success">{{ data.buttonText }}</button>
     </ng-container>
   </div>
   </ng-container>
   </div>
-</div>   
+</div>
 <ng-template #loading>Loading Data...</ng-template>
 

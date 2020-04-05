@@ -13,11 +13,11 @@ from adaero.models import (
     FeedbackTemplateRow,
     FeedbackTemplate,
     Period,
-    Nominee,
+    Enrollee,
     FeedbackForm,
     FeedbackAnswer,
     User,
-    ExternalInvite,
+    FeedbackRequest,
 )
 
 from .constants import TEST_UTCNOW
@@ -95,8 +95,8 @@ def drop_everything_but_users(dbsession_):
         dbsession_.query(FeedbackForm).delete()
         dbsession_.query(FeedbackTemplateRow).delete()
         dbsession_.query(FeedbackQuestion).delete()
-        dbsession_.query(Nominee).delete()
-        dbsession_.query(ExternalInvite).delete()
+        dbsession_.query(Enrollee).delete()
+        dbsession_.query(FeedbackRequest).delete()
         dbsession_.query(Period).delete()
         dbsession_.query(FeedbackTemplate).delete()
 

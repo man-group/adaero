@@ -8,7 +8,7 @@ from sqlalchemy import literal, func, and_, asc
 
 from adaero import constants
 from adaero.config import get_config_value
-from adaero.models import User, Period, FeedbackForm, Nominee
+from adaero.models import User, Period, FeedbackForm, Enrollee
 
 
 def build_stats_dataframe(request, username_list, user_columns):
@@ -16,7 +16,7 @@ def build_stats_dataframe(request, username_list, user_columns):
     For a set of users determined by `username_list` and then filtered out
     by whether the `request.user` are permitted to view feedback stats of
     the users in `username_list`, calculate for each period:
-    * whether they nominated themselves
+    * whether they enrolled themselves
     * how many feedback they contributed
     * how many feedback the received
     and store in a dataframe with the username as the id and any other user
@@ -42,7 +42,7 @@ def build_stats_dataframe(request, username_list, user_columns):
         cross_product_stmt = (
             query(
                 User,
-                Period.enrollment_start_utc.label("start_date"),
+                Period.enrolment_start_utc.label("start_date"),
                 Period.name.label("period_name"),
                 Period.id.label("p_id"),
             ).filter(User.username.in_(username_list))
@@ -84,18 +84,18 @@ def build_stats_dataframe(request, username_list, user_columns):
             .group_by(cross_product_sq.c.username, cross_product_sq.c.period_name)
         )
 
-        nominated_stmt = (
+        enrolled_stmt = (
             query(
                 cross_product_sq.c.username,
                 cross_product_sq.c.period_name,
-                func.count(Nominee.username).label("is_nominated"),
+                func.count(Enrollee.username).label("is_enrolled"),
                 func.count(FeedbackForm.is_summary).label("has_summary"),
             )
             .outerjoin(
-                Nominee,
+                Enrollee,
                 and_(
-                    cross_product_sq.c.p_id == Nominee.period_id,
-                    cross_product_sq.c.username == Nominee.username,
+                    cross_product_sq.c.p_id == Enrollee.period_id,
+                    cross_product_sq.c.username == Enrollee.username,
                 ),
             )
             .outerjoin(
@@ -119,24 +119,24 @@ def build_stats_dataframe(request, username_list, user_columns):
         )
         contributed_df = pd.read_sql(contributed_stmt.statement, request.dbsession.bind)
         received_df = pd.read_sql(received_stmt.statement, request.dbsession.bind)
-        nominated_df = pd.read_sql(nominated_stmt.statement, request.dbsession.bind)
+        enrolled_df = pd.read_sql(enrolled_stmt.statement, request.dbsession.bind)
 
         # sanity check
         assert (
             len(contributed_df)
             == len(received_df)
-            == len(nominated_df)
+            == len(enrolled_df)
             == len(cross_product_df)
         )
 
         # merge and clean table
         df = pd.merge(
             pd.merge(pd.merge(cross_product_df, contributed_df), received_df),
-            nominated_df,
+            enrolled_df,
         )
-        df.loc[df.is_nominated == 0, "received"] = -1
+        df.loc[df.is_enrolled == 0, "received"] = -1
         df.loc[:, "has_summary"] = df.loc[:, "has_summary"].astype(bool)
-        df = df.drop("is_nominated", axis=1)
+        df = df.drop("is_enrolled", axis=1)
         df = df.drop("p_id", axis=1)
     standard_columns_to_keep = [
         "start_date",
@@ -173,7 +173,7 @@ def generate_stats_payload_from_dataframe(df, dbsession, settings):
     with transaction.manager:
         asc_periods_by_date = (
             dbsession.query(Period.name)
-            .order_by(asc(Period.enrollment_start_utc))
+            .order_by(asc(Period.enrolment_start_utc))
             .all()
         )
         asc_period_names = [p[0] for p in asc_periods_by_date]
@@ -215,7 +215,7 @@ def generate_stats_payload_from_dataframe(df, dbsession, settings):
             ]:
                 button["buttonText"] = "Not in approval or review period"
                 button["enable"] = False
-            elif received == -1:  # not nominated
+            elif received == -1:  # not enrolled
                 button["buttonText"] = "Not enrolled for feedback"
                 button["enable"] = False
             elif has_summary:

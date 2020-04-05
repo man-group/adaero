@@ -8,9 +8,9 @@ import { AnonGuardService } from './anon-guard.service';
 import { ApiService } from '../services/api.service';
 import {
   GiveFeedbackComponent,
-  NomineesListComponent,
+  EnrolleesListComponent,
   LoginComponent,
-  SelfNominateComponent
+  EnrolComponent
 } from '../components';
 
 describe('AnonGuardService', () => {
@@ -18,9 +18,9 @@ describe('AnonGuardService', () => {
     TestBed.configureTestingModule({
       declarations: [
         LoginComponent,
-        NomineesListComponent,
+        EnrolleesListComponent,
         GiveFeedbackComponent,
-        SelfNominateComponent
+        EnrolComponent
       ],
       imports: [
         FormsModule,

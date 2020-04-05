@@ -16,7 +16,7 @@ log = get_logger(__name__)
 def build_feedback_payload(context, request, is_summary):
     """
     Generate a JSON-serialisable dict that contains the `request.user`'s
-    feedback form for the target `context.nominee`. If there is a
+    feedback form for the target `context.enrollee`. If there is a
     `context.form` (which contains existing answers), use that, or else,
     build a blank form from the current period's configuration.
 
@@ -32,7 +32,7 @@ def build_feedback_payload(context, request, is_summary):
     """
     form = context.form
     current_period = context.current_period
-    nominee = context.nominee
+    enrollee = context.enrollee
     location = get_config_value(
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
@@ -46,7 +46,7 @@ def build_feedback_payload(context, request, is_summary):
     else:
         end_date_utc = current_period.approval_start_utc
         read_only = not current_period.subperiod(location) == Period.ENTRY_SUBPERIOD
-    end_date = datetimeformat(end_date_utc, nominee.user)
+    end_date = datetimeformat(end_date_utc, enrollee.user)
 
     if form:
         log.debug("existing form %s found" % form.id)
@@ -77,7 +77,7 @@ def build_feedback_payload(context, request, is_summary):
                 "caption": row.question.caption,
                 "question": row.question.question_template.format(
                     period_name=current_period.name,
-                    display_name=nominee.user.display_name,
+                    display_name=enrollee.user.display_name,
                 ),
                 "rawAnswer": raw_answer,
                 "answerId": row.id if form else None,
@@ -87,8 +87,8 @@ def build_feedback_payload(context, request, is_summary):
 
     return {
         "employee": {
-            "displayName": nominee.user.display_name,
-            "position": nominee.user.position,
+            "displayName": enrollee.user.display_name,
+            "position": enrollee.user.position,
         },
         "periodName": current_period.name,
         "endDate": end_date,

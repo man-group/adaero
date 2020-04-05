@@ -18,7 +18,7 @@ from adaero.models import (
     get_tm_session,
     Period,
     User,
-    Nominee,
+    Enrollee,
     generate_period_dates,
     FeedbackQuestion,
     FeedbackTemplateRow,
@@ -32,7 +32,7 @@ log = get_logger(__name__)
 
 SUBPERIOD_CHOICES = {
     "inactive": Period.INACTIVE_SUBPERIOD,
-    "enrollment": Period.ENROLLMENT_SUBPERIOD,
+    "enrolment": Period.ENROLMENT_SUBPERIOD,
     "entry": Period.ENTRY_SUBPERIOD,
     "approval": Period.APPROVAL_SUBPERIOD,
     "review": Period.REVIEW_SUBPERIOD,
@@ -167,20 +167,20 @@ def downgrade(ctx, revision):
 
 @cli.command()
 @click.pass_context
-def nominate_everyone(ctx):
+def enrol_everyone(ctx):
     engine = ctx.obj[ENGINE_KEY]
     session_factory = get_session_factory(engine)
     dbsession = get_tm_session(session_factory, transaction.manager)
 
     with transaction.manager:
         period = Period.get_current_period(dbsession)
-        for user, nominee in (
-            dbsession.query(User, Nominee)
-            .outerjoin(Nominee, Nominee.username == User.username)
+        for user, enrollee in (
+            dbsession.query(User, Enrollee)
+            .outerjoin(Enrollee, Enrollee.username == User.username)
             .all()
         ):
-            if not nominee:
-                dbsession.add(Nominee(user=user, period=period))
+            if not enrollee:
+                dbsession.add(Enrollee(user=user, period=period))
 
 
 @cli.command()

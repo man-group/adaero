@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload
 from adaero import constants
 from adaero.config import get_config_value
 from adaero.forms import build_feedback_payload, update_feedback_form
-from adaero.models import ExternalInvite, FeedbackForm, Nominee, Period
+from adaero.models import FeedbackRequest, FeedbackForm, Enrollee, Period
 from adaero.history import fetch_feedback_history
 from adaero.security import EMPLOYEE_ROLE, EXTERNAL_BUSINESS_UNIT_ROLE
 from adaero.views import Root
@@ -33,10 +33,10 @@ class FeedbackFormResource(Root):
             options=(joinedload("template").joinedload("rows").joinedload("question")),
         )
 
-        self.current_nominees = (
-            request.dbsession.query(Nominee)
+        self.current_enrollees = (
+            request.dbsession.query(Enrollee)
             .options(joinedload("user"))
-            .filter(Nominee.period == self.current_period)
+            .filter(Enrollee.period == self.current_period)
         )
 
         if self.current_period.subperiod(location) != Period.ENTRY_SUBPERIOD:
@@ -48,22 +48,22 @@ class FeedbackFormResource(Root):
         if self.to_username == self.from_username:
             raise HTTPNotFound(explanation="Cannot use feedback on self.")
 
-        self.nominee = self.current_nominees.filter(
-            Nominee.username == self.to_username
+        self.enrollee = self.current_enrollees.filter(
+            Enrollee.username == self.to_username
         ).one_or_none()
 
-        if not self.nominee:
+        if not self.enrollee:
             raise HTTPNotFound(
-                explanation='Nominee "%s" does not exist.' % self.to_username
+                explanation='Enrollee "%s" does not exist.' % self.to_username
             )
 
         if EXTERNAL_BUSINESS_UNIT_ROLE in request.effective_principals:
             exists = (
-                request.dbsession.query(ExternalInvite)
+                request.dbsession.query(FeedbackRequest)
                 .filter(
-                    ExternalInvite.from_username == self.to_username,
-                    ExternalInvite.to_username == self.from_username,
-                    ExternalInvite.period_id == self.current_period.id,
+                    FeedbackRequest.from_username == self.to_username,
+                    FeedbackRequest.to_username == self.from_username,
+                    FeedbackRequest.period_id == self.current_period.id,
                 )
                 .one_or_none()
             )

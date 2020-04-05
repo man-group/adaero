@@ -2,7 +2,7 @@ import transaction
 from sqlalchemy import and_, desc
 
 from adaero.config import get_config_value
-from adaero.models import Period, FeedbackForm, Nominee, User
+from adaero.models import Period, FeedbackForm, Enrollee, User
 from adaero import constants
 
 
@@ -25,7 +25,7 @@ def fetch_feedback_history(dbsession, username, settings, fetch_full=False):
     provided user.
     """
     location = get_config_value(settings, constants.HOMEBASE_LOCATION_KEY)
-    q = dbsession.query(Period, FeedbackForm, Nominee)
+    q = dbsession.query(Period, FeedbackForm, Enrollee)
     with transaction.manager:
         user = dbsession.query(User).get(username)
         history = (
@@ -38,10 +38,10 @@ def fetch_feedback_history(dbsession, username, settings, fetch_full=False):
                 ),
             )  # noqa
             .outerjoin(
-                Nominee,
-                and_(Period.id == Nominee.period_id, Nominee.username == username),
+                Enrollee,
+                and_(Period.id == Enrollee.period_id, Enrollee.username == username),
             )
-            .order_by(desc(Period.enrollment_start_utc))
+            .order_by(desc(Period.enrolment_start_utc))
         )
 
         if fetch_full:
@@ -50,7 +50,7 @@ def fetch_feedback_history(dbsession, username, settings, fetch_full=False):
             history = history.limit(constants.MANAGER_VIEW_HISTORY_LIMIT)
 
         feedbacks = []
-        for period, summary_form, nominee in history:
+        for period, summary_form, enrollee in history:
             if period.subperiod(location) != Period.REVIEW_SUBPERIOD:
                 feedbacks.append(
                     {
@@ -59,7 +59,7 @@ def fetch_feedback_history(dbsession, username, settings, fetch_full=False):
                         "items": [],
                     }
                 )
-            elif not summary_form and not nominee:
+            elif not summary_form and not enrollee:
                 feedbacks.append(
                     {
                         "periodDescription": "Did not request feedback for period "

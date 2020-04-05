@@ -1,6 +1,6 @@
-import { NomineeFilterPipe } from './nominee-filter.pipe';
+import { NomineeFilterPipe } from './enrollee-filter.pipe';
 
-describe('NomineeFilterPipe', () => {
+describe('EnrolleeFilterPipe', () => {
   it('create an instance', () => {
     const pipe = new NomineeFilterPipe();
     expect(pipe).toBeTruthy();

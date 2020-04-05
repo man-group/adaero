@@ -3,30 +3,30 @@ from sqlalchemy.orm import relationship, backref, joinedload
 import transaction
 
 from logging import getLogger as get_logger
-from adaero.models.all import Base, Checkable, Serializable, NOMINEE_ID_SEQ
+from adaero.models.all import Base, Checkable, Serializable, ENROLLEE_ID_SEQ
 from adaero.security import ldapauth
 
 log = get_logger(__name__)
 
 
-class Nominee(Base, Checkable):
-    """Presence implicitly means self-nomination"""
+class Enrollee(Base, Checkable):
+    """Presence implicitly means enrolment"""
 
-    __tablename__ = "nominees"
-    id = Column(Integer, NOMINEE_ID_SEQ, primary_key=True)
+    __tablename__ = "enrollees"
+    id = Column(Integer, ENROLLEE_ID_SEQ, primary_key=True)
     username = Column(Unicode(length=32))
     user = relationship(
         "User",
-        primaryjoin="User.username " "== foreign(Nominee.username)",
-        backref="nominations",
+        primaryjoin="User.username == foreign(Enrollee.username)",
+        backref="enrollees",
     )
     period_id = Column("p_id", Integer, ForeignKey("periods.id"))
-    period = relationship("Period", back_populates="nominees")
+    period = relationship("Period", back_populates="enrollees")
 
     __table_args__ = (UniqueConstraint("p_id", "username", name="uq_username_to_p"),)
 
     def __repr__(self):
-        return "Nominee(period_id=%s, username=%s)" % (self.period_id, self.username)
+        return "Enrollee(period_id=%s, username=%s)" % (self.period_id, self.username)
 
     def check_validity(self, session):
         pass
@@ -44,7 +44,7 @@ class User(Base, Serializable):
     manager_username = Column("manager", Unicode(length=32))
     direct_reports = relationship(
         "User",
-        primaryjoin="foreign(User.manager_username) " "== User.username",
+        primaryjoin="foreign(User.manager_username) == User.username",
         backref=backref("manager", remote_side=[username]),
     )
 

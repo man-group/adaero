@@ -14,7 +14,7 @@ from adaero.date import datetimeformat
 from adaero.models import (
     FeedbackAnswer,
     FeedbackForm,
-    Nominee,
+    Enrollee,
     Period,
     User,
     generate_period_dates,
@@ -126,7 +126,7 @@ def add_test_data_for_stats(
         template_id,
         period_id=TEST_PERIOD_ID,
         period_name=TEST_PERIOD_NAME,
-        add_nominees=False,
+        add_enrollees=False,
         days_in=days_in,
     )
     previous_period_id = add_test_period_with_template(
@@ -136,18 +136,18 @@ def add_test_data_for_stats(
         period_id=TEST_PREVIOUS_PERIOD_ID,
         period_name=TEST_PREVIOUS_PERIOD_NAME,
         offset_from_utc_now_days=-400,
-        add_nominees=False,
+        add_enrollees=False,
         days_in=days_in,
     )
-    # TEST_MANAGER only manages nominee 1 and 2
-    nominee1 = partial(Nominee, username=TEST_STATS_NOMINATED_USERS[0])
-    nominee2 = partial(Nominee, username=TEST_STATS_NOMINATED_USERS[1])
-    nominee3 = partial(Nominee, username=TEST_STATS_NOMINATED_USERS[2])
+    # TEST_MANAGER only manages enrollee 1 and 2
+    enrollee1 = partial(Enrollee, username=TEST_STATS_NOMINATED_USERS[0])
+    enrollee2 = partial(Enrollee, username=TEST_STATS_NOMINATED_USERS[1])
+    enrollee3 = partial(Enrollee, username=TEST_STATS_NOMINATED_USERS[2])
 
     random_username = lambda: fake.profile()["username"]  # noqa: E731
 
     with transaction.manager:
-        # nominee 1 participated in everything
+        # enrollee 1 participated in everything
         _generate_num_of_forms(
             _dbsession,
             previous_period_id,
@@ -155,7 +155,7 @@ def add_test_data_for_stats(
             to_username=random_username,
             from_username=TEST_EMPLOYEE_USERNAME,
         )
-        _dbsession.add(nominee1(period_id=previous_period_id))
+        _dbsession.add(enrollee1(period_id=previous_period_id))
         _generate_num_of_forms(
             _dbsession,
             previous_period_id,
@@ -170,7 +170,7 @@ def add_test_data_for_stats(
             to_username=random_username,
             from_username=TEST_EMPLOYEE_USERNAME,
         )
-        _dbsession.add(nominee1(period_id=current_period_id))
+        _dbsession.add(enrollee1(period_id=current_period_id))
         _generate_num_of_forms(
             _dbsession,
             current_period_id,
@@ -179,7 +179,7 @@ def add_test_data_for_stats(
             from_username=random_username,
         )
 
-        # nominee 2:
+        # enrollee 2:
         _generate_num_of_forms(
             _dbsession,
             previous_period_id,
@@ -187,12 +187,12 @@ def add_test_data_for_stats(
             to_username=random_username,
             from_username=TEST_EMPLOYEE_2_USERNAME,
         )
-        # Did not request any feedback so not nomination
+        # Did not request any feedback so not enrolment
         # Did not give any feedback so no forms created
-        # Did request any feedback so nomination
-        _dbsession.add(nominee2(period_id=current_period_id))
+        # Did request any feedback so enrolment
+        _dbsession.add(enrollee2(period_id=current_period_id))
 
-        # nominee 3 participated in everything but isn't managed
+        # enrollee 3 participated in everything but isn't managed
         _generate_num_of_forms(
             _dbsession,
             previous_period_id,
@@ -200,7 +200,7 @@ def add_test_data_for_stats(
             to_username=random_username,
             from_username=TEST_TALENT_MANAGER_USERNAME,
         )
-        _dbsession.add(nominee3(period_id=previous_period_id))
+        _dbsession.add(enrollee3(period_id=previous_period_id))
         _generate_num_of_forms(
             _dbsession,
             previous_period_id,
@@ -215,7 +215,7 @@ def add_test_data_for_stats(
             to_username=random_username,
             from_username=TEST_TALENT_MANAGER_USERNAME,
         )
-        _dbsession.add(nominee3(period_id=current_period_id))
+        _dbsession.add(enrollee3(period_id=current_period_id))
         _generate_num_of_forms(
             _dbsession,
             current_period_id,
@@ -269,11 +269,11 @@ def add_test_data_for_stats(
         manager_form.answers = answers
         _dbsession.add(manager_form)
 
-        # other employee is nominated and summarised
-        other_nominee = Nominee(
+        # other employee is enrolled and summarised
+        other_enrollee = Enrollee(
             username=TEST_STATS_NOMINATED_USERS[3], period_id=current_period_id
         )
-        _dbsession.add(other_nominee)
+        _dbsession.add(other_enrollee)
         other_manager_form = FeedbackForm(
             to_username=TEST_OTHER_EMPLOYEE_USERNAME,
             from_username=TEST_OTHER_MANAGER_USERNAME,
@@ -299,20 +299,20 @@ def add_test_data_for_stats(
 
 
 def test_external_cannot_get_team_feedback_stats(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/team-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_team_feedback_stats(
-    app_with_nominees_inside_entry_subperiod
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_nominees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
     )
     response = app.get("/api/v1/team-stats", expect_errors=True)
     assert response.status_code == 403
@@ -400,7 +400,7 @@ def _add_extra_periods(dbsession):
 
 
 def test_manager_can_get_own_team_feedback_stats_during_approval_period(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -412,7 +412,7 @@ def test_manager_can_get_own_team_feedback_stats_during_approval_period(
 
 
 def test_manager_can_get_own_team_feedback_stats_outside_approval_period(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -480,7 +480,7 @@ def test_employee_cannot_put_summary(ldap_mocked_app_with_users):
 
 
 def test_manager_can_get_initial_summary_for_direct_report(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -526,7 +526,7 @@ def test_manager_can_get_initial_summary_for_direct_report(
 
 
 def test_manager_can_summarise_for_direct_report(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
@@ -582,7 +582,7 @@ def test_manager_can_summarise_when_also_giver(ldap_mocked_app_with_users):
             template_id,
             period_id=TEST_PERIOD_ID,
             period_name=TEST_PERIOD_NAME,
-            add_nominees=True,
+            add_enrollees=True,
         )
         manager_feedback = FeedbackForm(
             to_username=TEST_EMPLOYEE_USERNAME,  # noqa: E501
@@ -638,8 +638,8 @@ def test_manager_can_summarise_when_also_giver(ldap_mocked_app_with_users):
         assert ini["rawAnswer"] == gen["rawAnswer"]
 
 
-def test_manager_cannot_summarise_for_non_nominated_direct_report(
-    ldap_mocked_app_with_users
+def test_manager_cannot_summarise_for_non_enrolled_direct_report(
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
@@ -659,7 +659,7 @@ def test_manager_cannot_summarise_for_non_nominated_direct_report(
 
 
 @pytest.mark.parametrize(
-    "subperiod", (Period.ENROLLMENT_SUBPERIOD, Period.ENTRY_SUBPERIOD)
+    "subperiod", (Period.ENROLMENT_SUBPERIOD, Period.ENTRY_SUBPERIOD)
 )
 def test_manager_cannot_summarise_during_illegal_subperiod(
     ldap_mocked_app_with_users, subperiod
@@ -682,7 +682,7 @@ def test_manager_cannot_summarise_during_illegal_subperiod(
 
 
 def test_manager_can_only_view_summary_during_review(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
@@ -702,8 +702,8 @@ def test_manager_can_only_view_summary_during_review(
     assert response.status_code == 404
 
 
-def test_manager_can_summarise_for_nominated_but_no_received_feedback(
-    ldap_mocked_app_with_users
+def test_manager_can_summarise_for_enrolled_but_no_received_feedback(
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -720,7 +720,7 @@ def test_manager_can_summarise_for_nominated_but_no_received_feedback(
 
 
 def test_manager_can_get_history_for_direct_report(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -758,7 +758,7 @@ def test_employee_cannot_get_others_history(ldap_mocked_app_with_users):  # noqa
 
 
 def test_manager_cannot_get_history_for_non_direct_report(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_OTHER_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
@@ -770,7 +770,7 @@ def test_manager_cannot_get_history_for_non_direct_report(
 
 
 def test_talent_manager_can_get_history_for_anyone(
-    ldap_mocked_app_with_users
+    ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
     dbsession = get_dbsession(app)

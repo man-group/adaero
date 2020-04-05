@@ -23,7 +23,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
     [
         (
             Period(
-                enrollment_start_utc=date_offset_by(0, 9, 0),
+                enrolment_start_utc=date_offset_by(0, 9, 0),
                 entry_start_utc=date_offset_by(2, 9, 0),
                 approval_start_utc=date_offset_by(3, 9, 0),
                 approval_end_utc=date_offset_by(4, 9, 0),
@@ -36,43 +36,43 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
         # daylight savings
         (
             Period(
-                enrollment_start_utc=date_offset_by(0, 9, 0, TEST_DAYLIGHT_SAVINGS),
+                enrolment_start_utc=date_offset_by(0, 9, 0, TEST_DAYLIGHT_SAVINGS),
                 entry_start_utc=date_offset_by(2, 9, 0, TEST_DAYLIGHT_SAVINGS),
                 approval_start_utc=date_offset_by(3, 9, 0, TEST_DAYLIGHT_SAVINGS),
                 approval_end_utc=date_offset_by(4, 9, 0, TEST_DAYLIGHT_SAVINGS),
             ),
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             adaero.date.LONDON,
             time(hour=8, minute=59),
             TEST_DAYLIGHT_SAVINGS,
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(0, 9, 0),
+                enrolment_start_utc=date_offset_by(0, 9, 0),
                 entry_start_utc=date_offset_by(1, 9, 0),
                 approval_start_utc=date_offset_by(2, 9, 0),
                 approval_end_utc=date_offset_by(3, 9, 0),
             ),
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             adaero.date.LONDON,
             time(hour=9, minute=00),
             TEST_DATETIME,
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(-1, 9, 0),
+                enrolment_start_utc=date_offset_by(-1, 9, 0),
                 entry_start_utc=date_offset_by(0, 9, 0),
                 approval_start_utc=date_offset_by(2, 9, 0),
                 approval_end_utc=date_offset_by(3, 9, 0),
             ),
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             adaero.date.LONDON,
             time(hour=8, minute=59),
             TEST_DATETIME,
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(-2, 9, 0),
+                enrolment_start_utc=date_offset_by(-2, 9, 0),
                 entry_start_utc=date_offset_by(0, 9, 0),
                 approval_start_utc=date_offset_by(1, 9, 0),
                 approval_end_utc=date_offset_by(2, 9, 0),
@@ -84,7 +84,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(-10, 9, 0),
+                enrolment_start_utc=date_offset_by(-10, 9, 0),
                 entry_start_utc=date_offset_by(-9, 9, 0),
                 approval_start_utc=date_offset_by(0, 9, 0),
                 approval_end_utc=date_offset_by(3, 9, 0),
@@ -96,7 +96,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(-10, 9, 0),
+                enrolment_start_utc=date_offset_by(-10, 9, 0),
                 entry_start_utc=date_offset_by(-9, 9, 0),
                 approval_start_utc=date_offset_by(0, 9, 0),
                 approval_end_utc=date_offset_by(3, 9, 0),
@@ -108,7 +108,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(-100, 9, 0),
+                enrolment_start_utc=date_offset_by(-100, 9, 0),
                 entry_start_utc=date_offset_by(-99, 9, 0),
                 approval_start_utc=date_offset_by(-90, 9, 0),
                 approval_end_utc=date_offset_by(0, 9, 0),
@@ -120,7 +120,7 @@ def date_offset_by(days, hours, mins, dt=TEST_DATETIME):
         ),
         (
             Period(
-                enrollment_start_utc=date_offset_by(-100, 9, 0),
+                enrolment_start_utc=date_offset_by(-100, 9, 0),
                 entry_start_utc=date_offset_by(-99, 9, 0),
                 approval_start_utc=date_offset_by(-90, 9, 0),
                 approval_end_utc=date_offset_by(0, 9, 0),

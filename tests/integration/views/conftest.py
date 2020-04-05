@@ -14,7 +14,7 @@ from adaero.models import (
     FeedbackTemplateRow,
     FeedbackTemplate,
     Period,
-    Nominee,
+    Enrollee,
     FeedbackForm,
     FeedbackAnswer,
     User,
@@ -124,7 +124,9 @@ def new_ldap_mocked_app_with_users(dbsession, request):
                 dbsession.add(user)
 
             # Add non-staff member e.g. upper management
-            non_staff_user = User.create_from_ldap_details(ldapsource, TEST_NON_STAFF_USER)
+            non_staff_user = User.create_from_ldap_details(
+                ldapsource, TEST_NON_STAFF_USER
+            )
             dbsession.add(non_staff_user)
 
         freezer = freeze_time(TEST_UTCNOW)
@@ -193,7 +195,7 @@ def add_test_period_with_template(
     period_id=TEST_PERIOD_ID,
     period_name=TEST_PERIOD_NAME,
     offset_from_utc_now_days=0,
-    add_nominees=True,
+    add_enrollees=True,
     days_in=1,
 ):
 
@@ -206,14 +208,14 @@ def add_test_period_with_template(
         dbsession.add(period)
 
     with transaction.manager:
-        if add_nominees:
-            for nominee_username in TEST_NOMINEES:
-                dbsession.add(Nominee(period_id=period_id, username=nominee_username))
+        if add_enrollees:
+            for enrollee_username in TEST_NOMINEES:
+                dbsession.add(Enrollee(period_id=period_id, username=enrollee_username))
     return period_id
 
 
 @pytest.yield_fixture
-def app_with_nominees_inside_entry_subperiod(ldap_mocked_app_with_users):
+def app_with_enrollees_inside_entry_subperiod(ldap_mocked_app_with_users):
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
@@ -222,7 +224,7 @@ def app_with_nominees_inside_entry_subperiod(ldap_mocked_app_with_users):
 
 
 @pytest.yield_fixture
-def app_with_nominees_inside_approval_subperiod(ldap_mocked_app_with_users):
+def app_with_enrollees_inside_approval_subperiod(ldap_mocked_app_with_users):
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
@@ -265,7 +267,7 @@ def _add_test_feedback_forms(_dbsession, period_id=TEST_PERIOD_ID):
             period_id=period_id,
         )
         # because of test_employee_cannot_give_feedback_form_with_missing
-        # _answers_to_valid_nominate_while_inside_entry_subperiod test, we
+        # _answers_to_valid_enrol_while_inside_entry_subperiod test, we
         # should never get into a state where we have less answers than
         # questions for a form. views/feedback.py:update_feedback uses an
         # atomic transaction to ensure this as well
@@ -291,35 +293,35 @@ def _add_test_feedback_forms(_dbsession, period_id=TEST_PERIOD_ID):
 
 
 @pytest.fixture
-def app_with_nominees_and_existing_feedback_form_inside_entry_subperiod(
-    app_with_nominees_inside_entry_subperiod
+def app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod(
+    app_with_enrollees_inside_entry_subperiod,
 ):  # noqa: E501
-    app = app_with_nominees_inside_entry_subperiod
+    app = app_with_enrollees_inside_entry_subperiod
     _add_test_feedback_forms(get_dbsession(app))
     return app
 
 
 @pytest.fixture
-def app_with_nominees_and_existing_feedback_form_inside_approval_subperiod(
-    app_with_nominees_inside_approval_subperiod
+def app_with_enrollees_and_existing_feedback_form_inside_approval_subperiod(
+    app_with_enrollees_inside_approval_subperiod,
 ):  # noqa: E501
-    app = app_with_nominees_inside_approval_subperiod
+    app = app_with_enrollees_inside_approval_subperiod
     _add_test_feedback_forms(get_dbsession(app))
     return app
 
 
 @pytest.fixture
-def app_in_enrollment_subperiod(ldap_mocked_app_with_users):
+def app_in_enrolment_subperiod(ldap_mocked_app_with_users):
 
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
 
-    # requires no nominations
+    # requires no enrollees
     with transaction.manager:
         period = Period(
             id=TEST_PERIOD_ID,
             name=TEST_PERIOD_NAME,
-            enrollment_start_utc=days_from_utcnow(-1),
+            enrolment_start_utc=days_from_utcnow(-1),
             entry_start_utc=days_from_utcnow(1),
             approval_start_utc=days_from_utcnow(2),
             approval_end_utc=days_from_utcnow(3),
@@ -361,7 +363,7 @@ def add_extra_feedback_histories(dbsession, num):
         offset_days = -400 - ((p_id - 490) * 30)
         add_test_period_with_template(
             dbsession,
-            Period.ENROLLMENT_SUBPERIOD,
+            Period.ENROLMENT_SUBPERIOD,
             1,
             period_id=p_id,
             period_name=p_name,

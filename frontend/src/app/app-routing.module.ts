@@ -3,16 +3,16 @@ import { RouterModule, Routes } from '@angular/router';
 
 import {
   GiveFeedbackComponent,
-  NomineesListComponent,
+  EnrolleesListComponent,
   LoginComponent,
-  SelfNominateComponent,
+  EnrolComponent,
   StatsComponent,
   SummariseFeedbackComponent,
   FeedbackAboutMeComponent,
   TalentManagerPanelComponent,
   AuthenticatedComponent,
   FeedbackHistoryViewComponent,
-  ExternalInviteComponent
+  RequestComponent
 } from './components/views';
 
 import { AuthGuardService, AnonGuardService, PendingChangesGuardService } from './guards';
@@ -25,10 +25,10 @@ const routes: Routes = [
     component: AuthenticatedComponent,
     canActivate: [AuthGuardService],
     children: [
-      { path: 'self-nominate', component: SelfNominateComponent },
+      { path: 'enrol', component: EnrolComponent },
       { path: 'feedback-about-me', component: FeedbackAboutMeComponent },
-      { path: 'feedback', component: NomineesListComponent },
-      { path: 'invite-outside-reviewers', component: ExternalInviteComponent },
+      { path: 'feedback', component: EnrolleesListComponent },
+      { path: 'invite-outside-reviewers', component: RequestComponent },
       {
         path: 'feedback/:username',
         canDeactivate: [PendingChangesGuardService],

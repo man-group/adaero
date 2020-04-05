@@ -40,9 +40,9 @@ TEMPLATE_ID_SEQ = Sequence("template_id_seq")
 TEMPLATE_ROW_ID_SEQ = Sequence("template_row_id_seq")
 QUESTION_ID_SEQ = Sequence("question_id_seq")
 ANSWER_ID_SEQ = Sequence("answer_id_seq")
-NOMINEE_ID_SEQ = Sequence("nominee_id_seq")
+ENROLLEE_ID_SEQ = Sequence("enrollee_id_seq")
 PERIOD_ID_SEQ = Sequence("period_id_seq")
-EXTERNAL_REQUEST_ID_SEQ = Sequence("erequest_id_seq")
+FEEDBACK_REQUEST_ID_SEQ = Sequence("request_id_seq")
 
 SEQUENCES = (
     PERIOD_ID_SEQ,
@@ -51,8 +51,8 @@ SEQUENCES = (
     TEMPLATE_ROW_ID_SEQ,
     QUESTION_ID_SEQ,
     ANSWER_ID_SEQ,
-    NOMINEE_ID_SEQ,
-    EXTERNAL_REQUEST_ID_SEQ,
+    ENROLLEE_ID_SEQ,
+    FEEDBACK_REQUEST_ID_SEQ,
 )
 
 
@@ -234,7 +234,7 @@ class FeedbackQuestion(Base, Checkable, Serializable):
 
 
 class FeedbackAnswer(Base, Checkable, Serializable):
-    """Represents an answer for a particular question from one colleague
+    """Represents an answer for a particular question from one user
     to another."""
 
     __tablename__ = "answers"
@@ -249,21 +249,20 @@ class FeedbackAnswer(Base, Checkable, Serializable):
         pass
 
 
-class ExternalInvite(Base, Checkable, Serializable):
+class FeedbackRequest(Base, Checkable, Serializable):
     """
-    Represents an invite from a user within the population to a user that is
-    in the configured LDAP source (with the population being a subset of the
-    users in the LDAP source)
+    Represents an explicit request from a user within the population to a user
+    that is may be within the population or in the wider configured LDAP source.
     """
 
-    __tablename__ = "einvites"
-    id = Column(Integer, EXTERNAL_REQUEST_ID_SEQ, primary_key=True)
+    __tablename__ = "requests"
+    id = Column(Integer, FEEDBACK_REQUEST_ID_SEQ, primary_key=True)
     to_username = Column(Unicode(length=32))
     from_username = Column(Unicode(length=32))
     from_user = relationship(
         "User",
         foreign_keys=[from_username],
-        primaryjoin="User.username == " "ExternalInvite.from_username",
+        primaryjoin="User.username == " "FeedbackRequest.from_username",
     )
     period_id = Column(Integer, ForeignKey("periods.id"))
     period = relationship("Period")

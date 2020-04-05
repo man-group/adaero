@@ -9,9 +9,9 @@ import { AppComponent } from './app.component';
 
 import {
   GiveFeedbackComponent,
-  NomineesListComponent,
+  EnrolleesListComponent,
   LoginComponent,
-  SelfNominateComponent,
+  EnrolComponent,
   StatsComponent,
   SummariseFeedbackComponent,
   FeedbackAboutMeComponent,
@@ -27,12 +27,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { ApiService } from './services/api.service';
 import { CookieService } from './services/cookie.service';
 import { AuthGuardService, AnonGuardService, PendingChangesGuardService } from './guards';
-import { NomineeFilterPipe } from './pipes/nominee-filter.pipe';
+import { EnrolleeFilterPipe } from './pipes/enrollee-filter.pipe';
 import { ModalComponent } from './components/widgets/modal/modal.component';
 import { AuthenticatedComponent } from './components/views/authenticated/authenticated.component';
 import { FeedbackHistoryComponent } from './components/widgets/feedback-history/feedback-history.component';
 import { FeedbackHistoryViewComponent } from './components/views/feedback-history-view/feedback-history-view.component';
-import { ExternalInviteComponent } from './components/views/external-invite/external-invite.component';
+import { RequestComponent } from './components/views/request/request.component';
 
 @NgModule({
   declarations: [
@@ -41,14 +41,14 @@ import { ExternalInviteComponent } from './components/views/external-invite/exte
     LoginComponent,
     AuthenticatedComponent,
     GiveFeedbackComponent,
-    NomineesListComponent,
-    SelfNominateComponent,
+    EnrolleesListComponent,
+    EnrolComponent,
     StatsComponent,
     SummariseFeedbackComponent,
     FeedbackAboutMeComponent,
     TalentManagerPanelComponent,
     FeedbackHistoryViewComponent,
-    ExternalInviteComponent,
+    RequestComponent,
 
     // components
     FeedbackFormComponent,
@@ -56,7 +56,7 @@ import { ExternalInviteComponent } from './components/views/external-invite/exte
     FeedbackHistoryComponent,
 
     // pipes
-    NomineeFilterPipe,
+    EnrolleeFilterPipe,
 
 
 

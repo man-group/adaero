@@ -10,26 +10,26 @@ from sqlalchemy.sql import and_, func, asc
 
 from adaero import constants
 from adaero.config import get_config_value
-from adaero.models import ExternalInvite, FeedbackForm, Period, Nominee, User
+from adaero.models import FeedbackRequest, FeedbackForm, Period, Enrollee, User
 from adaero.security import EMPLOYEE_ROLE, EXTERNAL_BUSINESS_UNIT_ROLE
 from adaero.views import Root
 
 
-@resource("/api/v1/nominees")
-class Nominees(Root):
+@resource("/api/v1/enrollees")
+class Enrollees(Root):
     __acl__ = [(Allow, Authenticated, "read")]
 
     def __init__(self, request):  # pylint disable=unused-argument
         pass
 
 
-@Nominees.GET(permission="read")
-def get_nominees(request):
+@Enrollees.GET(permission="read")
+def get_enrollees(request):
     """
     Returns
     -------
-    JSON-serialisable payload with filtered list of nominees that `request.user`
-    can view for the current period. Each nominees has labelled data to help
+    JSON-serialisable payload with filtered list of enrollees that `request.user`
+    can view for the current period. Each enrollees has labelled data to help
     with categorising client-side.
     """
     location = get_config_value(
@@ -39,7 +39,7 @@ def get_nominees(request):
     if not current_period:
         return interpolate_template(FEEDBACK_ENDED_TEMPLATE)
 
-    if current_period.subperiod(location) == Period.ENROLLMENT_SUBPERIOD:
+    if current_period.subperiod(location) == Period.ENROLMENT_SUBPERIOD:
         return interpolate_template(
             ENTRY_PENDING_TEMPLATE, period_name=current_period.name
         )
@@ -52,7 +52,7 @@ def get_nominees(request):
     own_username = request.user.username
 
     query = request.dbsession.query(User, func.count(FeedbackForm.id)).join(
-        Nominee, User.username == Nominee.username
+        Enrollee, User.username == Enrollee.username
     )
     base = (
         query.outerjoin(
@@ -61,48 +61,48 @@ def get_nominees(request):
                 User.username == FeedbackForm.to_username,
                 FeedbackForm.from_username == own_username,
                 FeedbackForm.is_summary == False,  # noqa
-                FeedbackForm.period_id == Nominee.period_id,
+                FeedbackForm.period_id == Enrollee.period_id,
             ),
         )
-        .filter(Nominee.username != own_username)
-        .filter(Nominee.period_id == current_period.id)
+        .filter(Enrollee.username != own_username)
+        .filter(Enrollee.period_id == current_period.id)
     )
 
     # restrict users outside configured business unit to see only those
     # employees that invited them
     if EXTERNAL_BUSINESS_UNIT_ROLE in request.effective_principals:
         base = base.join(
-            ExternalInvite,
+            FeedbackRequest,
             and_(
-                ExternalInvite.to_username == own_username,
-                ExternalInvite.period_id == current_period.id,
-                User.username == ExternalInvite.from_username,
+                FeedbackRequest.to_username == own_username,
+                FeedbackRequest.period_id == current_period.id,
+                User.username == FeedbackRequest.from_username,
             ),
         )
 
     joined = base.group_by(User).order_by(asc(User.first_name)).all()
 
     payload = []
-    for nominated_user, form in joined:
-        if not nominated_user:
+    for enrolled_user, form in joined:
+        if not enrolled_user:
             continue
-        manager = nominated_user.manager
+        manager = enrolled_user.manager
         if manager:
             manager_display_name = " ".join([manager.first_name, manager.last_name])
         else:
             manager_display_name = "-"
         payload.append(
             {
-                "username": nominated_user.username,
-                "displayName": nominated_user.display_name,
-                "department": nominated_user.department,
+                "username": enrolled_user.username,
+                "displayName": enrolled_user.display_name,
+                "department": enrolled_user.department,
                 "managerDisplayName": manager_display_name,
-                "position": nominated_user.position,
+                "position": enrolled_user.position,
                 "hasExistingFeedback": True if form else False,
             }
         )
     request.response.status_int = 200
-    return {"period": current_period.name, "nominees": payload}
+    return {"period": current_period.name, "enrollees": payload}
 
 
 FEEDBACK_ENDED_TEMPLATE = {
@@ -111,7 +111,7 @@ FEEDBACK_ENDED_TEMPLATE = {
     "feedback for the next period.",
     "buttonText": "Feedback about me",
     "buttonLink": "/feedback-about-me",
-    "canNominate": False,
+    "canEnrol": False,
 }
 
 ENTRY_PENDING_TEMPLATE = {
@@ -121,7 +121,7 @@ ENTRY_PENDING_TEMPLATE = {
     "feedback.",
     "buttonText": "Request feedback",
     "buttonLink": None,
-    "canNominate": False,
+    "canEnrol": False,
 }
 
 ENTRY_ENDED_TEMPLATE = {
@@ -129,23 +129,23 @@ ENTRY_ENDED_TEMPLATE = {
     "body": "You cannot give feedback at the moment.",
     "buttonText": "Review my feedback",
     "buttonLink": None,
-    "canNominate": False,
+    "canEnrol": False,
 }
 
-ENROLLMENT_ACTIVE_TEMPLATE = {
+ENROLMENT_ACTIVE_TEMPLATE = {
     "heading": "Request feedback",
     "body": "Request feedback from your colleagues by " "hitting the big button below.",
     "buttonText": "Request feedback",
     "buttonLink": None,
-    "canNominate": True,
+    "canEnrol": True,
 }
 
-ENROLLMENT_INACTIVE_TEMPLATE = {
+ENROLMENT_INACTIVE_TEMPLATE = {
     "heading": "The Enrollment Period is closed",
     "body": "{body}",
     "buttonText": "See list of people who you can leave feedback about",
     "buttonLink": None,
-    "canNominate": False,
+    "canEnrol": False,
 }
 
 ENROLLED_BODY = (
@@ -154,46 +154,46 @@ ENROLLED_BODY = (
 )
 
 NOT_ENROLLED_BODY = (
-    "You have missed enrollment for this period. You will "
+    "You have missed enrolment for this period. You will "
     "be notified when it becomes possible to request "
     "feedback for the next period."
 )
 
-ENROLLMENT_EXISTS_TEMPLATE = {
+ENROLMENT_EXISTS_TEMPLATE = {
     "heading": "You have already requested feedback for {period_name}",
     "body": "You will be notified once it becomes possible to request "
     "feedback for the next period.",
     "buttonText": "Review my feedback",
     "buttonLink": "/feedback-about-me",
-    "canNominate": False,
+    "canEnrol": False,
 }
 
-ENROLLMENT_SUCCESS_TEMPLATE = {
+ENROLMENT_SUCCESS_TEMPLATE = {
     "heading": "Thank you!",
     "body": "Thank you for requesting feedback from your "
     "colleagues.\n\nYour colleagues will be able to "
     'leave feedback about you once the "Give Feedback" period starts.',
     "buttonText": "Review my feedback",
     "buttonLink": "/feedback-about-me",
-    "canNominate": False,
+    "canEnrol": False,
 }
 
 
-@resource("/api/v1/self-nominate")
-class SelfNominate(object):
+@resource("/api/v1/enrol")
+class Enrol(object):
     __acl__ = [(Allow, EMPLOYEE_ROLE, ("read", "update"))]
 
     def __init__(self, request):  # pylint disable=unused-argument
         pass
 
 
-@SelfNominate.GET(permission="read")
-def get_nomination_status(request):
+@Enrol.GET(permission="read")
+def get_request_status(request):
     """
     Returns
     -------
     JSON-serialisable payload that includes:
-    * Message to display to `request.user` on their current nomination status
+    * Message to display to `request.user` on their current enrolment status
       for the current period.
     * Whether to display a button, with an associated URL and display text
     """
@@ -201,43 +201,43 @@ def get_nomination_status(request):
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
     current_period = Period.get_current_period(
-        request.dbsession, options=joinedload("nominees")
+        request.dbsession, options=joinedload("enrollees")
     )
     if not current_period:
         return interpolate_template(FEEDBACK_ENDED_TEMPLATE)
 
     username = request.user.username
-    if username in (n.username for n in current_period.nominees):
+    if username in (n.username for n in current_period.enrollees):
         is_enrolled = True
     else:
         is_enrolled = False
 
-    if current_period.subperiod(location) != Period.ENROLLMENT_SUBPERIOD:
+    if current_period.subperiod(location) != Period.ENROLMENT_SUBPERIOD:
         return interpolate_template(
-            ENROLLMENT_INACTIVE_TEMPLATE,
+            ENROLMENT_INACTIVE_TEMPLATE,
             period_name=current_period.name,
             body=ENROLLED_BODY if is_enrolled else NOT_ENROLLED_BODY,
         )
     if is_enrolled:
         return interpolate_template(
-            ENROLLMENT_EXISTS_TEMPLATE, period_name=current_period.name
+            ENROLMENT_EXISTS_TEMPLATE, period_name=current_period.name
         )
 
     return interpolate_template(
-        ENROLLMENT_ACTIVE_TEMPLATE, period_name=current_period.name
+        ENROLMENT_ACTIVE_TEMPLATE, period_name=current_period.name
     )
 
 
-@SelfNominate.POST(permission="update")
-def self_nominate(request):
+@Enrol.POST(permission="update")
+def self_enrol(request):
     """
-    If the current period cycle is in the enrollment state,
+    If the current period cycle is in the enrolment state,
     update `request.user` status for the current period to ENROLLED.
 
     Returns
     -------
     JSON-serialisable payload that includes:
-    * Message to display to `request.user` on their current nomination status
+    * Message to display to `request.user` on their current enrolment status
       for the current period.
     * Whether to display a button, with an associated URL and display text
     """
@@ -245,7 +245,7 @@ def self_nominate(request):
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
     current_period = Period.get_current_period(
-        request.dbsession, options=joinedload("nominees")
+        request.dbsession, options=joinedload("enrollees")
     )
     if not current_period:
         raise HTTPNotFound(
@@ -253,21 +253,21 @@ def self_nominate(request):
             "the meantime. Please contact your "
             "manager for more details."
         )
-    elif current_period.subperiod(location) != Period.ENROLLMENT_SUBPERIOD:
+    elif current_period.subperiod(location) != Period.ENROLMENT_SUBPERIOD:
         display_end_date = current_period.entry_start_utc.strftime(
             constants.DEFAULT_DISPLAY_DATETIME_FORMAT
         )
         raise HTTPNotFound(
-            explanation="The enrollment period closed on " "%s" % display_end_date
+            explanation="The enrolment period closed on " "%s" % display_end_date
         )
 
     username = request.user.username
-    if username in (n.username for n in current_period.nominees):
+    if username in (n.username for n in current_period.enrollees):
         raise HTTPBadRequest(
             explanation="You are already enrolled "
             "for the current period %s" % current_period.name
         )
     period_name = current_period.name
     with transaction.manager:
-        request.dbsession.add(Nominee(period=current_period, username=username))
-    return interpolate_template(ENROLLMENT_SUCCESS_TEMPLATE, period_name=period_name)
+        request.dbsession.add(Enrollee(period=current_period, username=username))
+    return interpolate_template(ENROLMENT_SUCCESS_TEMPLATE, period_name=period_name)

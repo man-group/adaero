@@ -20,7 +20,7 @@ export class AnonGuardService implements CanActivate {
       pipe(
         map((e) => {
           if (e) {
-            this.router.navigate(['/self-nominate']);
+            this.router.navigate(['/enrol']);
             return false;
           }
         }),

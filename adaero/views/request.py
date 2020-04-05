@@ -10,7 +10,7 @@ from adaero import constants
 from adaero import date
 from adaero import mail
 from adaero.config import get_config_value
-from adaero.models import ExternalInvite, Nominee, Period, User
+from adaero.models import FeedbackRequest, Enrollee, Period, User
 from adaero.security import ldapauth, EMPLOYEE_ROLE
 from adaero.text import interpolate_template
 from adaero.views import Root
@@ -34,14 +34,14 @@ PRIOR_ENTRY_TEMPLATE = {
 NOT_ENROLLED_TEMPLATE = {
     "heading": "You are not enrolled to receive feedback",
     "body": "You are unable to invite additional reviewers for feedback "
-    "this period as you did not enrol during the enrollment "
+    "this period as you did not enrol during the enrolment "
     "period. You are still able to give feedback.",
     "canInvite": False,
 }
 
 
-@resource("/api/v1/external-invite")
-class ExternalInviteResource(Root):
+@resource("/api/v1/request")
+class FeedbackRequestResource(Root):
 
     __acl__ = [(Allow, EMPLOYEE_ROLE, ("read", "update"))]
 
@@ -49,8 +49,8 @@ class ExternalInviteResource(Root):
         pass
 
 
-@ExternalInviteResource.GET(permission="read")
-def get_external_invite_status(request):
+@FeedbackRequestResource.GET(permission="read")
+def get_request_status(request):
     """
     Generate list of existing external invites that `request.user` has already
     sent for the current period.
@@ -73,28 +73,28 @@ def get_external_invite_status(request):
         Period.REVIEW_SUBPERIOD,
     ]:
         return interpolate_template(ENTRY_ENDED_TEMPLATE)
-    elif current_period.subperiod(location) in [Period.ENROLLMENT_SUBPERIOD]:
+    elif current_period.subperiod(location) in [Period.ENROLMENT_SUBPERIOD]:
         dt = date.datetimeformat(current_period.entry_start_utc, request.user)
         return interpolate_template(PRIOR_ENTRY_TEMPLATE, entry_start=dt)
 
     with transaction.manager:
-        is_nominated = (
-            request.dbsession.query(Nominee)
-            .filter(Nominee.period == current_period)
-            .filter(Nominee.username == request.user.username)
+        is_enrolled = (
+            request.dbsession.query(Enrollee)
+            .filter(Enrollee.period == current_period)
+            .filter(Enrollee.username == request.user.username)
             .one_or_none()
         )
 
-    if not is_nominated:
+    if not is_enrolled:
         return interpolate_template(NOT_ENROLLED_TEMPLATE)
 
     invitee_users = []
     with transaction.manager:
         invites = (
-            request.dbsession.query(ExternalInvite.to_username)
+            request.dbsession.query(FeedbackRequest.to_username)
             .filter(
-                ExternalInvite.from_username == request.user.username,
-                ExternalInvite.period_id == current_period.id,
+                FeedbackRequest.from_username == request.user.username,
+                FeedbackRequest.period_id == current_period.id,
             )
             .all()
         )
@@ -117,8 +117,8 @@ def get_external_invite_status(request):
     return {"canInvite": True, "invitees": payload_users}
 
 
-@ExternalInviteResource.POST(permission="update")
-def post_external_invite(request):
+@FeedbackRequestResource.POST(permission="update")
+def post_request(request):
     """
     If allowed, records that `request.user` sent an external invite to a user
     identified by their email which must be in LDAP, and sends an email to
@@ -149,8 +149,8 @@ def post_external_invite(request):
             raise HTTPBadRequest(
                 explanation="Can only send invite during " 'the "Give feedback" period.'
             )
-        ext_user_details = ldapsource.get_ldap_user_by_email(email)
-        if not ext_user_details:
+        requested_user_details = ldapsource.get_ldap_user_by_email(email)
+        if not requested_user_details:
             raise HTTPNotFound(
                 explanation="%s is not a valid %s "
                 "email. If you think it is, "
@@ -158,18 +158,18 @@ def post_external_invite(request):
                 "%s." % (email, company_name, support_email)
             )
 
-        ext_user = User.create_from_ldap_details(ldapsource, ext_user_details)
-        invite = ExternalInvite(
+        ext_user = User.create_from_ldap_details(ldapsource, requested_user_details)
+        invite = FeedbackRequest(
             to_username=ext_user.username,
             from_username=request.user.username,
             period=current_period,
         )
         invites = (
-            request.dbsession.query(ExternalInvite)
+            request.dbsession.query(FeedbackRequest)
             .filter(
-                ExternalInvite.to_username == ext_user.username,
-                ExternalInvite.from_username == request.user.username,
-                ExternalInvite.period_id == current_period.id,
+                FeedbackRequest.to_username == ext_user.username,
+                FeedbackRequest.from_username == request.user.username,
+                FeedbackRequest.period_id == current_period.id,
             )
             .one_or_none()
         )

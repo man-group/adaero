@@ -22,7 +22,7 @@ from adaero.config import get_config_value, check_if_production
 # missing models
 from .all import (  # noqa: F401
     Base,
-    ExternalInvite,
+    FeedbackRequest,
     FeedbackAnswer,
     FeedbackForm,
     FeedbackQuestion,
@@ -30,7 +30,7 @@ from .all import (  # noqa: F401
     FeedbackTemplateRow,
     SEQUENCES,
 )
-from adaero.models.user import Nominee, User  # noqa: F401
+from adaero.models.user import Enrollee, User  # noqa: F401
 from .period import Period, OFFSETS  # noqa: F401
 
 # run configure_mappers after defining all of the models to ensure all
@@ -282,7 +282,7 @@ def generate_period_dates(subperiod, days_away_func, days_in=1):
         )
     offset = OFFSETS[subperiod]
     return {
-        "enrollment_start_utc": days_away_func(0 - offset - days_in),
+        "enrolment_start_utc": days_away_func(0 - offset - days_in),
         "entry_start_utc": days_away_func(2 - offset - days_in),
         "approval_start_utc": days_away_func(4 - offset - days_in),
         "approval_end_utc": days_away_func(6 - offset - days_in),

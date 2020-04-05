@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 
 @Component({
-  templateUrl: './self-nominate.component.html',
-  selector: 'app-self-nominate'
+  templateUrl: './enrol.component.html',
+  selector: 'app-enrol'
 })
-export class SelfNominateComponent implements OnInit {
+export class EnrolComponent implements OnInit {
     isLoaded = false;
     data = null;
-    endpoint = '/self-nominate';
+    endpoint = '/enrol';
 
     constructor(private api: ApiService, private router: Router) {}
 
@@ -28,8 +28,8 @@ export class SelfNominateComponent implements OnInit {
     }
 
     onClick() {
-      if (this.data.canNominate) {
-        this.api.selfNominate().subscribe(
+      if (this.data.canEnrol) {
+        this.api.enrol().subscribe(
           (data) => {
             this.data = data;
             this.isLoaded = true;

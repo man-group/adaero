@@ -25,7 +25,7 @@ class Period(Base, Checkable, Serializable):
     id = Column(Integer, PERIOD_ID_SEQ, primary_key=True)
 
     feedback_forms = relationship("FeedbackForm")
-    nominees = relationship("Nominee")
+    enrollees = relationship("Enrollee")
 
     name = Column(Unicode(length=16), unique=True)
 
@@ -33,7 +33,7 @@ class Period(Base, Checkable, Serializable):
     template_id = Column("t_id", Integer, ForeignKey("templates.id"))
     template = relationship("FeedbackTemplate")
 
-    enrollment_start_utc = Column(DateTime)
+    enrolment_start_utc = Column(DateTime)
     entry_start_utc = Column(DateTime)
     approval_start_utc = Column(DateTime)
     approval_end_utc = Column(DateTime)
@@ -54,7 +54,7 @@ class Period(Base, Checkable, Serializable):
 
     __table_args__ = (
         CheckConstraint(
-            "enrollment_start_utc < entry_start_utc", name="enro_s_lt_entr_s"
+            "enrolment_start_utc < entry_start_utc", name="enro_s_lt_entr_s"
         ),
         CheckConstraint(
             "entry_start_utc < approval_start_utc", name="entr_s_lt_appr_s"
@@ -65,7 +65,7 @@ class Period(Base, Checkable, Serializable):
     )
 
     INACTIVE_SUBPERIOD = "inactive_subperiod"
-    ENROLLMENT_SUBPERIOD = "enrollment_subperiod"
+    ENROLMENT_SUBPERIOD = "enrolment_subperiod"
     ENTRY_SUBPERIOD = "entry_subperiod"
     APPROVAL_SUBPERIOD = "approval_subperiod"
     REVIEW_SUBPERIOD = "review_subperiod"
@@ -78,12 +78,12 @@ class Period(Base, Checkable, Serializable):
     def __repr__(self):
         fmt = "%d-%m-%Y %H%M"
         return (
-            "Period(name=%s, enrollment_start_utc=%s, "
+            "Period(name=%s, enrolment_start_utc=%s, "
             "entry_start_utc=%s, approval_start_utc=%s, "
             "approval_end_utc=%s"
             % (
                 self.name,
-                self.enrollment_start_utc.strftime(fmt),
+                self.enrolment_start_utc.strftime(fmt),
                 self.entry_start_utc.strftime(fmt),
                 self.approval_start_utc.strftime(fmt),
                 self.approval_end_utc.strftime(fmt),
@@ -108,14 +108,14 @@ class Period(Base, Checkable, Serializable):
         )
         if (
             previous_period
-            and previous_period.approval_end_utc > self.enrollment_start_utc
+            and previous_period.approval_end_utc > self.enrolment_start_utc
         ):
             msgs.append(
-                "new period %s with enrollment_start_utc %s overlaps "
+                "new period %s with enrolment_start_utc %s overlaps "
                 "previous period %swith approval_end_utc %s"
                 % (
                     self.name,
-                    self.enrollment_start_utc,
+                    self.enrolment_start_utc,
                     previous_period.name,
                     previous_period.approval_end_utc,
                 )
@@ -130,15 +130,15 @@ class Period(Base, Checkable, Serializable):
             .order_by(Period.approval_end_utc.asc())
             .first()
         )
-        if next_period and next_period.enrollment_start_utc < self.approval_end_utc:
+        if next_period and next_period.enrolment_start_utc < self.approval_end_utc:
             msgs.append(
                 "new period %s with approval_end_utc %s overlaps next "
-                "period %s with enrollment_start_utc %s"
+                "period %s with enrolment_start_utc %s"
                 % (
                     self.name,
                     self.approval_end_utc,
                     next_period.name,
-                    next_period.enrollment_start_utc,
+                    next_period.enrolment_start_utc,
                 )
             )
         if msgs:
@@ -186,8 +186,8 @@ class Period(Base, Checkable, Serializable):
             return self.APPROVAL_SUBPERIOD
         elif converted_dt(self.entry_start_utc) <= utcnow:
             return self.ENTRY_SUBPERIOD
-        elif converted_dt(self.enrollment_start_utc) <= utcnow:
-            return self.ENROLLMENT_SUBPERIOD
+        elif converted_dt(self.enrolment_start_utc) <= utcnow:
+            return self.ENROLMENT_SUBPERIOD
         else:
             return self.INACTIVE_SUBPERIOD
 
@@ -195,7 +195,7 @@ class Period(Base, Checkable, Serializable):
         REVIEW_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.REVIEW_START],
         APPROVAL_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.APPROVE_START],
         ENTRY_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.ENTRY_START],
-        ENROLLMENT_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.ENROL_START],
+        ENROLMENT_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.ENROL_START],
     }
 
     def current_email_template(self, location):
@@ -214,19 +214,19 @@ class Period(Base, Checkable, Serializable):
         days_into_future = timedelta(days=cls.PERIOD_LOOKAHEAD_DAYS)
         with transaction.manager:
             periods_by_date_desc = (
-                query.filter(cls.enrollment_start_utc < utcnow + days_into_future)
-                .order_by(cls.enrollment_start_utc.desc())
+                query.filter(cls.enrolment_start_utc < utcnow + days_into_future)
+                .order_by(cls.enrolment_start_utc.desc())
                 .all()
             )
 
         if not periods_by_date_desc:
             msg = "No period data starting on %s is available." % utcnow
             raise HTTPInternalServerError(explanation=msg)
-        elif periods_by_date_desc[0].enrollment_start_utc <= utcnow:
+        elif periods_by_date_desc[0].enrolment_start_utc <= utcnow:
             current_period = periods_by_date_desc[0]
         elif (
             len(periods_by_date_desc) >= 2
-            and (utcnow - periods_by_date_desc[1].enrollment_start_utc).days
+            and (utcnow - periods_by_date_desc[1].enrolment_start_utc).days
             <= cls.REVIEW_SUBPERIOD_LEN_DAYS
         ):
             current_period = periods_by_date_desc[1]
@@ -237,7 +237,7 @@ class Period(Base, Checkable, Serializable):
 
 OFFSETS = {
     Period.INACTIVE_SUBPERIOD: -2,
-    Period.ENROLLMENT_SUBPERIOD: 0,
+    Period.ENROLMENT_SUBPERIOD: 0,
     Period.ENTRY_SUBPERIOD: 2,
     Period.APPROVAL_SUBPERIOD: 4,
     Period.REVIEW_SUBPERIOD: 6,

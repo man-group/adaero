@@ -22,16 +22,16 @@ export class LoginSuccessPayload {
   data: UserData;
 }
 
-// refer to adaero/views/nomination.py
+// refer to adaero/views/enrol.py
 export class MessageTemplatePayload {
   heading: string;
   body: string;
   buttonText: string;
   buttonLink: string;
-  canNominate: boolean;
+  canEnrol: boolean;
 }
 
-export class NomineeItem {
+export class EnrolleeItem {
   displayName: string;
   username: string;
   hasExistingFeedback: string;
@@ -40,9 +40,9 @@ export class NomineeItem {
   department: string;
 }
 
-export class NomineePayload {
+export class EnrolleesPayload {
   period: string;
-  nominees: NomineeItem[];
+  enrollees: EnrolleeItem[];
 }
 
 // refer to adaero/views/feedback.py
@@ -98,8 +98,8 @@ export class SummaryFeedbackPayload {
   summary: FeedbackForm;
 }
 
-// refer to adaero/views/external.py
-export class ExternalFeedbackStatusPayload {
+// refer to adaero/views/request.py
+export class RequestStatusPayload {
   canInvite: boolean;
   heading?: string;
   body?: string;
@@ -202,14 +202,14 @@ export class ApiService {
     }
   }
 
-  selfNominate(): Observable<{} | MessageTemplatePayload> {
-    return this._httpWrapper(this.http.post(this.rootUrl + '/self-nominate', {}, { withCredentials: true })
+  enrol(): Observable<{} | MessageTemplatePayload> {
+    return this._httpWrapper(this.http.post(this.rootUrl + '/enrol', {}, { withCredentials: true })
       .pipe(map((res: MessageTemplatePayload) => res)));
   }
 
-  getNominees(): Observable<{} | NomineePayload | MessageTemplatePayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + '/nominees', { withCredentials: true })
-      .pipe(map((res: NomineePayload | MessageTemplatePayload) => res)));
+  getNominees(): Observable<{} | EnrolleesPayload | MessageTemplatePayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + '/enrollees', { withCredentials: true })
+      .pipe(map((res: EnrolleesPayload | MessageTemplatePayload) => res)));
   }
 
   getFeedbackAboutMe(): Observable<{} | FeedbackHistoryPayload> {
@@ -257,13 +257,13 @@ export class ApiService {
       .pipe(map((res: object) => res)));
   }
 
-  getExternalInviteStatus(): Observable<{}| ExternalFeedbackStatusPayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + `/external-invite`, { withCredentials: true })
-      .pipe(map((res: ExternalFeedbackStatusPayload) => res)));
+  getRequestStatus(): Observable<{}| RequestStatusPayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + `/request`, { withCredentials: true })
+      .pipe(map((res: RequestStatusPayload) => res)));
   }
 
-  sendExternalInvite(email: String): Observable<object> {
-    return this.http.post(this.rootUrl + `/external-invite`, { email }, { withCredentials: true })
+  sendRequest(email: String): Observable<object> {
+    return this.http.post(this.rootUrl + `/request`, { email }, { withCredentials: true })
       .pipe(
         map((res: object) => res),
         catchError((err) => {

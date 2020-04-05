@@ -65,7 +65,7 @@ The following steps were run on a minimal install of Ubuntu LTS 18.04.4
 6. Use the following commands to change phases.
 
    ```
-   python3 tests/scripts/configure_db.py --config host_example.ini --subperiod enrollment adjust
+   python3 tests/scripts/configure_db.py --config host_example.ini --subperiod enrolment adjust
    python3 tests/scripts/configure_db.py --config host_example.ini --subperiod entry adjust
    python3 tests/scripts/configure_db.py --config host_example.ini --subperiod approval adjust
    python3 tests/scripts/configure_db.py --config host_example.ini --subperiod review adjust

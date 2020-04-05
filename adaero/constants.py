@@ -14,9 +14,7 @@ BUSINESS_UNIT_KEY = "adaero.business_unit"
 HOMEBASE_LOCATION_KEY = "adaero.homebase_location"
 TALENT_MANAGER_USERNAMES_KEY = "adaero.talent_manager_usernames"
 RELOAD_USERS_ON_APP_START_KEY = "adaero.reload_users_on_app_start"
-LOAD_TALENT_MANAGERS_ON_APP_START_KEY = (
-    "adaero.load_talent_managers_" "on_app_start"
-)
+LOAD_TALENT_MANAGERS_ON_APP_START_KEY = "adaero.load_talent_managers_on_app_start"
 CORS_ALLOW_ORIGIN_KEY = "adaero.cors.allow_origin"
 ALLOW_PASSWORDLESS_ACCESS_KEY = "adaero.allow_passwordless_access"
 LOAD_USER_EMAIL_LIST_KEY = "adaero.load_user_email_list"
@@ -73,7 +71,7 @@ EMAIL_TEMPLATE_MAP = {
     ENROL_REMINDER: {
         "summary": "Opportunity to Enrol Reminder",
         "template": "enrol.html.j2",
-        "audience": "non-nominated",
+        "audience": "non-enrolled",
         "code": "ust02",
     },
     ENTRY_START: {

@@ -1,18 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ApiService, ExternalFeedbackStatusPayload, MetadataPayload, Metadata } from '../../../services/api.service';
+import { ApiService, RequestStatusPayload, MetadataPayload, Metadata } from '../../../services/api.service';
 
 @Component({
-  selector: 'app-external-invite',
-  templateUrl: './external-invite.component.html',
-  styleUrls: ['./external-invite.component.scss']
+  selector: 'app-request',
+  templateUrl: './request.component.html',
+  styleUrls: ['./request.component.scss']
 })
-export class ExternalInviteComponent implements OnInit {
+export class RequestComponent implements OnInit {
 
   successMsg: string;
   errorMsg: string;
   metadata: Metadata;
-  status: ExternalFeedbackStatusPayload | {};
+  status: RequestStatusPayload | {};
   constructor(private api: ApiService) { }
 
   ngOnInit() {
@@ -25,7 +25,7 @@ export class ExternalInviteComponent implements OnInit {
   }
 
   fetchStatus() {
-    this.api.getExternalInviteStatus().subscribe((payload) => {
+    this.api.getRequestStatus().subscribe((payload) => {
       this.status = payload;
     });
   }
@@ -33,7 +33,7 @@ export class ExternalInviteComponent implements OnInit {
   onSubmit(form: NgForm) {
     this.successMsg = null;
     this.errorMsg = null;
-    this.api.sendExternalInvite(form.value.email).subscribe(() => {
+    this.api.sendRequest(form.value.email).subscribe(() => {
       this.successMsg = 'Invite successfully sent!';
     }, (error) => {
       this.errorMsg = error.error ? error.error.message : error.message;

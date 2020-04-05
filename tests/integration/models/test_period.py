@@ -21,7 +21,7 @@ EXC_CHECK_CONSTRAINT_VIOLATED_REGEX = re.compile(
     r"check constraint \(([\w._]*)\) violated"
 )
 ORDERED_PERIOD_MODEL_DATE_KEYS = [
-    "enrollment_start_utc",
+    "enrolment_start_utc",
     "entry_start_utc",
     "approval_start_utc",
     "approval_end_utc",
@@ -31,11 +31,11 @@ ORDERED_PERIOD_MODEL_DATE_KEYS = [
 def test_able_to_create_valid(func_scoped_dbsession):
     dbsession = func_scoped_dbsession
     next_day = next_day_generator()
-    enrollment_start_utc = next(next_day)
+    enrolment_start_utc = next(next_day)
     with transaction.manager:
         period = Period(
             name="2017-Q4",
-            enrollment_start_utc=enrollment_start_utc,
+            enrolment_start_utc=enrolment_start_utc,
             entry_start_utc=next(next_day),
             approval_start_utc=next(next_day),
             approval_end_utc=next(next_day),
@@ -47,7 +47,7 @@ def test_unable_to_create_overlapping_subperiods(func_scoped_dbsession):
     dbsession = func_scoped_dbsession
     if dbsession.connection().engine.driver.lower() != "cx_oracle":
         pytest.skip("Only for oracle driver")
-    # cannot have overlapping subperiods e.g. enrollment, review
+    # cannot have overlapping subperiods e.g. enrolment, review
     next_day = next_day_generator()
     dt = next(next_day)
     next_year = dt + timedelta(days=365)
@@ -84,7 +84,7 @@ def test_unable_to_create_duplicate_names(func_scoped_dbsession):
             dt = next(next_day)
             period = Period(
                 name="foo",
-                enrollment_start_utc=dt,
+                enrolment_start_utc=dt,
                 entry_start_utc=next(next_day),
                 approval_start_utc=next(next_day),
                 approval_end_utc=next(next_day),
@@ -92,7 +92,7 @@ def test_unable_to_create_duplicate_names(func_scoped_dbsession):
             dbsession.add(period)
             period = Period(
                 name="foo",
-                enrollment_start_utc=next(next_day),
+                enrolment_start_utc=next(next_day),
                 entry_start_utc=next(next_day),
                 approval_start_utc=next(next_day),
                 approval_end_utc=next(next_day),
@@ -125,14 +125,14 @@ def _build_period_date_kwargs(dt, is_end_utc=False):
             k: v for k, v in zip(ORDERED_PERIOD_MODEL_DATE_KEYS, (v for v in next_day))
         }
     # sanity check
-    start_dt = kwargs["enrollment_start_utc"]
+    start_dt = kwargs["enrolment_start_utc"]
     end_dt = kwargs["approval_end_utc"]
     assert start_dt < end_dt
     return kwargs, start_dt, end_dt
 
 
 def test_unable_to_create_overlapping_to_previous_period(
-    func_scoped_dbsession
+    func_scoped_dbsession,
 ):  # noqa: E501
     """
                            |-----------------------------------|
@@ -142,9 +142,11 @@ def test_unable_to_create_overlapping_to_previous_period(
     dbsession = func_scoped_dbsession
     start_dt = datetime.now()
     with pytest.raises(CheckError) as exc_info:
-        existing_period_kwargs, existing_start_utc_dt, existing_end_utc_dt = _build_period_date_kwargs(
-            start_dt, is_end_utc=True
-        )
+        (
+            existing_period_kwargs,
+            existing_start_utc_dt,
+            existing_end_utc_dt,
+        ) = _build_period_date_kwargs(start_dt, is_end_utc=True)
         new_period_kwargs, new_start_utc_dt, new_end_utc_dt = _build_period_date_kwargs(
             start_dt - timedelta(days=1)
         )
@@ -175,9 +177,11 @@ def test_unable_to_create_overlapping_to_next_period(func_scoped_dbsession):
         new_period_kwargs, new_start_utc_dt, new_end_utc_dt = _build_period_date_kwargs(
             start_dt, is_end_utc=True
         )
-        existing_period_kwargs, existing_start_utc_dt, existing_end_utc_dt = _build_period_date_kwargs(
-            start_dt - timedelta(days=1)
-        )
+        (
+            existing_period_kwargs,
+            existing_start_utc_dt,
+            existing_end_utc_dt,
+        ) = _build_period_date_kwargs(start_dt - timedelta(days=1))
         # check dates themselves overlap
         assert existing_end_utc_dt > new_end_utc_dt
         assert existing_start_utc_dt > new_start_utc_dt
@@ -194,7 +198,7 @@ def test_unable_to_create_overlapping_to_next_period(func_scoped_dbsession):
 
 
 def test_unable_to_update_overlapping_to_previous_period(
-    func_scoped_dbsession
+    func_scoped_dbsession,
 ):  # noqa: E501
     dbsession = func_scoped_dbsession
     with transaction.manager:
@@ -202,7 +206,7 @@ def test_unable_to_update_overlapping_to_previous_period(
         dt = next(next_day)
         period = Period(
             name="existing period",
-            enrollment_start_utc=dt,
+            enrolment_start_utc=dt,
             entry_start_utc=next(next_day),
             approval_start_utc=next(next_day),
             approval_end_utc=next(next_day),
@@ -210,7 +214,7 @@ def test_unable_to_update_overlapping_to_previous_period(
         dbsession.add(period)
         old_period = Period(
             name="new period",
-            enrollment_start_utc=next(next_day),
+            enrolment_start_utc=next(next_day),
             entry_start_utc=next(next_day),
             approval_start_utc=next(next_day),
             approval_end_utc=next(next_day),
@@ -224,7 +228,7 @@ def test_unable_to_update_overlapping_to_previous_period(
             updated_period = Period(
                 id=old_period.id,
                 name="new period",
-                enrollment_start_utc=dt,
+                enrolment_start_utc=dt,
                 entry_start_utc=next(next_day),
                 approval_start_utc=next(next_day),
                 approval_end_utc=next(next_day),
@@ -265,10 +269,10 @@ def test_get_current_period(
     dbsession = func_scoped_dbsession
     previous_days_away = partial(days_from_utcnow, offset=prev_days_away)
     previous_times = generate_period_dates(
-        Period.ENROLLMENT_SUBPERIOD, previous_days_away
+        Period.ENROLMENT_SUBPERIOD, previous_days_away
     )
     next_days_away = partial(days_from_utcnow, offset=next_days_away)
-    next_times = generate_period_dates(Period.ENROLLMENT_SUBPERIOD, next_days_away)
+    next_times = generate_period_dates(Period.ENROLMENT_SUBPERIOD, next_days_away)
     with transaction.manager:
         prev_period = Period(id=PREV, name="prev", **previous_times)
         dbsession.add(prev_period)
