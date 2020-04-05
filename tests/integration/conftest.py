@@ -8,7 +8,7 @@ from sqlalchemy.ext.compiler import compiles
 import sqlalchemy.orm.session
 
 from tests.settings import DEFAULT_TEST_SETTINGS
-from feedback_tool.models import (
+from adaero.models import (
     FeedbackQuestion,
     FeedbackTemplateRow,
     FeedbackTemplate,
@@ -55,20 +55,20 @@ def dbsession(request, worker_id):
     """
     settings = DEFAULT_TEST_SETTINGS
     if request.config.getoption("--use-sqlite3"):
-        settings["feedback_tool.use_local_sqlite3"] = True
-        settings["feedback_tool.worker_id"] = worker_id
+        settings["adaero.use_local_sqlite3"] = True
+        settings["adaero.worker_id"] = worker_id
 
     config = testing.setUp(settings=settings)
-    config.include("feedback_tool.models")
+    config.include("adaero.models")
     settings = config.get_settings()
 
-    from feedback_tool.models import get_engine, get_session_factory, get_tm_session
+    from adaero.models import get_engine, get_session_factory, get_tm_session
 
     engine = get_engine(settings)
     session_factory = get_session_factory(engine)
     session = get_tm_session(session_factory, transaction.manager)
 
-    from feedback_tool.models.all import Base, SEQUENCES
+    from adaero.models.all import Base, SEQUENCES
 
     Base.metadata.drop_all(engine)
 

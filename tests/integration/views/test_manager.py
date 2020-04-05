@@ -9,9 +9,9 @@ from faker import Faker
 import pytest
 import transaction
 
-from feedback_tool.constants import MANAGER_VIEW_HISTORY_LIMIT
-from feedback_tool.date import datetimeformat
-from feedback_tool.models import (
+from adaero.constants import MANAGER_VIEW_HISTORY_LIMIT
+from adaero.date import datetimeformat
+from adaero.models import (
     FeedbackAnswer,
     FeedbackForm,
     Nominee,
@@ -19,7 +19,7 @@ from feedback_tool.models import (
     User,
     generate_period_dates,
 )
-from feedback_tool.security import (
+from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_HEADER_NAME,
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
 )

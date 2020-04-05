@@ -8,8 +8,8 @@ import pytest
 import transaction
 from mock import patch
 
-from feedback_tool import mail
-from feedback_tool.constants import (
+from adaero import mail
+from adaero.constants import (
     EMAIL_CODES,
     ENROL_START,
     ENROL_REMINDER,
@@ -20,9 +20,9 @@ from feedback_tool.constants import (
     EMAIL_TEMPLATE_MAP,
     DISPLAYED_HOSTNAME_KEY,
 )
-from feedback_tool.date import LONDON, HONG_KONG, BOSTON
-from feedback_tool.models import Period, User
-from feedback_tool.security import ldapauth
+from adaero.date import LONDON, HONG_KONG, BOSTON
+from adaero.models import Period, User
+from adaero.security import ldapauth
 from tests.settings import DEFAULT_TEST_SETTINGS
 from tests.integration.views.conftest import get_dbsession
 from tests.integration.views.test_manager import (
@@ -155,13 +155,13 @@ def test_send_correct_emails_are_sent_during_subperiods(
     dbsession = get_dbsession(app)
     add_test_data_for_stats(dbsession, current_subperiod=subperiod)
     settings = {
-        "feedback_tool.load_talent_managers_on_app_start": False,
-        "feedback_tool.talent_manager_usernames": [TEST_TALENT_MANAGER_USERNAME],
-        "feedback_tool.served_on_https": True,
-        "feedback_tool.homebase_location": "London",
-        "feedback_tool.production_hostname": TEST_PRODUCTION_HOSTNAME,
-        "feedback_tool.production_user": TEST_PRODUCTION_USER,
-        "feedback_tool.enable_send_email": True,
+        "adaero.load_talent_managers_on_app_start": False,
+        "adaero.talent_manager_usernames": [TEST_TALENT_MANAGER_USERNAME],
+        "adaero.served_on_https": True,
+        "adaero.homebase_location": "London",
+        "adaero.production_hostname": TEST_PRODUCTION_HOSTNAME,
+        "adaero.production_user": TEST_PRODUCTION_USER,
+        "adaero.enable_send_email": True,
     }
 
     with patch("smtplib.SMTP") as smtp_mock, patch(
@@ -254,12 +254,12 @@ def test_hostname_override_works(ldap_mocked_app_with_users, ldapsource, with_en
     displayed_hostname = "notfoobar.com"
     assert displayed_hostname != TEST_PRODUCTION_HOSTNAME
     settings = {
-        "feedback_tool.talent_manager_usernames": [TEST_OTHER_MANAGER_USERNAME],
-        "feedback_tool.served_on_https": True,
-        "feedback_tool.homebase_location": "London",
-        "feedback_tool.production_hostname": TEST_PRODUCTION_HOSTNAME,
-        "feedback_tool.production_user": TEST_PRODUCTION_USER,
-        "feedback_tool.enable_send_email": True,
+        "adaero.talent_manager_usernames": [TEST_OTHER_MANAGER_USERNAME],
+        "adaero.served_on_https": True,
+        "adaero.homebase_location": "London",
+        "adaero.production_hostname": TEST_PRODUCTION_HOSTNAME,
+        "adaero.production_user": TEST_PRODUCTION_USER,
+        "adaero.enable_send_email": True,
     }
 
     if with_envvar:
@@ -295,8 +295,8 @@ def test_do_not_send_emails_when_not_in_production(
     dbsession = get_dbsession(app)
     add_test_data_for_stats(dbsession)
     settings = {
-        "feedback_tool.talent_manager_usernames": [TEST_TALENT_MANAGER_USERNAME],
-        "feedback_tool.homebase_location": "London",
+        "adaero.talent_manager_usernames": [TEST_TALENT_MANAGER_USERNAME],
+        "adaero.homebase_location": "London",
     }
 
     with patch("smtplib.SMTP") as smtp_mock, patch(
@@ -319,8 +319,8 @@ def test_emailing_works_with_different_tm_username_config(
     add_test_data_for_stats(dbsession)
     json_str = '["%s"]' % TEST_OTHER_MANAGER_USERNAME
     settings = {
-        "feedback_tool.talent_manager_usernames": json_str,
-        "feedback_tool.homebase_location": "London",
+        "adaero.talent_manager_usernames": json_str,
+        "adaero.homebase_location": "London",
     }
 
     with patch("smtplib.SMTP") as smtp_mock, patch(
@@ -385,10 +385,10 @@ def test_send_emails_according_to_configured_location(
     freezer.stop()
     # needs to be outside configured employees at a minimum
     settings = {
-        "feedback_tool.talent_manager_usernames": [TEST_OTHER_MANAGER_USERNAME],
-        "feedback_tool.served_on_https": True,
-        "feedback_tool.homebase_location": location,
-        "feedback_tool.enable_send_email": True,
+        "adaero.talent_manager_usernames": [TEST_OTHER_MANAGER_USERNAME],
+        "adaero.served_on_https": True,
+        "adaero.homebase_location": location,
+        "adaero.enable_send_email": True,
     }
 
     with patch("smtplib.SMTP") as smtp_mock, patch(

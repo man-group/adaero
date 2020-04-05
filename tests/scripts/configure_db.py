@@ -2,7 +2,7 @@ import click
 from faker import Faker
 import transaction
 
-from feedback_tool.models import (
+from adaero.models import (
     get_session_factory,
     get_tm_session,
     Period,
@@ -10,7 +10,7 @@ from feedback_tool.models import (
     Nominee,
     generate_period_dates,
 )
-from feedback_tool.scripts.configure_db import (
+from adaero.scripts.configure_db import (
     cli,
     ENGINE_KEY,
     SUBPERIOD_CHOICES,

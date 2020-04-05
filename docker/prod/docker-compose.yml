@@ -4,7 +4,7 @@ services:
     image: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/feedback-tool.conf:/etc/nginx/sites-enabled/feedback-tool.conf:ro
+      - ./nginx/adaero.conf:/etc/nginx/sites-enabled/adaero.conf:ro
     ports:
       - "8080:8080"
     networks:
@@ -12,7 +12,7 @@ services:
     depends_on:
       - webapp
   webapp:
-    image: feedback-tool-app:latest
+    image: adaero-app:latest
     networks:
       - web
       - db

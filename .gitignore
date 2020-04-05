@@ -27,14 +27,14 @@ tests/unit/__pycache__
 *.DS_Store
 *.sqlite3
 # generated static assets should never be stored in repo
-feedback_tool/static/3rdpartylicenses.txt
-feedback_tool/static/*.js
-feedback_tool/static/*.map
-feedback_tool/static/*.css
-feedback_tool/static/index.html
-feedback_tool/local.ini
+adaero/static/3rdpartylicenses.txt
+adaero/static/*.js
+adaero/static/*.map
+adaero/static/*.css
+adaero/static/index.html
+adaero/local.ini
 docker/bin/docker_common.sh
-feedback_tool/test.ini
+adaero/test.ini
 frontend/package-lock.json
 
 .tox

@@ -4,8 +4,8 @@ from datetime import datetime
 
 import pytest
 
-import feedback_tool.date
-from feedback_tool.models import User
+import adaero.date
+from adaero.models import User
 
 
 @pytest.mark.parametrize(
@@ -137,6 +137,6 @@ from feedback_tool.models import User
 def test_datetimeformat_works(value, man_location, format_, expected):
     user = User(username="foo", location=man_location)
     if format_:
-        assert expected == feedback_tool.date.datetimeformat(value, user, format_)
+        assert expected == adaero.date.datetimeformat(value, user, format_)
     else:
-        assert expected == feedback_tool.date.datetimeformat(value, user)
+        assert expected == adaero.date.datetimeformat(value, user)

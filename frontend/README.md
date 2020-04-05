@@ -1,8 +1,8 @@
-# feedback-tool-frontend
+# adaero-frontend
 
 ## Development server
 
-Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. All HTTP calls to `/api` are proxied, so please have the `feedback_tool` Pyramid backend running in development mode.
+Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. All HTTP calls to `/api` are proxied, so please have the `adaero` Pyramid backend running in development mode.
 
 ## Code scaffolding
 

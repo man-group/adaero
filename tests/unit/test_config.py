@@ -2,8 +2,8 @@ import pytest
 import pyramid.testing
 import os
 
-from feedback_tool import config
-from feedback_tool import constants
+from adaero import config
+from adaero import constants
 
 DEFAULT_SETTINGS = {
     constants.CHECK_AND_SEND_EMAIL_INT_KEY: "60",

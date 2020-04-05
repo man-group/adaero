@@ -9,13 +9,13 @@ import transaction
 from logging import getLogger as get_logger
 
 import tests.integration.constants
-from feedback_tool import constants as app_constants
-from feedback_tool.models import ExternalInvite, Period, User
-from feedback_tool.security import (
+from adaero import constants as app_constants
+from adaero.models import ExternalInvite, Period, User
+from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
     ANGULAR_2_XSRF_TOKEN_HEADER_NAME,
 )
-from feedback_tool.security import ldapauth
+from adaero.security import ldapauth
 from .conftest import successfully_login, get_dbsession
 from ..constants import (
     TEST_EMPLOYEE_USERNAME,

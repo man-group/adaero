@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from datetime import datetime
 
-from feedback_tool.security.ldapauth import DIRECT_REPORTS_KEY
+from adaero.security.ldapauth import DIRECT_REPORTS_KEY
 
 TEST_UTCNOW = datetime(year=2017, month=11, day=22, hour=9, minute=23)
 TEST_USERNAME_KEY = "username"

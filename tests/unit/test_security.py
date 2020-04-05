@@ -2,8 +2,8 @@ import mock
 from pyramid.security import Everyone, Authenticated
 import pytest
 
-from feedback_tool import constants, security
-from feedback_tool.models import User
+from adaero import constants, security
+from adaero.models import User
 
 TEST_USERNAME = "fbar"
 

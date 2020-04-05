@@ -21,7 +21,7 @@ export class GiveFeedbackComponent implements ComponentCanDeactivate, OnInit {
     username: String;
     formState: FormState = FormState.Editing;
     successButtonLink = '/feedback';
-    @ViewChild('formComponent') formComponent: FeedbackFormComponent;
+    @ViewChild('formComponent', { static: true }) formComponent: FeedbackFormComponent;
 
     readonly formInfo = `<p>Thank you for taking the time to provide feedback on one of your colleagues.</p>
     <p>You will be asked to answer some simple questions:</p>

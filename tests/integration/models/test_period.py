@@ -8,9 +8,9 @@ import pytest
 import transaction
 from sqlalchemy.exc import IntegrityError
 
-from feedback_tool.models.all import CheckError
-from feedback_tool.models.period import Period
-from feedback_tool.models import generate_period_dates
+from adaero.models.all import CheckError
+from adaero.models.period import Period
+from adaero.models import generate_period_dates
 from ..constants import TEST_UTCNOW
 from ..conftest import next_day_generator, days_from_utcnow
 

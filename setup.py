@@ -15,7 +15,7 @@ def readme():
         return ""
 
 setup(
-    name='feedback_tool',
+    name='adaero',
 
     version='1.0.0',
 
@@ -23,8 +23,8 @@ setup(
     long_description=readme(),
     long_description_content_type='text/markdown',
     # The project's main homepage.
-    url='https://github.com/manahl/feedback_tool',
-    download_url='https://github.com/manahl/feedback_tool/archive/v1.0.0.tar.gz',
+    url='https://github.com/man-group/adaero',
+    download_url='https://github.com/man-group/adaero/archive/v1.0.0.tar.gz',
 
     # Author details
     author='MAN Alpha Tech',
@@ -65,7 +65,7 @@ setup(
         'pyramid_tm',
         'SQLAlchemy',
         'transaction',
-        'zope.sqlalchemy',
+        'zope.sqlalchemy==1.1',
         'pycrypto',
         'rest_toolkit',
         'python-dateutil',
@@ -113,11 +113,11 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'feedback_tool=feedback_tool.scripts.feedback_app:main',
-            'configure_db=feedback_tool.scripts.configure_db:cli',
+            'adaero=adaero.scripts.feedback_app:main',
+            'configure_db=adaero.scripts.configure_db:cli',
         ],
         'paste.app_factory': [
-            'main = feedback_tool:main'
+            'main = adaero:main'
         ]
     },
 )

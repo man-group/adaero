@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 import pytest
 import transaction
 
-from feedback_tool.models import Period, Nominee, ExternalInvite
-from feedback_tool.security import (
+from adaero.models import Period, Nominee, ExternalInvite
+from adaero.security import (
     ANGULAR_2_XSRF_TOKEN_COOKIE_NAME,
     ANGULAR_2_XSRF_TOKEN_HEADER_NAME,
 )
-from feedback_tool.views.nomination import (
+from adaero.views.nomination import (
     ENROLLMENT_EXISTS_TEMPLATE,
     ENROLLMENT_ACTIVE_TEMPLATE,
     ENROLLMENT_INACTIVE_TEMPLATE,

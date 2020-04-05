@@ -69,7 +69,7 @@ import { ExternalInviteComponent } from './components/views/external-invite/exte
     HttpClientModule,
     HttpClientXsrfModule,
     FormsModule,
-    NgbModule.forRoot(),
+    NgbModule,
     // local modules
     AppRoutingModule,
   ],
