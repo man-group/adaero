@@ -11,8 +11,8 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: posixAccount
 objectClass: top
-uid: abarnes
-homeDirectory: /home/abarnes
+uid: alovelace
+homeDirectory: /home/alovelace
 userpassword: password
 givenname: Ada
 cn: Ada Lovelace

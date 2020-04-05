@@ -11,35 +11,65 @@ We found that off-the-shelf tools weren’t cutting it, and so we built our own 
 
 [![Build status](https://circleci.com/gh/man-group/adaero.svg?style=svg)](https://circleci.com/gh/man-group/adaero)
 
-## Docker Quickstart
+## Building and running
 
+The following steps were run on a minimal install of Ubuntu LTS 18.04.4
+
+### Steps
+
+0. Ensure you have the pre-requisites installed
+   ```
+   sudo apt install docker.io python3 python3-pip curl
+   sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   sudo chmod +x /usr/local/bin/docker-compose
+   ```
 1. Build and Run the application on local Docker
-```
-cd frontend
-docker build -t adaero-dev-frontend . 
-cd ..
-docker build -t adaero-webapp . 
-cd docker/dev
-docker-compose up -d
-```
+   ```
+   cd frontend
+   sudo docker build -t adaero-dev-frontend . 
+   cd ..
+   sudo docker build -t adaero-app . 
+   cd docker/dev
+   docker-compose up -d
+   ```
 
 2. Setup a dummy template, 3 question and period data to carry out a feedback cycle.
-```
-cd ../..
-python setup.py develop
-pip install faker freezegun webtest mock 
-python tests/scripts/configure_db.py --config host_example.ini add-test-periods
-```
+   ```
+   cd ../..
+   sudo pip3 install -e .
+   sudo pip3 install pytest faker freezegun webtest mock 
+   python3 tests/scripts/configure_db.py --config host_example.ini add-test-periods
+   ```
 
-3. Once fully started, open http://localhost:4200. Refer to `docker/shared/ldif/01-data.ldif` 
-for credentials for dummy users. Use the following commands to change phases.
+3. Once fully started, open http://localhost:4200. The table below shows the users 
+   and their role within the app. Source is `docker/shared/ldif/01-data.ldif`
 
-```
-python tests/scripts/configure_db.py --config host_example.ini --subperiod enrollment adjust
-python tests/scripts/configure_db.py --config host_example.ini --subperiod entry adjust
-python tests/scripts/configure_db.py --config host_example.ini --subperiod approval adjust
-python tests/scripts/configure_db.py --config host_example.ini --subperiod review adjust
-```
+   | Username   | Password | Role                          |
+   | ---------- | -------- | ----------------------------- |
+   | alovelace  | password | Employee, managed by dthomas  |
+   | bsmith     | password | Employee, managed by dthomas  |
+   | cdalton    | password | Employee, managed by dthomas  |
+   | dthomas    | password | Employee, managed by eforshaw |
+   | eforshaw   | password | Manager, Talent Manager       |
+
+4. Login as `eforshaw`. The "Talent Manager Panel" option should be available on the
+   left. Select that, and scroll down to "Generate population CSV template". Enter into the
+   textbox "Engineering" (corresponds to `o` in the LDIF file) and click 
+   "Generate and download". This is a CSV view of relevant information in LDAP required to 
+   build a population.
+
+5. Scroll to the bottom and on the "Upload new population CSV" feature, upload the CSV.
+   You can logout and login as the employees, and according to different phases, you can 
+   carry out a feedback cycle.
+
+6. Use the following commands to change phases.
+
+   ```
+   python3 tests/scripts/configure_db.py --config host_example.ini --subperiod enrollment adjust
+   python3 tests/scripts/configure_db.py --config host_example.ini --subperiod entry adjust
+   python3 tests/scripts/configure_db.py --config host_example.ini --subperiod approval adjust
+   python3 tests/scripts/configure_db.py --config host_example.ini --subperiod review adjust
+   ```
 
 ![Login screen](/docs/login.png?raw=true "Login screen")
 ![Initial screen for user eforshaw](/docs/welcome.png?raw=true "Initial screen for user eforshaw")
@@ -71,8 +101,6 @@ this will enable:
 * Loading of all user emails for the given business unit unless
   `adaero.load_user_email_list` is set, which then will only
   load the subset of the user emails in the list.
-
-<a name="homebase-location">
 
 #### `adaero.homebase_location`
 The datetimes set in the Period table are technically not UTC. Those times 

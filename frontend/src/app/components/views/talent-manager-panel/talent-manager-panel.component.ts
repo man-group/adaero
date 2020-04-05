@@ -26,7 +26,7 @@ export class TalentManagerPanelComponent implements OnInit, OnDestroy {
   csvGenerationForm: CSVGenerationForm = {'businessUnit': ''};
   csvUploadForm: CSVUploadForm = {'populationFile': ''};
   csvGenerationSubmitting: boolean = false;
-  @ViewChild('inputFile') private inputFile: ElementRef;
+  @ViewChild('inputFile', { static: true }) private inputFile: ElementRef;
 
 
   // button text and template key is aligned with adaero/constants.py

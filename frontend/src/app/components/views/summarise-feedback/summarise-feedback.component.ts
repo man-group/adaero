@@ -20,7 +20,7 @@ export class SummariseFeedbackComponent implements OnInit {
   username: String;
   formState: FormState = FormState.Editing;
   successButtonLink = '/team-feedback';
-  @ViewChild('formComponent') formComponent: FeedbackFormComponent;
+  @ViewChild('formComponent', { static: true }) formComponent: FeedbackFormComponent;
 
   readonly formInfo = `<p>For each question, please review, edit & summarize the feedback that has been given:</p>
     <ul>
