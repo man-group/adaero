@@ -64,15 +64,15 @@ class Period(Base, Checkable, Serializable):
         ),
     )
 
-    INACTIVE_SUBPERIOD = "inactive_subperiod"
-    ENROLMENT_SUBPERIOD = "enrolment_subperiod"
-    ENTRY_SUBPERIOD = "entry_subperiod"
-    APPROVAL_SUBPERIOD = "approval_subperiod"
-    REVIEW_SUBPERIOD = "review_subperiod"
+    INACTIVE_PHASE = "inactive_phase"
+    ENROLMENT_PHASE = "enrolment_phase"
+    ENTRY_PHASE = "entry_phase"
+    APPROVAL_PHASE = "approval_phase"
+    REVIEW_PHASE = "review_phase"
 
     # This is only really used by emailing - a user can always view
     # previous summarised feedback
-    REVIEW_SUBPERIOD_LEN_DAYS = 30
+    REVIEW_PHASE_LEN_DAYS = 30
     PERIOD_LOOKAHEAD_DAYS = 120
 
     def __repr__(self):
@@ -177,36 +177,36 @@ class Period(Base, Checkable, Serializable):
         elif code == "ust07":
             return self.review_reminder_last_sent
 
-    def subperiod(self, location):
+    def phase(self, location):
         utcnow = datetime.utcnow()
         converted_dt = partial(adjust_dt_for_location, location=location)
         if converted_dt(self.approval_end_utc) <= utcnow:
-            return self.REVIEW_SUBPERIOD
+            return self.REVIEW_PHASE
         elif converted_dt(self.approval_start_utc) <= utcnow:
-            return self.APPROVAL_SUBPERIOD
+            return self.APPROVAL_PHASE
         elif converted_dt(self.entry_start_utc) <= utcnow:
-            return self.ENTRY_SUBPERIOD
+            return self.ENTRY_PHASE
         elif converted_dt(self.enrolment_start_utc) <= utcnow:
-            return self.ENROLMENT_SUBPERIOD
+            return self.ENROLMENT_PHASE
         else:
-            return self.INACTIVE_SUBPERIOD
+            return self.INACTIVE_PHASE
 
-    SUBPERIOD_TO_TEMPLATE = {
-        REVIEW_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.REVIEW_START],
-        APPROVAL_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.APPROVE_START],
-        ENTRY_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.ENTRY_START],
-        ENROLMENT_SUBPERIOD: constants.EMAIL_TEMPLATE_MAP[constants.ENROL_START],
+    PHASE_TO_TEMPLATE = {
+        REVIEW_PHASE: constants.EMAIL_TEMPLATE_MAP[constants.REVIEW_START],
+        APPROVAL_PHASE: constants.EMAIL_TEMPLATE_MAP[constants.APPROVE_START],
+        ENTRY_PHASE: constants.EMAIL_TEMPLATE_MAP[constants.ENTRY_START],
+        ENROLMENT_PHASE: constants.EMAIL_TEMPLATE_MAP[constants.ENROL_START],
     }
 
     def current_email_template(self, location):
         try:
-            result = self.SUBPERIOD_TO_TEMPLATE[self.subperiod(location)]
+            result = self.PHASE_TO_TEMPLATE[self.phase(location)]
         except KeyError:
             result = None
         return result
 
     @classmethod
-    def get_current_period(cls, dbsession, options=None):
+    def get_current_period(cls, dbsession, options=None) -> "Period":
         utcnow = datetime.utcnow()
         query = dbsession.query(Period)
         if options:
@@ -227,7 +227,7 @@ class Period(Base, Checkable, Serializable):
         elif (
             len(periods_by_date_desc) >= 2
             and (utcnow - periods_by_date_desc[1].enrolment_start_utc).days
-            <= cls.REVIEW_SUBPERIOD_LEN_DAYS
+            <= cls.REVIEW_PHASE_LEN_DAYS
         ):
             current_period = periods_by_date_desc[1]
         else:
@@ -236,9 +236,9 @@ class Period(Base, Checkable, Serializable):
 
 
 OFFSETS = {
-    Period.INACTIVE_SUBPERIOD: -2,
-    Period.ENROLMENT_SUBPERIOD: 0,
-    Period.ENTRY_SUBPERIOD: 2,
-    Period.APPROVAL_SUBPERIOD: 4,
-    Period.REVIEW_SUBPERIOD: 6,
+    Period.INACTIVE_PHASE: -2,
+    Period.ENROLMENT_PHASE: 0,
+    Period.ENTRY_PHASE: 2,
+    Period.APPROVAL_PHASE: 4,
+    Period.REVIEW_PHASE: 6,
 }

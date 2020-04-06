@@ -68,12 +68,12 @@ def get_request_status(request):
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
     current_period = Period.get_current_period(request.dbsession)
-    if current_period.subperiod(location) in [
-        Period.APPROVAL_SUBPERIOD,
-        Period.REVIEW_SUBPERIOD,
+    if current_period.phase(location) in [
+        Period.APPROVAL_PHASE,
+        Period.REVIEW_PHASE,
     ]:
         return interpolate_template(ENTRY_ENDED_TEMPLATE)
-    elif current_period.subperiod(location) in [Period.ENROLMENT_SUBPERIOD]:
+    elif current_period.phase(location) in [Period.ENROLMENT_PHASE]:
         dt = date.datetimeformat(current_period.entry_start_utc, request.user)
         return interpolate_template(PRIOR_ENTRY_TEMPLATE, entry_start=dt)
 
@@ -145,7 +145,7 @@ def post_request(request):
         settings, constants.SUPPORT_EMAIL_KEY, "your IT support for this tool"
     )
     with transaction.manager:
-        if current_period.subperiod(location) != Period.ENTRY_SUBPERIOD:
+        if current_period.phase(location) != Period.ENTRY_PHASE:
             raise HTTPBadRequest(
                 explanation="Can only send invite during " 'the "Give feedback" period.'
             )

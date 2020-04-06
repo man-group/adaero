@@ -46,17 +46,17 @@ NOMINATED_USER_FEEDBACK_ENDPOINT = "/api/v1/feedback/%s/" % NOMINATED_USERNAME
 UNNOMINATED_USER_FEEDBACK_ENDPOINT = "/api/v1/feedback/%s/" % UNNOMINATED_USERNAME
 
 
-def test_employee_can_get_blank_feedback_form_to_valid_enrollee_while_inside_entry_subperiod(
-    app_with_enrollees_inside_entry_subperiod,
+def test_employee_can_get_blank_feedback_form_to_valid_enrollee_while_inside_entry_phase(
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
 
     response = app.get(NOMINATED_USER_FEEDBACK_ENDPOINT)
     form = response.json_body.get("form")
     end_date = form["endDate"]
-    # note in entry subperiod for `generate_period_dates` hence 1 day offset
+    # note in entry phase for `generate_period_dates` hence 1 day offset
     man_location = TEST_LDAP_FULL_DETAILS[TEST_EMPLOYEE_USERNAME][LDAP_LOCATION_ATTR]
     assert end_date == datetimeformat(
         TEST_UTCNOW + timedelta(days=1), User(location=man_location)
@@ -86,11 +86,11 @@ def test_employee_can_get_blank_feedback_form_to_valid_enrollee_while_inside_ent
         assert generated["caption"] == expected[1]
 
 
-def test_employee_can_give_valid_feedback_form_to_valid_enrol_while_inside_entry_subperiod(
-    app_with_enrollees_inside_entry_subperiod,
+def test_employee_can_give_valid_feedback_form_to_valid_enrol_while_inside_entry_phase(
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     expected_questions = []
@@ -127,14 +127,14 @@ def test_employee_can_give_valid_feedback_form_to_valid_enrol_while_inside_entry
         assert generated["answer"] == expected_a["answer"]
 
 
-def test_employee_cannot_give_feedback_form_with_missing_answers_to_valid_enrol_while_inside_entry_subperiod(
-    app_with_enrollees_inside_entry_subperiod,
+def test_employee_cannot_give_feedback_form_with_missing_answers_to_valid_enrol_while_inside_entry_phase(
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     """This is just testing the API, not the frontend, which *should*
     always send same number of answers as questions, even when answers are
     blank."""
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     missing_answers = [
@@ -151,11 +151,11 @@ def test_employee_cannot_give_feedback_form_with_missing_answers_to_valid_enrol_
     assert response.status_code == 400
 
 
-def test_employee_can_update_valid_feedback_form_to_valid_enrol_while_inside_entry_subperiod(
-    app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,
+def test_employee_can_update_valid_feedback_form_to_valid_enrol_while_inside_entry_phase(
+    app_with_enrollees_and_existing_feedback_form_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,  # noqa: E501
+        app_with_enrollees_and_existing_feedback_form_inside_entry_phase,  # noqa: E501
         TEST_EMPLOYEE_USERNAME,
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
@@ -192,11 +192,11 @@ def test_employee_can_update_valid_feedback_form_to_valid_enrol_while_inside_ent
         assert generated["answer"] == expected["answer"]
 
 
-def test_employee_cannot_update_feedback_form_with_missing_answer_ids_to_valid_enrol_while_inside_entry_subperiod(
-    app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,
+def test_employee_cannot_update_feedback_form_with_missing_answer_ids_to_valid_enrol_while_inside_entry_phase(
+    app_with_enrollees_and_existing_feedback_form_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,  # noqa: E501
+        app_with_enrollees_and_existing_feedback_form_inside_entry_phase,  # noqa: E501
         TEST_EMPLOYEE_USERNAME,
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
@@ -222,11 +222,11 @@ def test_employee_cannot_update_feedback_form_with_missing_answer_ids_to_valid_e
     assert response.status_code == 400
 
 
-def test_employee_cannot_update_feedback_form_with_unauthorized_answer_ids_to_valid_enrol_while_inside_entry_subperiod(
-    app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,
+def test_employee_cannot_update_feedback_form_with_unauthorized_answer_ids_to_valid_enrol_while_inside_entry_phase(
+    app_with_enrollees_and_existing_feedback_form_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,  # noqa: E501
+        app_with_enrollees_and_existing_feedback_form_inside_entry_phase,  # noqa: E501
         TEST_EMPLOYEE_USERNAME,
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
@@ -258,8 +258,8 @@ def test_employee_cannot_update_feedback_form_with_unauthorized_answer_ids_to_va
     assert response.status_code == 400
 
 
-def test_employee_cannot_give_and_update_feedback_to_valid_enrollee_if_outside_entry_subperiod(
-    app_with_enrollees_inside_approval_subperiod,
+def test_employee_cannot_give_and_update_feedback_to_valid_enrollee_if_outside_entry_phase(
+    app_with_enrollees_inside_approval_phase,
 ):  # noqa: E501
     """GIVEN I am logged in
     AND I have previously given feedback on a employee
@@ -270,7 +270,7 @@ def test_employee_cannot_give_and_update_feedback_to_valid_enrollee_if_outside_e
     item
     """
     app = successfully_login(
-        app_with_enrollees_inside_approval_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_approval_phase, TEST_EMPLOYEE_USERNAME
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
 
@@ -288,10 +288,10 @@ def test_employee_cannot_give_and_update_feedback_to_valid_enrollee_if_outside_e
 
 
 def test_employee_cannot_give_and_update_feedback_on_invalid_enrollee(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
 

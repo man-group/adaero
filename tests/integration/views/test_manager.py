@@ -113,7 +113,7 @@ def init_approval_state_dbsession(ldap_mocked_app_with_users):
 
 
 def add_test_data_for_stats(
-    _dbsession, current_subperiod=Period.APPROVAL_SUBPERIOD, days_in=1
+    _dbsession, current_phase=Period.APPROVAL_PHASE, days_in=1
 ):
     """Not trying to test mutability of existing rows so no need to track
     ids, so just need to make sure we have 2 separate periods with multiple
@@ -122,7 +122,7 @@ def add_test_data_for_stats(
     template_id = add_test_template(_dbsession)
     current_period_id = add_test_period_with_template(
         _dbsession,
-        current_subperiod,
+        current_phase,
         template_id,
         period_id=TEST_PERIOD_ID,
         period_name=TEST_PERIOD_NAME,
@@ -131,7 +131,7 @@ def add_test_data_for_stats(
     )
     previous_period_id = add_test_period_with_template(
         _dbsession,
-        Period.APPROVAL_SUBPERIOD,
+        Period.APPROVAL_PHASE,
         template_id,
         period_id=TEST_PREVIOUS_PERIOD_ID,
         period_name=TEST_PREVIOUS_PERIOD_NAME,
@@ -299,20 +299,20 @@ def add_test_data_for_stats(
 
 
 def test_external_cannot_get_team_feedback_stats(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/team-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_team_feedback_stats(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
     response = app.get("/api/v1/team-stats", expect_errors=True)
     assert response.status_code == 403
@@ -388,7 +388,7 @@ def _add_extra_periods(dbsession):
     with transaction.manager:
         for i in range(1, 3):
             dates_dict = generate_period_dates(
-                Period.INACTIVE_SUBPERIOD,
+                Period.INACTIVE_PHASE,
                 lambda days: (
                     datetime.utcnow() - timedelta(days=i * 30) + timedelta(days=days)
                 ),
@@ -416,7 +416,7 @@ def test_manager_can_get_own_team_feedback_stats_outside_approval_period(
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
-    add_test_data_for_stats(dbsession, current_subperiod=Period.ENTRY_SUBPERIOD)
+    add_test_data_for_stats(dbsession, current_phase=Period.ENTRY_PHASE)
     _add_extra_periods(dbsession)
     response = app.get("/api/v1/team-stats")
     expected = ADD_TEST_DATA_FOR_STATS_EXPECTED_STATE
@@ -494,7 +494,7 @@ def test_manager_can_get_initial_summary_for_direct_report(
 
     end_date = response_1.json_body["summary"]["endDate"]
 
-    # note in entry subperiod for `generate_period_dates` hence 1 day offset
+    # note in entry phase for `generate_period_dates` hence 1 day offset
     man_location = TEST_LDAP_FULL_DETAILS[TEST_EMPLOYEE_USERNAME][LDAP_LOCATION_ATTR]
     assert end_date == datetimeformat(
         TEST_UTCNOW + timedelta(days=1), User(location=man_location)
@@ -578,7 +578,7 @@ def test_manager_can_summarise_when_also_giver(ldap_mocked_app_with_users):
         template_id = add_test_template(dbsession)
         current_period_id = add_test_period_with_template(
             dbsession,
-            Period.APPROVAL_SUBPERIOD,
+            Period.APPROVAL_PHASE,
             template_id,
             period_id=TEST_PERIOD_ID,
             period_name=TEST_PERIOD_NAME,
@@ -659,15 +659,15 @@ def test_manager_cannot_summarise_for_non_enrolled_direct_report(
 
 
 @pytest.mark.parametrize(
-    "subperiod", (Period.ENROLMENT_SUBPERIOD, Period.ENTRY_SUBPERIOD)
+    "phase", (Period.ENROLMENT_PHASE, Period.ENTRY_PHASE)
 )
-def test_manager_cannot_summarise_during_illegal_subperiod(
-    ldap_mocked_app_with_users, subperiod
+def test_manager_cannot_summarise_during_illegal_phase(
+    ldap_mocked_app_with_users, phase
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     dbsession = get_dbsession(app)
-    add_test_data_for_stats(dbsession, current_subperiod=subperiod)
+    add_test_data_for_stats(dbsession, current_phase=phase)
     endpoint = "/api/v1/summarise/%s/" % TEST_EMPLOYEE_USERNAME
     response = app.get(endpoint, expect_errors=True)
     assert response.status_code == 404
@@ -687,7 +687,7 @@ def test_manager_can_only_view_summary_during_review(
     app = successfully_login(ldap_mocked_app_with_users, TEST_MANAGER_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     dbsession = get_dbsession(app)
-    add_test_data_for_stats(dbsession, current_subperiod=Period.REVIEW_SUBPERIOD)
+    add_test_data_for_stats(dbsession, current_phase=Period.REVIEW_PHASE)
     endpoint = "/api/v1/summarise/%s/" % TEST_EMPLOYEE_USERNAME
     response = app.get(endpoint)
     assert response.json_body["summary"]["readOnly"]

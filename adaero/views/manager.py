@@ -77,9 +77,9 @@ class SummariseFeedbackResource(Root):
         location = get_config_value(
             request.registry.settings, constants.HOMEBASE_LOCATION_KEY
         )
-        if self.current_period.subperiod(location) not in [
-            Period.APPROVAL_SUBPERIOD,
-            Period.REVIEW_SUBPERIOD,
+        if self.current_period.phase(location) not in [
+            Period.APPROVAL_PHASE,
+            Period.REVIEW_PHASE,
         ]:
             raise HTTPNotFound(
                 explanation="Currently not in the approval or " "review period."
@@ -174,7 +174,7 @@ def put_summary(context, request):
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
 
-    if current_period.subperiod(location) != Period.APPROVAL_SUBPERIOD:
+    if current_period.phase(location) != Period.APPROVAL_PHASE:
         raise HTTPNotFound(explanation="Currently not in the approval " "period.")
 
     return update_feedback_form(context, request, True)

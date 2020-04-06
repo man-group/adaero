@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+import transaction
 
 from pyramid.httpexceptions import HTTPUnauthorized, HTTPOk
 from pyramid.security import (
@@ -12,9 +12,10 @@ from pyramid.security import (
 from logging import getLogger as get_logger
 from rest_toolkit import resource
 
-from adaero.constants import ALLOW_PASSWORDLESS_ACCESS_KEY, BUSINESS_UNIT_KEY
+from adaero.constants import ALLOW_PASSWORDLESS_ACCESS_KEY, BUSINESS_UNIT_KEY, HOMEBASE_LOCATION_KEY
 from adaero.config import get_config_value
-from adaero.security import ldapauth, ANGULAR_2_XSRF_TOKEN_COOKIE_NAME
+from adaero.models.period import Period
+from adaero.security import ANGULAR_2_XSRF_TOKEN_COOKIE_NAME
 from adaero.views import Root
 
 
@@ -27,6 +28,11 @@ def _build_user_data_response(request, username):
         ANGULAR_2_XSRF_TOKEN_COOKIE_NAME, request.session.get_csrf_token()
     )
     unit_name = get_config_value(request.registry.settings, BUSINESS_UNIT_KEY)
+    location = get_config_value(
+        request.registry.settings, HOMEBASE_LOCATION_KEY
+    )
+    with transaction.manager:
+        current_period = Period.get_current_period(request.dbsession)
     return {
         "success": True,
         "data": {
@@ -34,6 +40,7 @@ def _build_user_data_response(request, username):
             "title": request.user.position,
             "principals": request.effective_principals,
             "businessUnit": unit_name,
+            "currentPhase": current_period.phase(location),
         },
     }
 

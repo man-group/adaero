@@ -41,9 +41,9 @@ from tests.integration.views.test_manager import (
 
 
 def test_employee_can_get_correct_enrolment_status_when_in_enrolment_period(
-    app_in_enrolment_subperiod,
+    app_in_enrolment_phase,
 ):  # noqa: E501
-    app = successfully_login(app_in_enrolment_subperiod, TEST_EMPLOYEE_USERNAME)
+    app = successfully_login(app_in_enrolment_phase, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     response = app.get(
         "/api/v1/enrol", headers={ANGULAR_2_XSRF_TOKEN_HEADER_NAME: csrf_token}
@@ -112,16 +112,16 @@ def test_employee_can_get_correct_enrolment_status_when_outside_enrolment_period
 
 
 def test_employee_can_get_correct_enrolment_status_when_already_enrolled(
-    app_in_enrolment_subperiod,
+    app_in_enrolment_phase,
 ):  # noqa: E501
-    dbsession = get_dbsession(app_in_enrolment_subperiod)
+    dbsession = get_dbsession(app_in_enrolment_phase)
 
     with transaction.manager:
         period = dbsession.query(Period).first()
         enrollee = Enrollee(period=period, username=TEST_EMPLOYEE_USERNAME)
         dbsession.add(enrollee)
 
-    app = successfully_login(app_in_enrolment_subperiod, TEST_EMPLOYEE_USERNAME)
+    app = successfully_login(app_in_enrolment_phase, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     response = app.get(
         "/api/v1/enrol", headers={ANGULAR_2_XSRF_TOKEN_HEADER_NAME: csrf_token}
@@ -140,9 +140,9 @@ def test_employee_can_get_correct_enrolment_status_when_already_enrolled(
 
 
 def test_employee_can_self_enrol_under_valid_conditions(
-    app_in_enrolment_subperiod,
+    app_in_enrolment_phase,
 ):  # noqa: E501
-    app = successfully_login(app_in_enrolment_subperiod, TEST_EMPLOYEE_USERNAME)
+    app = successfully_login(app_in_enrolment_phase, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     response = app.post(
         "/api/v1/enrol", headers={ANGULAR_2_XSRF_TOKEN_HEADER_NAME: csrf_token}
@@ -161,16 +161,16 @@ def test_employee_can_self_enrol_under_valid_conditions(
 
 
 def test_employee_cannot_self_enrol_if_already_enrolled(
-    app_in_enrolment_subperiod,
+    app_in_enrolment_phase,
 ):  # noqa: E501
-    dbsession = get_dbsession(app_in_enrolment_subperiod)
+    dbsession = get_dbsession(app_in_enrolment_phase)
 
     with transaction.manager:
         period = dbsession.query(Period).first()
         enrollee = Enrollee(period=period, username=TEST_EMPLOYEE_USERNAME)
         dbsession.add(enrollee)
 
-    app = successfully_login(app_in_enrolment_subperiod, TEST_EMPLOYEE_USERNAME)
+    app = successfully_login(app_in_enrolment_phase, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     response = app.post(
         "/api/v1/enrol",
@@ -181,7 +181,7 @@ def test_employee_cannot_self_enrol_if_already_enrolled(
     assert "You are already enrolled" in response.json_body["message"]
 
 
-def test_employee_cannot_self_enrol_when_not_in_valid_enrolment_subperiod(
+def test_employee_cannot_self_enrol_when_not_in_valid_enrolment_phase(
     ldap_mocked_app_with_users,
 ):  # noqa: E501
     dbsession = get_dbsession(ldap_mocked_app_with_users)
@@ -207,20 +207,20 @@ def test_employee_cannot_self_enrol_when_not_in_valid_enrolment_subperiod(
 
 
 def test_anonymous_cannot_get_enrollees(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
-    app = app_with_enrollees_inside_entry_subperiod
+    app = app_with_enrollees_inside_entry_phase
     logout(app)
 
     response = app.get("/api/v1/enrollees", expect_errors=True)
     assert response.status_code == 401
 
 
-def test_employee_can_list_enrollees_inside_entry_subperiod(
-    app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,
+def test_employee_can_list_enrollees_inside_entry_phase(
+    app_with_enrollees_and_existing_feedback_form_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,  # noqa: E501
+        app_with_enrollees_and_existing_feedback_form_inside_entry_phase,  # noqa: E501
         TEST_EMPLOYEE_USERNAME,
     )
     response = app.get("/api/v1/enrollees")
@@ -258,11 +258,11 @@ def test_employee_can_list_enrollees_inside_entry_subperiod(
     assert expected == sorted_response
 
 
-def test_external_can_list_enrollee_inviters_inside_entry_subperiod(
-    app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,
+def test_external_can_list_enrollee_inviters_inside_entry_phase(
+    app_with_enrollees_and_existing_feedback_form_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,  # noqa: E501
+        app_with_enrollees_and_existing_feedback_form_inside_entry_phase,  # noqa: E501
         TEST_COMPANY_COLLEAGUE_USERNAME,
     )
     response = app.get("/api/v1/enrollees")
@@ -274,7 +274,7 @@ def test_external_can_list_enrollee_inviters_inside_entry_subperiod(
     # add irrevelant external invite for previous period
     add_test_period_with_template(
         dbsession,
-        Period.ENTRY_SUBPERIOD,
+        Period.ENTRY_PHASE,
         1,
         period_id=TEST_PREVIOUS_PERIOD_ID,
         period_name=TEST_PREVIOUS_PERIOD_NAME,
@@ -304,14 +304,14 @@ def test_external_can_list_enrollee_inviters_inside_entry_subperiod(
     assert not response.json_body["enrollees"][0]["hasExistingFeedback"]
 
 
-def test_employee_can_list_enrollees_inside_entry_subperiod_2(
+def test_employee_can_list_enrollees_inside_entry_phase_2(
     ldap_mocked_app_with_users,
 ):  # noqa: E501
     """A particular DB state that caused failure in the past but
     is not working"""
     app = successfully_login(ldap_mocked_app_with_users, TEST_EMPLOYEE_USERNAME)
     dbsession = get_dbsession(app)
-    add_test_data_for_stats(dbsession, Period.ENTRY_SUBPERIOD)
+    add_test_data_for_stats(dbsession, Period.ENTRY_PHASE)
 
     response = app.get("/api/v1/enrollees")
     assert response.status_code == 200
@@ -349,11 +349,11 @@ def test_employee_can_list_enrollees_inside_entry_subperiod_2(
     assert expected == sorted_response
 
 
-def test_employee_cannot_list_enrollees_outside_entry_subperiod(
-    app_with_enrollees_inside_approval_subperiod,
+def test_employee_cannot_list_enrollees_outside_entry_phase(
+    app_with_enrollees_inside_approval_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_approval_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_approval_phase, TEST_EMPLOYEE_USERNAME
     )
 
     response = app.get("/api/v1/enrollees")

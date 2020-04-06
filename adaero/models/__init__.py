@@ -273,14 +273,14 @@ def includeme(config):
     )
 
 
-def generate_period_dates(subperiod, days_away_func, days_in=1):
+def generate_period_dates(phase, days_away_func, days_in=1):
     if days_in not in [0, 1]:
         raise ValueError("days_in must be 0 or 1")
-    if subperiod not in OFFSETS.keys():
+    if phase not in OFFSETS.keys():
         raise ValueError(
-            "Invalid subperiod %s, please refer to Period model" % subperiod
+            "Invalid phase %s, please refer to Period model" % phase
         )
-    offset = OFFSETS[subperiod]
+    offset = OFFSETS[phase]
     return {
         "enrolment_start_utc": days_away_func(0 - offset - days_in),
         "entry_start_utc": days_away_func(2 - offset - days_in),

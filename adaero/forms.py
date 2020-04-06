@@ -42,10 +42,10 @@ def build_feedback_payload(context, request, is_summary):
     )
     if is_summary:
         end_date_utc = current_period.approval_end_utc
-        read_only = not current_period.subperiod(location) == Period.APPROVAL_SUBPERIOD
+        read_only = not current_period.phase(location) == Period.APPROVAL_PHASE
     else:
         end_date_utc = current_period.approval_start_utc
-        read_only = not current_period.subperiod(location) == Period.ENTRY_SUBPERIOD
+        read_only = not current_period.phase(location) == Period.ENTRY_PHASE
     end_date = datetimeformat(end_date_utc, enrollee.user)
 
     if form:

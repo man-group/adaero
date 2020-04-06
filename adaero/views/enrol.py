@@ -39,12 +39,12 @@ def get_enrollees(request):
     if not current_period:
         return interpolate_template(FEEDBACK_ENDED_TEMPLATE)
 
-    if current_period.subperiod(location) == Period.ENROLMENT_SUBPERIOD:
+    if current_period.phase(location) == Period.ENROLMENT_PHASE:
         return interpolate_template(
             ENTRY_PENDING_TEMPLATE, period_name=current_period.name
         )
 
-    if current_period.subperiod(location) != Period.ENTRY_SUBPERIOD:
+    if current_period.phase(location) != Period.ENTRY_PHASE:
         return interpolate_template(
             ENTRY_ENDED_TEMPLATE, period_name=current_period.name
         )
@@ -212,7 +212,7 @@ def get_request_status(request):
     else:
         is_enrolled = False
 
-    if current_period.subperiod(location) != Period.ENROLMENT_SUBPERIOD:
+    if current_period.phase(location) != Period.ENROLMENT_PHASE:
         return interpolate_template(
             ENROLMENT_INACTIVE_TEMPLATE,
             period_name=current_period.name,
@@ -253,7 +253,7 @@ def self_enrol(request):
             "the meantime. Please contact your "
             "manager for more details."
         )
-    elif current_period.subperiod(location) != Period.ENROLMENT_SUBPERIOD:
+    elif current_period.phase(location) != Period.ENROLMENT_PHASE:
         display_end_date = current_period.entry_start_utc.strftime(
             constants.DEFAULT_DISPLAY_DATETIME_FORMAT
         )

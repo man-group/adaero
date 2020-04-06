@@ -43,11 +43,11 @@ def test_able_to_create_valid(func_scoped_dbsession):
         dbsession.add(period)
 
 
-def test_unable_to_create_overlapping_subperiods(func_scoped_dbsession):
+def test_unable_to_create_overlapping_phases(func_scoped_dbsession):
     dbsession = func_scoped_dbsession
     if dbsession.connection().engine.driver.lower() != "cx_oracle":
         pytest.skip("Only for oracle driver")
-    # cannot have overlapping subperiods e.g. enrolment, review
+    # cannot have overlapping phases e.g. enrolment, review
     next_day = next_day_generator()
     dt = next(next_day)
     next_year = dt + timedelta(days=365)
@@ -256,11 +256,11 @@ NEXT = 2
         # just inside lookahead
         (-400, Period.PERIOD_LOOKAHEAD_DAYS - 1, NEXT),
         # outside review and outside lookahead
-        (-Period.REVIEW_SUBPERIOD_LEN_DAYS + 2, 400, PREV),
+        (-Period.REVIEW_PHASE_LEN_DAYS + 2, 400, PREV),
         # outside review and within lookahead
-        (-Period.REVIEW_SUBPERIOD_LEN_DAYS - 2, 30, NEXT),
+        (-Period.REVIEW_PHASE_LEN_DAYS - 2, 30, NEXT),
         # outside review and within next period
-        (-Period.REVIEW_SUBPERIOD_LEN_DAYS - 2, -1, NEXT),
+        (-Period.REVIEW_PHASE_LEN_DAYS - 2, -1, NEXT),
     ),
 )
 def test_get_current_period(
@@ -269,10 +269,10 @@ def test_get_current_period(
     dbsession = func_scoped_dbsession
     previous_days_away = partial(days_from_utcnow, offset=prev_days_away)
     previous_times = generate_period_dates(
-        Period.ENROLMENT_SUBPERIOD, previous_days_away
+        Period.ENROLMENT_PHASE, previous_days_away
     )
     next_days_away = partial(days_from_utcnow, offset=next_days_away)
-    next_times = generate_period_dates(Period.ENROLMENT_SUBPERIOD, next_days_away)
+    next_times = generate_period_dates(Period.ENROLMENT_PHASE, next_days_away)
     with transaction.manager:
         prev_period = Period(id=PREV, name="prev", **previous_times)
         dbsession.add(prev_period)

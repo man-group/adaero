@@ -43,90 +43,90 @@ TEST_CSV_FILEPATH = os.path.join(dirpath, "company_stats.csv")
 
 
 def test_external_cannot_get_company_feedback_stats_csv(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/company-feedback-stats.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_company_feedback_stats_csv(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
     response = app.get("/api/v1/company-feedback-stats.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_manager_cannot_get_company_feedback_stats_csv(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-feedback-stats.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_external_cannot_get_raw_feedback_csv(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/company-raw-feedback.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_raw_feedback_csv(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_EMPLOYEE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_EMPLOYEE_USERNAME
     )
     response = app.get("/api/v1/company-raw-feedback.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_manager_cannot_get_raw_feedback_csv(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-raw-feedback.csv", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_external_cannot_get_company_feedback_stats(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_COMPANY_COLLEAGUE_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_COMPANY_COLLEAGUE_USERNAME
     )
     response = app.get("/api/v1/company-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_employee_cannot_get_company_feedback_stats(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-stats", expect_errors=True)
     assert response.status_code == 403
 
 
 def test_manager_cannot_get_company_feedback_stats(
-    app_with_enrollees_inside_entry_subperiod,
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_inside_entry_subperiod, TEST_MANAGER_USERNAME
+        app_with_enrollees_inside_entry_phase, TEST_MANAGER_USERNAME
     )
     response = app.get("/api/v1/company-stats", expect_errors=True)
     assert response.status_code == 403
@@ -205,7 +205,7 @@ def test_talent_manager_can_correct_summarised_feedback_from_another_manager(
 ):  # noqa: E501
     app = successfully_login(ldap_mocked_app_with_users, TEST_TALENT_MANAGER_USERNAME)
     dbsession = get_dbsession(app)
-    add_test_data_for_stats(dbsession, current_subperiod=Period.REVIEW_SUBPERIOD)
+    add_test_data_for_stats(dbsession, current_phase=Period.REVIEW_PHASE)
     response = app.get("/api/v1/summarise/%s/" % TEST_EMPLOYEE_2_USERNAME)
     items = response.json_body["summary"]["items"]
     expected = [
@@ -232,7 +232,7 @@ def test_talent_manager_can_mass_email(ldap_mocked_app_with_users, template_key)
         )
         dbsession = get_dbsession(app)
         template_id = add_test_template(dbsession)
-        add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
+        add_test_period_with_template(dbsession, Period.ENTRY_PHASE, template_id)
         csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
         response = app.post_json(
             "/api/v1/send-email",

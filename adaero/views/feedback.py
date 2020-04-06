@@ -39,7 +39,7 @@ class FeedbackFormResource(Root):
             .filter(Enrollee.period == self.current_period)
         )
 
-        if self.current_period.subperiod(location) != Period.ENTRY_SUBPERIOD:
+        if self.current_period.phase(location) != Period.ENTRY_PHASE:
             raise HTTPNotFound(explanation="Currently not in the entry " "period.")
 
         self.to_username = request.matchdict["username"]

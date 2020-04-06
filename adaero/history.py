@@ -51,7 +51,7 @@ def fetch_feedback_history(dbsession, username, settings, fetch_full=False):
 
         feedbacks = []
         for period, summary_form, enrollee in history:
-            if period.subperiod(location) != Period.REVIEW_SUBPERIOD:
+            if period.phase(location) != Period.REVIEW_PHASE:
                 feedbacks.append(
                     {
                         "periodDescription": "%s pending" % period.name,

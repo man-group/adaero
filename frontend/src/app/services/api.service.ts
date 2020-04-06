@@ -15,6 +15,7 @@ export class UserData {
   title: string;  // e.g. Software Developer
   principals: [string];
   businessUnit: string;
+  currentPhase: string; // refer to adaero/models/period.py
 }
 
 export class LoginSuccessPayload {

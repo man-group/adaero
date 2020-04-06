@@ -13,8 +13,8 @@ from adaero.models import (
 from adaero.scripts.configure_db import (
     cli,
     ENGINE_KEY,
-    SUBPERIOD_CHOICES,
-    SUBPERIOD_KEY,
+    PHASE_CHOICES,
+    PHASE_KEY,
 )
 
 from tests.integration.views.conftest import add_template, add_test_period_with_template
@@ -43,7 +43,7 @@ def add_test_periods(ctx):
     template_id = add_template(dbsession, QUESTION_IDS_AND_TEMPLATES, 1)
     add_test_period_with_template(
         dbsession,
-        Period.ENROLMENT_SUBPERIOD,
+        Period.ENROLMENT_PHASE,
         template_id,
         1,
         u"Q1 2018",
@@ -51,7 +51,7 @@ def add_test_periods(ctx):
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLMENT_SUBPERIOD,
+        Period.ENROLMENT_PHASE,
         template_id,
         2,
         u"Q4 2017",
@@ -60,7 +60,7 @@ def add_test_periods(ctx):
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLMENT_SUBPERIOD,
+        Period.ENROLMENT_PHASE,
         template_id,
         3,
         u"Q3 2017",
@@ -69,7 +69,7 @@ def add_test_periods(ctx):
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLMENT_SUBPERIOD,
+        Period.ENROLMENT_PHASE,
         template_id,
         4,
         u"Q2 2017",
@@ -78,7 +78,7 @@ def add_test_periods(ctx):
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLMENT_SUBPERIOD,
+        Period.ENROLMENT_PHASE,
         template_id,
         5,
         u"Q1 2017",
@@ -87,7 +87,7 @@ def add_test_periods(ctx):
     )
     add_test_period_with_template(
         dbsession,
-        Period.ENROLMENT_SUBPERIOD,
+        Period.ENROLMENT_PHASE,
         template_id,
         6,
         u"Q4 2016",

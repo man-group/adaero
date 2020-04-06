@@ -190,7 +190,7 @@ def add_test_template(
 
 def add_test_period_with_template(
     dbsession,
-    subperiod,
+    phase,
     template_id,
     period_id=TEST_PERIOD_ID,
     period_name=TEST_PERIOD_NAME,
@@ -200,7 +200,7 @@ def add_test_period_with_template(
 ):
 
     days_away = partial(days_from_utcnow, offset=offset_from_utc_now_days)
-    times = generate_period_dates(subperiod, days_away, days_in)
+    times = generate_period_dates(phase, days_away, days_in)
     with transaction.manager:
         period = Period(
             id=period_id, name=period_name, template_id=template_id, **times
@@ -215,20 +215,20 @@ def add_test_period_with_template(
 
 
 @pytest.yield_fixture
-def app_with_enrollees_inside_entry_subperiod(ldap_mocked_app_with_users):
+def app_with_enrollees_inside_entry_phase(ldap_mocked_app_with_users):
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
-    add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
+    add_test_period_with_template(dbsession, Period.ENTRY_PHASE, template_id)
     yield app
 
 
 @pytest.yield_fixture
-def app_with_enrollees_inside_approval_subperiod(ldap_mocked_app_with_users):
+def app_with_enrollees_inside_approval_phase(ldap_mocked_app_with_users):
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
-    add_test_period_with_template(dbsession, Period.APPROVAL_SUBPERIOD, template_id)
+    add_test_period_with_template(dbsession, Period.APPROVAL_PHASE, template_id)
     yield app
 
 
@@ -267,7 +267,7 @@ def _add_test_feedback_forms(_dbsession, period_id=TEST_PERIOD_ID):
             period_id=period_id,
         )
         # because of test_employee_cannot_give_feedback_form_with_missing
-        # _answers_to_valid_enrol_while_inside_entry_subperiod test, we
+        # _answers_to_valid_enrol_while_inside_entry_phase test, we
         # should never get into a state where we have less answers than
         # questions for a form. views/feedback.py:update_feedback uses an
         # atomic transaction to ensure this as well
@@ -293,25 +293,25 @@ def _add_test_feedback_forms(_dbsession, period_id=TEST_PERIOD_ID):
 
 
 @pytest.fixture
-def app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod(
-    app_with_enrollees_inside_entry_subperiod,
+def app_with_enrollees_and_existing_feedback_form_inside_entry_phase(
+    app_with_enrollees_inside_entry_phase,
 ):  # noqa: E501
-    app = app_with_enrollees_inside_entry_subperiod
+    app = app_with_enrollees_inside_entry_phase
     _add_test_feedback_forms(get_dbsession(app))
     return app
 
 
 @pytest.fixture
-def app_with_enrollees_and_existing_feedback_form_inside_approval_subperiod(
-    app_with_enrollees_inside_approval_subperiod,
+def app_with_enrollees_and_existing_feedback_form_inside_approval_phase(
+    app_with_enrollees_inside_approval_phase,
 ):  # noqa: E501
-    app = app_with_enrollees_inside_approval_subperiod
+    app = app_with_enrollees_inside_approval_phase
     _add_test_feedback_forms(get_dbsession(app))
     return app
 
 
 @pytest.fixture
-def app_in_enrolment_subperiod(ldap_mocked_app_with_users):
+def app_in_enrolment_phase(ldap_mocked_app_with_users):
 
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
@@ -363,7 +363,7 @@ def add_extra_feedback_histories(dbsession, num):
         offset_days = -400 - ((p_id - 490) * 30)
         add_test_period_with_template(
             dbsession,
-            Period.ENROLMENT_SUBPERIOD,
+            Period.ENROLMENT_PHASE,
             1,
             period_id=p_id,
             period_name=p_name,

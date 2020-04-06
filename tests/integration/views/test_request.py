@@ -44,16 +44,16 @@ log = get_logger(__name__)
 
 
 @pytest.mark.parametrize(
-    "subperiod",
-    (Period.ENROLMENT_SUBPERIOD, Period.APPROVAL_SUBPERIOD, Period.REVIEW_SUBPERIOD),
+    "phase",
+    (Period.ENROLMENT_PHASE, Period.APPROVAL_PHASE, Period.REVIEW_PHASE),
 )
-def test_employee_unable_to_send_feedback_request_outside_entry_subperiod(
-    ldap_mocked_app_with_users, subperiod
+def test_employee_unable_to_send_feedback_request_outside_entry_phase(
+    ldap_mocked_app_with_users, phase
 ):  # noqa: E501
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
-    add_test_period_with_template(dbsession, Period.APPROVAL_SUBPERIOD, template_id)
+    add_test_period_with_template(dbsession, Period.APPROVAL_PHASE, template_id)
     successfully_login(app, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     email = TEST_COMPANY_COLLEAGUE_EMAIL
@@ -66,13 +66,13 @@ def test_employee_unable_to_send_feedback_request_outside_entry_subperiod(
     assert resp.status_code == 400
 
 
-def test_employee_unable_to_send_feedback_request_inside_entry_subperiod_if_not_enrolled(
+def test_employee_unable_to_send_feedback_request_inside_entry_phase_if_not_enrolled(
     ldap_mocked_app_with_users,
 ):  # noqa: E501
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
-    add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
+    add_test_period_with_template(dbsession, Period.ENTRY_PHASE, template_id)
     successfully_login(app, TEST_EMPLOYEE_2_USERNAME)
     resp = app.get("/api/v1/request")
     assert resp.json_body["heading"]
@@ -93,7 +93,7 @@ def test_employee_unable_to_send_feedback_request_inside_entry_subperiod_if_not_
         (TEST_COMPANY_COLLEAGUE_EMAIL, (200, "")),
     ),
 )
-def test_employee_able_to_send_feedback_request_within_entry_subperiod(
+def test_employee_able_to_send_feedback_request_within_entry_phase(
     ldap_mocked_app_with_users, email, expected
 ):  # noqa: E501
     expected_status_code, expected_msg = expected
@@ -101,7 +101,7 @@ def test_employee_able_to_send_feedback_request_within_entry_subperiod(
     ldapsource = ldapauth.build_ldapauth_from_settings(app.app.registry.settings)
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
-    add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
+    add_test_period_with_template(dbsession, Period.ENTRY_PHASE, template_id)
     successfully_login(app, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
 
@@ -167,7 +167,7 @@ def test_employee_able_to_invite_twice(ldap_mocked_app_with_users):  # noqa: E50
     app = ldap_mocked_app_with_users
     dbsession = get_dbsession(app)
     template_id = add_test_template(dbsession)
-    add_test_period_with_template(dbsession, Period.ENTRY_SUBPERIOD, template_id)
+    add_test_period_with_template(dbsession, Period.ENTRY_PHASE, template_id)
     successfully_login(app, TEST_EMPLOYEE_USERNAME)
     csrf_token = app.cookies[ANGULAR_2_XSRF_TOKEN_COOKIE_NAME]
     with patch("smtplib.SMTP") as _:
@@ -205,10 +205,10 @@ def test_employee_able_to_invite_twice(ldap_mocked_app_with_users):  # noqa: E50
 
 
 def test_external_user_able_to_give_and_amend_feedback_that_sent_them_invites(
-    app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,
+    app_with_enrollees_and_existing_feedback_form_inside_entry_phase,
 ):  # noqa: E501
     app = successfully_login(
-        app_with_enrollees_and_existing_feedback_form_inside_entry_subperiod,  # noqa: E501
+        app_with_enrollees_and_existing_feedback_form_inside_entry_phase,  # noqa: E501
         TEST_COMPANY_COLLEAGUE_USERNAME,
     )
     dbsession = get_dbsession(app)
@@ -216,7 +216,7 @@ def test_external_user_able_to_give_and_amend_feedback_that_sent_them_invites(
     # add previous period using existing template
     add_test_period_with_template(
         dbsession,
-        Period.ENTRY_SUBPERIOD,
+        Period.ENTRY_PHASE,
         TEST_TEMPLATE_ID,
         period_id=TEST_PREVIOUS_PERIOD_ID,
         period_name=TEST_PREVIOUS_PERIOD_NAME,

@@ -178,7 +178,7 @@ def generate_stats_payload_from_dataframe(df, dbsession, settings):
         )
         asc_period_names = [p[0] for p in asc_periods_by_date]
     current_period_name = current_period.name
-    current_subperiod = current_period.subperiod(location)
+    current_phase = current_period.phase(location)
 
     stats_dict = defaultdict(list)
     for (
@@ -209,9 +209,9 @@ def generate_stats_payload_from_dataframe(df, dbsession, settings):
                 "enable": True,
                 "hasExistingSummary": False,
             }
-            if current_subperiod not in [
-                Period.APPROVAL_SUBPERIOD,
-                Period.REVIEW_SUBPERIOD,
+            if current_phase not in [
+                Period.APPROVAL_PHASE,
+                Period.REVIEW_PHASE,
             ]:
                 button["buttonText"] = "Not in approval or review period"
                 button["enable"] = False

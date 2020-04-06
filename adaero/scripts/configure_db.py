@@ -30,28 +30,28 @@ from adaero.models.all import Base, SEQUENCES
 log = get_logger(__name__)
 
 
-SUBPERIOD_CHOICES = {
-    "inactive": Period.INACTIVE_SUBPERIOD,
-    "enrolment": Period.ENROLMENT_SUBPERIOD,
-    "entry": Period.ENTRY_SUBPERIOD,
-    "approval": Period.APPROVAL_SUBPERIOD,
-    "review": Period.REVIEW_SUBPERIOD,
+PHASE_CHOICES = {
+    "inactive": Period.INACTIVE_PHASE,
+    "enrolment": Period.ENROLMENT_PHASE,
+    "entry": Period.ENTRY_PHASE,
+    "approval": Period.APPROVAL_PHASE,
+    "review": Period.REVIEW_PHASE,
 }
-SUBPERIOD_KEY = "SUBPERIOD"
+PHASE_KEY = "PHASE"
 SETTINGS_KEY = "SETTINGS"
 ENGINE_KEY = "ENGINE"
 
 
 @click.group()
 @click.option("--config", type=click.STRING)
-@click.option("--subperiod", type=click.Choice(SUBPERIOD_CHOICES.keys()))
+@click.option("--phase", type=click.Choice(PHASE_CHOICES.keys()))
 @click.pass_context
-def cli(ctx, config, subperiod):
+def cli(ctx, config, phase):
     """This script makes manipulating the db easy"""
     ctx.obj = {}
     if not config.endswith(".ini"):
         raise ValueError("config file %s must end in .ini" % config)
-    ctx.obj[SUBPERIOD_KEY] = subperiod
+    ctx.obj[PHASE_KEY] = phase
     ctx.obj[ENGINE_KEY], ctx.obj[SETTINGS_KEY] = get_engine_from_config_filename(config)
 
 
@@ -186,13 +186,13 @@ def enrol_everyone(ctx):
 @cli.command()
 @click.pass_context
 def adjust(ctx):
-    subperiod = SUBPERIOD_CHOICES[ctx.obj[SUBPERIOD_KEY]]
+    phase = PHASE_CHOICES[ctx.obj[PHASE_KEY]]
     engine = ctx.obj[ENGINE_KEY]
     session_factory = get_session_factory(engine)
     dbsession = get_tm_session(session_factory, transaction.manager)
 
     dates_dict = generate_period_dates(
-        subperiod, lambda days: datetime.utcnow() + timedelta(days=days)
+        phase, lambda days: datetime.utcnow() + timedelta(days=days)
     )
 
     with transaction.manager:
@@ -214,7 +214,7 @@ def generate_periods(ctx):
     with transaction.manager:
         for i in range(1, 3):
             dates_dict = generate_period_dates(
-                Period.INACTIVE_SUBPERIOD,
+                Period.INACTIVE_PHASE,
                 lambda days: (
                     datetime.utcnow() - timedelta(days=i * 30) + timedelta(days=days)
                 ),
