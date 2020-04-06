@@ -1,0 +1,37 @@
+<h2>{{title}}</h2>
+<p>{{description}}</p>
+<input #quickSearch id="enrollee-quick-search-input" type="text" class="form-control" placeholder="Quick search" aria-label="search" (keyup)="0">
+<table class="table table-striped">
+  <thead class="thead-dark">
+  <tr>
+    <th scope="col" sortable="displayName" (sort)="onSort($event)">Name</th>
+    <th scope="col" sortable="position" (sort)="onSort($event)">Position</th>
+    <th scope="col" sortable="department" (sort)="onSort($event)">Department</th>
+    <th scope="col" sortable="managerDisplayName" (sort)="onSort($event)">Manager</th>
+    <th sortable="hasExistingFeedback" scope="col" (sort)="onSort($event)">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr></tr><!-- change row coloring without needing to use CSS -->
+  <tr *ngIf="(users | enrolleeFilter: quickSearch.value)?.length === 0">
+    <td>No enrollees found!</td>
+  </tr>
+  <tr *ngFor="let employee of users | enrolleeFilter: quickSearch.value">
+    <td>{{employee.displayName}}</td>
+    <td>{{employee.position}}</td>
+    <td>{{employee.department}}</td>
+    <td>{{employee.managerDisplayName}}</td>
+    <td><div *ngIf="employee.hasExistingFeedback; then edit else new"></div></td>
+    <ng-template #new>
+      <a class="btn btn-block btn-success" routerLink="/feedback/{{employee.username}}">
+        Give feedback
+      </a>
+    </ng-template>
+    <ng-template #edit>
+      <a class="btn btn-block btn-warning" routerLink="/feedback/{{employee.username}}">
+        View and edit
+      </a>
+    </ng-template>
+  </tr>
+  </tbody>
+</table>

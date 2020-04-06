@@ -299,9 +299,10 @@ def test_external_can_list_enrollee_inviters_inside_entry_phase(
     response = app.get("/api/v1/enrollees")
     assert 200 == response.status_code
     assert TEST_PERIOD_NAME == response.json_body["period"]
-    assert 1 == len(response.json_body["enrollees"])
-    assert TEST_EMPLOYEE_USERNAME == response.json_body["enrollees"][0]["username"]
-    assert not response.json_body["enrollees"][0]["hasExistingFeedback"]
+    assert 1 == len(response.json_body["requesters"])
+    assert TEST_EMPLOYEE_USERNAME == response.json_body["requesters"][0]["username"]
+    assert not response.json_body["requesters"][0]["hasExistingFeedback"]
+    assert 0 == len(response.json_body["enrollees"])
 
 
 def test_employee_can_list_enrollees_inside_entry_phase_2(
@@ -357,12 +358,13 @@ def test_employee_cannot_list_enrollees_outside_entry_phase(
     )
 
     response = app.get("/api/v1/enrollees")
-    assert response.json_body["heading"] == ENTRY_ENDED_TEMPLATE["heading"].format(
+    message = response.json_body["message"]
+    assert message["heading"] == ENTRY_ENDED_TEMPLATE["heading"].format(
         period_name=TEST_PERIOD_NAME
     )
-    assert response.json_body["body"] == ENTRY_ENDED_TEMPLATE["body"].format(
+    assert message["body"] == ENTRY_ENDED_TEMPLATE["body"].format(
         period_name=TEST_PERIOD_NAME
     )
-    assert response.json_body["buttonText"] == ENTRY_ENDED_TEMPLATE["buttonText"]
-    assert response.json_body["buttonLink"] == ENTRY_ENDED_TEMPLATE["buttonLink"]
-    assert response.json_body["canEnrol"] == ENTRY_ENDED_TEMPLATE["canEnrol"]
+    assert message["buttonText"] == ENTRY_ENDED_TEMPLATE["buttonText"]
+    assert message["buttonLink"] == ENTRY_ENDED_TEMPLATE["buttonLink"]
+    assert message["canEnrol"] == ENTRY_ENDED_TEMPLATE["canEnrol"]

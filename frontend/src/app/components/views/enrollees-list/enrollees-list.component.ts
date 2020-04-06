@@ -1,6 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ApiService, EnrolleesPayload, MessageTemplatePayload } from '../../../services/api.service';
-import { Observable } from 'rxjs';
+import {Component, Directive, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {ApiService, EnrolleeItem, EnrolleesPayload, MessageTemplatePayload} from '../../../services/api.service';
+import {Observable} from 'rxjs';
+
+
+
 
 @Component({
   selector: 'app-enrollees-list',
@@ -8,11 +11,20 @@ import { Observable } from 'rxjs';
   styleUrls: ['./enrollees-list.component.scss']
 })
 export class EnrolleesListComponent implements OnInit {
-    constructor(public api: ApiService) {}
 
-    data: Observable<{} | EnrolleesPayload | MessageTemplatePayload>;
+  constructor(public api: ApiService) {
+  }
 
-    ngOnInit() {
-        this.data = this.api.getNominees();
-    }
+  data: EnrolleesPayload;
+  message: MessageTemplatePayload;
+
+  ngOnInit() {
+    this.api.getNominees().subscribe(data => {
+      this.data = data
+    });
+
+  }
+
+
+
 }

@@ -8,18 +8,25 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 
 import {
-  GiveFeedbackComponent,
-  EnrolleesListComponent,
-  LoginComponent,
+  AuthenticatedComponent,
   EnrolComponent,
+  FeedbackAboutMeComponent,
+  EnrolleesListComponent,
+  FeedbackHistoryViewComponent,
+  GiveFeedbackComponent,
+  LoginComponent,
+  RequestComponent,
   StatsComponent,
   SummariseFeedbackComponent,
-  FeedbackAboutMeComponent,
   TalentManagerPanelComponent,
 } from './components/views';
 
 import {
   FeedbackFormComponent,
+  FeedbackUserListComponent,
+  FeedbackHistoryComponent,
+  ModalComponent,
+  NgbdSortableHeader,
 } from './components/widgets/';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,11 +35,6 @@ import { ApiService } from './services/api.service';
 import { CookieService } from './services/cookie.service';
 import { AuthGuardService, AnonGuardService, PendingChangesGuardService } from './guards';
 import { EnrolleeFilterPipe } from './pipes/enrollee-filter.pipe';
-import { ModalComponent } from './components/widgets/modal/modal.component';
-import { AuthenticatedComponent } from './components/views/authenticated/authenticated.component';
-import { FeedbackHistoryComponent } from './components/widgets/feedback-history/feedback-history.component';
-import { FeedbackHistoryViewComponent } from './components/views/feedback-history-view/feedback-history-view.component';
-import { RequestComponent } from './components/views/request/request.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,7 @@ import { RequestComponent } from './components/views/request/request.component';
     GiveFeedbackComponent,
     EnrolleesListComponent,
     EnrolComponent,
+    NgbdSortableHeader,
     StatsComponent,
     SummariseFeedbackComponent,
     FeedbackAboutMeComponent,
@@ -57,6 +60,8 @@ import { RequestComponent } from './components/views/request/request.component';
 
     // pipes
     EnrolleeFilterPipe,
+
+    FeedbackUserListComponent,
 
 
 

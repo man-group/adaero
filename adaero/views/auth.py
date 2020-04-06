@@ -1,6 +1,6 @@
 import transaction
 
-from pyramid.httpexceptions import HTTPUnauthorized, HTTPOk
+from pyramid.httpexceptions import HTTPUnauthorized, HTTPOk, HTTPInternalServerError
 from pyramid.security import (
     NO_PERMISSION_REQUIRED,
     forget,
@@ -32,7 +32,10 @@ def _build_user_data_response(request, username):
         request.registry.settings, HOMEBASE_LOCATION_KEY
     )
     with transaction.manager:
-        current_period = Period.get_current_period(request.dbsession)
+        try:
+            phase = Period.get_current_period(request.dbsession).phase(location)
+        except HTTPInternalServerError:
+            phase = Period.INACTIVE_PHASE
     return {
         "success": True,
         "data": {
@@ -40,7 +43,7 @@ def _build_user_data_response(request, username):
             "title": request.user.position,
             "principals": request.effective_principals,
             "businessUnit": unit_name,
-            "currentPhase": current_period.phase(location),
+            "currentPhase": phase,
         },
     }
 

@@ -1,4 +1,4 @@
-<div *ngIf="this.data | async as data; else loading">
+<div *ngIf="this.data as data; else loading">
   <div class="row">
     <div class="col-2">
       <table class="table table-striped" #nameTable>

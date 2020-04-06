@@ -44,9 +44,14 @@ export class EnrolleeItem {
 export class EnrolleesPayload {
   period: string;
   enrollees: EnrolleeItem[];
+  requesters: EnrolleeItem[];
+  message: MessageTemplatePayload;
 }
 
 // refer to adaero/views/feedback.py
+export class FeedbackFormPayload {
+  form: FeedbackFormItem[];
+}
 export class FeedbackFormItem {
   questionId: string;
   question: string;
@@ -208,65 +213,58 @@ export class ApiService {
       .pipe(map((res: MessageTemplatePayload) => res)));
   }
 
-  getNominees(): Observable<{} | EnrolleesPayload | MessageTemplatePayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + '/enrollees', { withCredentials: true })
-      .pipe(map((res: EnrolleesPayload | MessageTemplatePayload) => res)));
+  getNominees(): Observable<EnrolleesPayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + '/enrollees', { withCredentials: true }));
   }
 
-  getFeedbackAboutMe(): Observable<{} | FeedbackHistoryPayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + `/feedback-about-me`, { withCredentials: true })
-      .pipe(map((res: FeedbackHistoryPayload) => res)));
+  getFeedbackAboutMe(): Observable<FeedbackHistoryPayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + `/feedback-about-me`, { withCredentials: true }));
   }
 
-  getFeedbackForm(username: String): Observable<{} | GiveFeedbackPayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + `/feedback/${username}/`, { withCredentials: true })
-      .pipe(map((res: GiveFeedbackPayload) => res)));
+  getFeedbackForm(username: String): Observable<GiveFeedbackPayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + `/feedback/${username}/`, { withCredentials: true }));
   }
 
-  getFeedbackHistory(username: String): Observable<{} | FeedbackHistoryPayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + `/feedback-history/${username}/`, { withCredentials: true })
-      .pipe(map((res: GiveFeedbackPayload) => res)));
+  getFeedbackHistory(username: String): Observable<FeedbackHistoryPayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + `/feedback-history/${username}/`, { withCredentials: true }));
   }
 
-  putFeedbackForm(username: String, formItems: FeedbackFormItem[]): Observable<object> {
-    return this._httpWrapper(this.http.put(this.rootUrl + `/feedback/${username}/`, { form: formItems }, { withCredentials: true })
-      .pipe(map((res: object) => res)));
+  putFeedbackForm(username: String, form: FeedbackFormPayload): Observable<{}> {
+    return this._httpWrapper(this.http.put(this.rootUrl + `/feedback/${username}/`, form, { withCredentials: true }));
   }
 
-  getTeamStats(): Observable<{} | StatsPayload> {
-    return this._httpWrapper(this.http.get(this.rootUrl + `/team-stats`, { withCredentials: true })
-      .pipe(map((res: StatsPayload) => res)));
+  getTeamStats(): Observable<StatsPayload> {
+    return this._httpWrapper(this.http.get(this.rootUrl + `/team-stats`, { withCredentials: true }));
   }
 
-  getCompanyStats(): Observable<{} | StatsPayload> {
+  getCompanyStats(): Observable<StatsPayload> {
     return this._httpWrapper(this.http.get(this.rootUrl + `/company-stats`, { withCredentials: true })
       .pipe(map((res: StatsPayload) => res)));
   }
 
-  getSummaryFeedback(username: String): Observable<{}| SummaryFeedbackPayload> {
+  getSummaryFeedback(username: String): Observable<SummaryFeedbackPayload> {
     return this._httpWrapper(this.http.get(this.rootUrl + `/summarise/${username}/`, { withCredentials: true })
       .pipe(map((res: SummaryFeedbackPayload) => res)));
   }
 
-  putSummaryFeedback(username: String, formItems: FeedbackFormItem[]): Observable<object> {
-    return this._httpWrapper(this.http.put(this.rootUrl + `/summarise/${username}/`, { form: formItems }, { withCredentials: true })
-      .pipe(map((res: object) => res)));
+  putSummaryFeedback(username: String, formItems: FeedbackFormItem[]): Observable<{}> {
+    return this._httpWrapper(this.http.put(this.rootUrl + `/summarise/${username}/`, { form: formItems }, { withCredentials: true }));
   }
 
-  sendEmail(templateKey: String): Observable<object> {
+  sendEmail(templateKey: String): Observable<{}> {
     return this._httpWrapper(this.http.post(this.rootUrl + `/send-email`, { templateKey }, { withCredentials: true })
       .pipe(map((res: object) => res)));
   }
 
-  getRequestStatus(): Observable<{}| RequestStatusPayload> {
+  getRequestStatus(): Observable<RequestStatusPayload> {
     return this._httpWrapper(this.http.get(this.rootUrl + `/request`, { withCredentials: true })
       .pipe(map((res: RequestStatusPayload) => res)));
   }
 
-  sendRequest(email: String): Observable<object> {
+  sendRequest(email: String): Observable<{}> {
     return this.http.post(this.rootUrl + `/request`, { email }, { withCredentials: true })
       .pipe(
-        map((res: object) => res),
+        map((res: {}) => res),
         catchError((err) => {
           if (err.error === undefined || err.error === null) {
             this.errorSource.next(err);
@@ -315,7 +313,7 @@ export class ApiService {
     );
   }
 
-  _httpWrapper(httpObs: Observable<object>) {
+  _httpWrapper(httpObs: Observable<any>) {
     return httpObs
       .pipe(
         catchError((err) => {

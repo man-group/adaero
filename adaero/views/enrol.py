@@ -36,24 +36,36 @@ def get_enrollees(request):
         request.registry.settings, constants.HOMEBASE_LOCATION_KEY
     )
     current_period = Period.get_current_period(request.dbsession)
+    payload = {
+        "period": current_period.name,
+        "enrollees": [],
+        "requesters": [],
+        "message": {},
+    }
+    message = None
     if not current_period:
-        return interpolate_template(FEEDBACK_ENDED_TEMPLATE)
+        message = interpolate_template(FEEDBACK_ENDED_TEMPLATE)
 
-    if current_period.phase(location) == Period.ENROLMENT_PHASE:
-        return interpolate_template(
+    elif current_period.phase(location) == Period.ENROLMENT_PHASE:
+        message = interpolate_template(
             ENTRY_PENDING_TEMPLATE, period_name=current_period.name
         )
 
-    if current_period.phase(location) != Period.ENTRY_PHASE:
-        return interpolate_template(
+    elif current_period.phase(location) != Period.ENTRY_PHASE:
+        message = interpolate_template(
             ENTRY_ENDED_TEMPLATE, period_name=current_period.name
         )
+
+    if message:
+        payload["message"] = message
+        return payload
 
     own_username = request.user.username
 
     query = request.dbsession.query(User, func.count(FeedbackForm.id)).join(
         Enrollee, User.username == Enrollee.username
     )
+
     base = (
         query.outerjoin(
             FeedbackForm,
@@ -68,41 +80,45 @@ def get_enrollees(request):
         .filter(Enrollee.period_id == current_period.id)
     )
 
-    # restrict users outside configured business unit to see only those
-    # employees that invited them
+    request_base = base.join(
+        FeedbackRequest,
+        and_(
+            FeedbackRequest.to_username == own_username,
+            FeedbackRequest.period_id == current_period.id,
+            User.username == FeedbackRequest.from_username,
+        ),
+    )
+
     if EXTERNAL_BUSINESS_UNIT_ROLE in request.effective_principals:
-        base = base.join(
-            FeedbackRequest,
-            and_(
-                FeedbackRequest.to_username == own_username,
-                FeedbackRequest.period_id == current_period.id,
-                User.username == FeedbackRequest.from_username,
-            ),
-        )
+        enrolled_joined = []
+    else:
+        enrolled_joined = base.group_by(User).order_by(asc(User.first_name)).all()
+    request_joined = request_base.group_by(User).order_by(asc(User.first_name)).all()
 
-    joined = base.group_by(User).order_by(asc(User.first_name)).all()
+    for key, joined in (("enrollees", enrolled_joined), ("requesters", request_joined)):
+        rows = []
+        for enrolled_user, form in joined:
+            if not enrolled_user:
+                continue
+            manager = enrolled_user.manager
+            if manager:
+                manager_display_name = " ".join([manager.first_name, manager.last_name])
+            else:
+                manager_display_name = "-"
+            rows.append(
+                {
+                    "username": enrolled_user.username,
+                    "displayName": enrolled_user.display_name,
+                    "department": enrolled_user.department,
+                    "managerDisplayName": manager_display_name,
+                    "position": enrolled_user.position,
+                    "hasExistingFeedback": True if form else False,
+                }
+            )
+        payload[key] = rows
 
-    payload = []
-    for enrolled_user, form in joined:
-        if not enrolled_user:
-            continue
-        manager = enrolled_user.manager
-        if manager:
-            manager_display_name = " ".join([manager.first_name, manager.last_name])
-        else:
-            manager_display_name = "-"
-        payload.append(
-            {
-                "username": enrolled_user.username,
-                "displayName": enrolled_user.display_name,
-                "department": enrolled_user.department,
-                "managerDisplayName": manager_display_name,
-                "position": enrolled_user.position,
-                "hasExistingFeedback": True if form else False,
-            }
-        )
     request.response.status_int = 200
-    return {"period": current_period.name, "enrollees": payload}
+    return payload
 
 
 FEEDBACK_ENDED_TEMPLATE = {

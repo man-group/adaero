@@ -78,7 +78,7 @@ export class GiveFeedbackComponent implements ComponentCanDeactivate, OnInit {
 
     onSubmit(form: NgForm) {
         this.formState = FormState.Submitting;
-        this.api.putFeedbackForm(this.username, this.form.items).subscribe((isSuccess: any) => {
+        this.api.putFeedbackForm(this.username, { form: this.form.items }).subscribe((isSuccess: any) => {
             this.formState = FormState.Success;
         },
             err => {

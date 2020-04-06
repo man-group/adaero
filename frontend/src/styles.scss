@@ -2,7 +2,7 @@ $grey: #f2f2f2;
 $grey-blue: #656c7e;
 
 // TODO: Move bootstrap import back to angular-cli.json once angular-cli is fixed https://github.com/angular/angular-cli/issues/9020
-@import '../node_modules/bootstrap/scss/bootstrap.scss';
+@import "~bootstrap/scss/bootstrap";
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body {
@@ -40,3 +40,29 @@ body {
 .multiline-text {
   white-space: pre-line;
 }
+
+th[sortable] {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+th[sortable].desc:after, th[sortable].asc:after {
+  content: '';
+  display: block;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  margin-left: 0.3em;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+}
+
+th[sortable].desc:after {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+}
+
