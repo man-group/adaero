@@ -30,8 +30,13 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .unit-name {
-    color: white;
-    width: 100px;
-    padding-left: 0.5em;
+  color: white;
+  width: 100px;
+  padding-left: 0.5em;
+}
+
+.multiline-text {
+  white-space: pre-line;
 }
