@@ -96,7 +96,8 @@ def get_enrollees(request):
     request_joined = request_base.group_by(User).order_by(asc(User.first_name)).all()
 
     for key, joined in (("enrollees", enrolled_joined), ("requesters", request_joined)):
-        rows = []
+        team_rows = []
+        others_rows = []
         for enrolled_user, form in joined:
             if not enrolled_user:
                 continue
@@ -105,17 +106,20 @@ def get_enrollees(request):
                 manager_display_name = " ".join([manager.first_name, manager.last_name])
             else:
                 manager_display_name = "-"
-            rows.append(
-                {
-                    "username": enrolled_user.username,
-                    "displayName": enrolled_user.display_name,
-                    "department": enrolled_user.department,
-                    "managerDisplayName": manager_display_name,
-                    "position": enrolled_user.position,
-                    "hasExistingFeedback": True if form else False,
-                }
-            )
-        payload[key] = rows
+            row = {
+                "username": enrolled_user.username,
+                "displayName": enrolled_user.display_name,
+                "department": enrolled_user.department,
+                "managerDisplayName": manager_display_name,
+                "position": enrolled_user.position,
+                "hasExistingFeedback": True if form else False,
+            }
+            if request.user.manager_username == manager.username:
+                team_rows.append(row)
+            else:
+                others_rows.append(row)
+            team_rows.extend(others_rows)
+        payload[key] = team_rows
 
     request.response.status_int = 200
     return payload
