@@ -31,12 +31,11 @@ setup(
     author_email='ManAlphaTech@man.com',
 
     # Choose your license
-    license='GPL 2.0',
+    license='AGPL 3.0',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 2.7',
