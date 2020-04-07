@@ -17,31 +17,44 @@ The following steps were run on a minimal install of Ubuntu LTS 18.04.4
 
 ### Steps
 
-0. Ensure you have the pre-requisites installed
+1. Ensure you have the pre-requisites installed
    ```
    sudo apt install docker.io python3 python3-pip curl
    sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
    sudo chmod +x /usr/local/bin/docker-compose
    ```
-1. Build and Run the application on local Docker
+2. Build Docker images
    ```
    cd frontend
    sudo docker build -t adaero-dev-frontend . 
    cd ..
    sudo docker build -t adaero-app . 
-   cd docker/dev
-   docker-compose up -d
    ```
-
-2. Setup a dummy template, 3 question and period data to carry out a feedback cycle.
+3. Start up just the DB. This is in preparation for a database upgrade.
+   ```
+   cd docker/dev
+   docker-compose up -d db
+   ```
+   
+4. Setup your Python environment for configuring the system
    ```
    cd ../..
    sudo pip3 install -e .
    sudo pip3 install pytest faker freezegun webtest mock 
+   ```
+   
+5. Perform a database migration
+   ```
+   configure_db --config adaero/host_example.ini upgrade --revision head
+   ```
+   
+6. Setup a dummy template, 3 question and period data to carry out a feedback cycle.
+   ```
+   cd adaero
    python3 tests/scripts/configure_db.py --config host_example.ini add-test-periods
    ```
 
-3. Once fully started, open http://localhost:4200. The table below shows the users 
+7. Once fully started, open http://localhost:4200. The table below shows the users 
    and their role within the app. Source is `docker/shared/ldif/01-data.ldif`
 
    | Username   | Password | Role                          |
@@ -52,17 +65,17 @@ The following steps were run on a minimal install of Ubuntu LTS 18.04.4
    | dthomas    | password | Employee, managed by eforshaw |
    | eforshaw   | password | Manager, Talent Manager       |
 
-4. Login as `eforshaw`. The "Talent Manager Panel" option should be available on the
+8. Login as `eforshaw`. The "Talent Manager Panel" option should be available on the
    left. Select that, and scroll down to "Generate population CSV template". Enter into the
    textbox "Engineering" (corresponds to `o` in the LDIF file) and click 
    "Generate and download". This is a CSV view of relevant information in LDAP required to 
    build a population.
 
-5. Scroll to the bottom and on the "Upload new population CSV" feature, upload the CSV.
+9. Scroll to the bottom and on the "Upload new population CSV" feature, upload the CSV.
    You can logout and login as the employees, and according to different phases, you can 
    carry out a feedback cycle.
 
-6. Use the following commands to change phases.
+10. Use the following commands to change phases.
 
    ```
    python3 tests/scripts/configure_db.py --config host_example.ini --phase enrolment adjust

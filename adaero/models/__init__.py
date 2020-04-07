@@ -253,10 +253,6 @@ def includeme(config):
     )
     engine = get_engine(settings)
 
-    for seq in SEQUENCES:
-        seq.create(engine)
-    Base.metadata.create_all(engine)
-
     session_factory = get_session_factory(engine)
     config.registry["dbsession_factory"] = session_factory
 
