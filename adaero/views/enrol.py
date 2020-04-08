@@ -102,8 +102,11 @@ def get_enrollees(request):
             if not enrolled_user:
                 continue
             manager = enrolled_user.manager
+            is_same_team = False
             if manager:
                 manager_display_name = " ".join([manager.first_name, manager.last_name])
+                if request.user.manager_username == manager.username:
+                    is_same_team = True
             else:
                 manager_display_name = "-"
             row = {
@@ -114,11 +117,12 @@ def get_enrollees(request):
                 "position": enrolled_user.position,
                 "hasExistingFeedback": True if form else False,
             }
-            if request.user.manager_username == manager.username:
+            if is_same_team:
                 team_rows.append(row)
             else:
                 others_rows.append(row)
-            team_rows.extend(others_rows)
+
+        team_rows.extend(others_rows)
         payload[key] = team_rows
 
     request.response.status_int = 200
