@@ -7,7 +7,6 @@ from adaero import constants
 
 DEFAULT_SETTINGS = {
     constants.CHECK_AND_SEND_EMAIL_INT_KEY: "60",
-    constants.LOAD_USER_EMAIL_LIST_KEY: '["bob", "dan"]',
     constants.ALLOW_PASSWORDLESS_ACCESS_KEY: True,
 }
 
@@ -35,7 +34,6 @@ DEFAULT_SETTINGS = {
             False,
         ),
         (None, None, constants.ALLOW_PASSWORDLESS_ACCESS_KEY, True),
-        (None, None, constants.LOAD_USER_EMAIL_LIST_KEY, '["bob", "dan"]'),
     ),
 )
 def test_get_config_value(envvar, envvar_val, key, expected):

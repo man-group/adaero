@@ -14,7 +14,7 @@ from adaero.constants import MISCONFIGURATION_MESSAGE
 from adaero.database import prepare_db
 from adaero.security import ldapauth
 from adaero import constants
-from adaero.config import get_config_value, check_if_production
+from adaero.config import get_config_value
 
 # Import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines. If this is not done,
@@ -146,7 +146,7 @@ def find_talent_managers(
 
 
 def _create_users(
-    dbsession, ldapsource, ldap_details, use_email_list, email_usernames, post_func=None
+    dbsession, ldapsource, ldap_details
 ):
     """
     Parameters
@@ -155,11 +155,6 @@ def _create_users(
         SQL-Alchemy session
     ldap_details
         List of dicts that contain LDAP details
-    use_email_list
-        If set, then default to NOT storing emails unless in `email_usernames`
-    post_func
-        If set with a function, invoke with `user` and its LDAP details
-        as parameters. Useful for storing state on a segment of users.
     """
     with transaction.manager:
         for ldap_detail in ldap_details:
@@ -170,12 +165,6 @@ def _create_users(
                     % ldap_detail[ldapsource.username_key]
                 )
                 continue
-            if use_email_list and user.username not in email_usernames:
-                user.email = None
-            else:
-                log.warning('Storing email for dn "%s"' % user.username)
-            if post_func:
-                post_func(user, ldap_detail)
             existing_user = dbsession.query(User).get(user.username)
             if not existing_user:
                 dbsession.add(user)
@@ -183,29 +172,8 @@ def _create_users(
 
 
 def load_talent_managers_only(
-    dbsession, ldapsource, settings  # type: Session  # type: ldapauth.LDAPAuth
+    dbsession: Session, ldapsource: ldapauth.LDAPAuth, settings
 ):
-    custom_user_list_string = get_config_value(
-        settings, constants.LOAD_USER_EMAIL_LIST_KEY
-    )
-    is_production = check_if_production(settings)
-    email_usernames = []
-    if custom_user_list_string:
-        log.warning(
-            "Custom user list provided = %s, so storing emails for "
-            "these users in DB." % custom_user_list_string
-        )
-        email_usernames = json.loads(custom_user_list_string)
-    elif is_production:
-        log.warning(
-            "No custom user list provided and in production, " "storing all user emails"
-        )
-    else:
-        log.warning(
-            "No custom user list provided, so not storing " "emails to prevent spam."
-        )
-    use_email_list = is_production and len(email_usernames) or not is_production
-
     with transaction.manager:
         talent_managers = find_talent_managers(settings, ldapsource, {})
         new_tms = []
@@ -213,9 +181,7 @@ def load_talent_managers_only(
             user = dbsession.query(User).get(tm[ldapsource.username_key])
             if not user:
                 new_tms.append(tm)
-        _create_users(
-            dbsession, ldapsource, new_tms, use_email_list, email_usernames, None
-        )
+        _create_users(dbsession, ldapsource, new_tms)
     log.info("Finished syncing Users LDAP cache")
 
 
@@ -244,13 +210,6 @@ def includeme(config):
             MISCONFIGURATION_MESSAGE.format(error="Homebase location is not set")
         )
 
-    # should_load_users = get_config_value(settings,
-    #                                      constants
-    #                                      .RELOAD_USERS_ON_APP_START_KEY,
-    #                                      False)
-    should_load_tms = get_config_value(
-        settings, constants.LOAD_TALENT_MANAGERS_ON_APP_START_KEY, True
-    )
     engine = get_engine(settings)
 
     session_factory = get_session_factory(engine)
@@ -258,7 +217,9 @@ def includeme(config):
 
     dbsession = get_tm_session(session_factory, transaction.manager)
     ldapsource = ldapauth.build_ldapauth_from_settings(settings)
-    if should_load_tms:
+
+    test_mode = get_config_value(settings, constants.TEST_MODE, default=False)
+    if not test_mode:
         load_talent_managers_only(dbsession, ldapsource, settings)
 
     # make request.dbsession available for use in Pyramid

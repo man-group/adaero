@@ -32,6 +32,7 @@ The following steps were run on a minimal install of Ubuntu LTS 18.04.4
    ```
 3. Start up just the DB. This is in preparation for a database upgrade.
    ```
+   
    cd docker/dev
    docker-compose up -d db
    ```
@@ -109,14 +110,6 @@ If set to `true`, it will cause emails to be sent. This happens:
 * Automatically according to the email schedule if 
   `adaero.run_email_interval_job` config value is set to `true`
 
-#### `adaero.production_hostname` and `adaero.production_user`
-If these values match the what the application sees on the host, then
-this will enable:
-
-* Loading of all user emails for the given business unit unless
-  `adaero.load_user_email_list` is set, which then will only
-  load the subset of the user emails in the list.
-
 #### `adaero.homebase_location`
 The datetimes set in the Period table are technically not UTC. Those times 
 are coupled with this configured value, the location. The phase shift will 
@@ -138,17 +131,6 @@ Set this to an array of strings containing the LDAP usernames
 of who you would like to be able to login with the talent manager role.
 e.g. ["eforshaw", "cdalton"]
 
-#### `adaero.reload_users_on_app_start`
-This is normally set to `False` as we now rely on talent managers uploading 
-the user hierarchy configuration CSV into the application.
-
-#### `adaero.load_user_email_list`
-In non-prod environments, we don't save emails within the User database.
-If this is set, we will save the emails of the following list of users
-identified by their LDAP username, allowing them to be emailed
-(if emailing is turned on).
-e.g. ["cdalton"]
-
 #### `adaero.allow_passwordless_access`
 A useful development flag for impersonation. This should be set to
 `false` in production.
@@ -156,7 +138,6 @@ A useful development flag for impersonation. This should be set to
 #### `adaero.run_email_interval_job`
 If `true`, run a job in the background that checks the email flags for
 the current period and if not set, send out the relevant emails and set.
-
 
 #### `adaero.display_name`
 Normally the company name, that will be displayed in the frontend.
@@ -223,6 +204,10 @@ Regex for extraction of a username from a DN
 
 #### `adaero.logo_filename`
 If the file exists in the assets folder on the backend, serve this up to the frontend.
+
+#### `adaero.test_mode`
+Should only be used for running a subset of automated tests. Currently disables initial LDAP
+fetching for talent manager data.
 
 ## Design
 This section will explain how the application is designed in terms of strucutures and processes, and some reasons why it is done this way.

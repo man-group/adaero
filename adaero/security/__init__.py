@@ -5,7 +5,7 @@ from pyramid.events import NewRequest
 from pyramid.security import Authenticated, Everyone
 
 from adaero import constants
-from adaero.config import get_config_value, get_envvar_name, check_if_production
+from adaero.config import get_config_value, get_envvar_name
 from adaero.models.user import request_user_callback
 from adaero.security.ldapauth import request_ldapauth_callback
 
@@ -119,7 +119,4 @@ def includeme(config):
     config.add_request_method(request_user_callback, "user", reify=True)
     config.add_request_method(request_ldapauth_callback, "ldapsource", reify=True)
 
-    config.add_request_method(
-        lambda: check_if_production(settings), "is_production", reify=True
-    )
     setup_cors(config)

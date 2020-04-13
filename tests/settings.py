@@ -1,6 +1,7 @@
 from tests.integration import constants
 
 DEFAULT_TEST_SETTINGS = {
+    "adaero.test_mode": True,
     "ahl.web.debug_all": True,
     "adaero.use_local_sqlite3": True,
     "adaero.company_name": "Example Org.",
@@ -10,7 +11,6 @@ DEFAULT_TEST_SETTINGS = {
     "adaero.production_user": constants.TEST_PRODUCTION_USER,
     "adaero.served_on_https": True,
     "adaero.talent_manager_usernames": '["llovelace"]',
-    "adaero.reload_users_on_app_start": False,
     "adaero.load_talent_managers_on_app_start": False,
     "adaero.staff_override_usernames": None,
     "adaero.support_email": "support@example.org",

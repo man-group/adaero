@@ -1,9 +1,6 @@
-import getpass
 import os
-import socket
 
 from logging import getLogger as get_logger
-from adaero import constants
 
 log = get_logger(__name__)
 
@@ -45,23 +42,3 @@ def get_config_value(settings, key, default=None, raise_if_not_set=False):
             )
         return default
 
-
-def check_if_production(settings):
-    hostname = socket.gethostname()
-    unix_user = getpass.getuser()
-    configured_hostname = get_config_value(settings, constants.PRODUCTION_HOSTNAME_KEY)
-    configured_user = get_config_value(settings, constants.PRODUCTION_USER_KEY)
-    is_production = hostname == configured_hostname and unix_user == configured_user
-    if is_production:
-        log.warning(
-            "Configured production hostname and user match current "
-            "environment so running in production mode."
-        )
-    else:
-        log.warning(
-            "Configured production hostname and user (%s, %s) don't "
-            "match the current environment (%s, %s) so not running in "
-            "production mode."
-            % (configured_hostname, configured_user, hostname, unix_user)
-        )
-    return is_production
