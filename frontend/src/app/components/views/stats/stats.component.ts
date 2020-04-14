@@ -12,16 +12,20 @@ export class StatsComponent implements OnInit, AfterViewChecked {
 
   @ViewChild('statsTable') private statsTable: ElementRef;
   @ViewChild('nameTable') private nameTable: ElementRef;
-  data: Observable<StatsPayload | {}>;
+  data: StatsPayload;
 
   constructor(public api: ApiService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.data.subscribe((routeData) => {
       if (!routeData.isCompanyWide) {
-        this.data = this.api.getTeamStats();
+        this.api.getTeamStats().subscribe((data) => {
+          this.data = data;
+        });
       } else {
-        this.data = this.api.getCompanyStats();
+        this.api.getCompanyStats().subscribe((data) => {
+          this.data = data;
+        });
       }
       this.scrollToEnd();
     });

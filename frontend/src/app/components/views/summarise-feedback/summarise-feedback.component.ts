@@ -43,7 +43,7 @@ export class SummariseFeedbackComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fetchData();
+      this.fetchData();
   }
 
   successInfo(): string {
@@ -54,12 +54,17 @@ export class SummariseFeedbackComponent implements OnInit {
       }
   }
 
+  saveButtonText(): string {
+      if (this.form) {
+          return "Review complete"
+      }
+  }
+
   saveCaption(): string {
-    if (this.form) {
-      return `Please kindly double check your summary before proceeding: once you hit the Save button,
-        your feedback will be saved and available for editing until the end of the "Review feedback" period at ${this.form.endDate}.
-        After this time, it will be automatically released to your direct report(s).` ;
-    }
+      if (this.form) {
+          return `You can still come back to edit again, if you wish, until the end of the "Review feedback" phase which ends at ${this.form.endDate}.
+              After this time, it will be automatically released to your direct report(s).` ;
+      }
   }
 
   fetchData() {

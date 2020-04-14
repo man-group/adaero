@@ -16,10 +16,12 @@ export enum FormState {
 export class FeedbackFormComponent {
 
   public formStates = FormState;
+  private submitting = false;
   @Input() form: FeedbackForm;
   @Input() public formState: FormState;
   @Input() public successButtonLink: string;
   @Input() public formInfo: string;
+  @Input() public saveButtonText: string;
   @Input() public saveCaption: string;
   @Input() public successTitle: string;
   @Input() public successInfo: string;
@@ -31,6 +33,7 @@ export class FeedbackFormComponent {
   username: String;
 
   onSubmit(form: NgForm) {
+    this.submitting = true;
     this.submitRequest.emit(form);
   }
 }

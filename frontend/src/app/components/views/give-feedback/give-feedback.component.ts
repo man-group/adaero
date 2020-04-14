@@ -59,6 +59,10 @@ export class GiveFeedbackComponent implements ComponentCanDeactivate, OnInit {
         }
     }
 
+    saveButtonText() : string {
+        return "Save";
+    }
+
     saveCaption(): string {
         if (this.form) {
             return `Please kindly double check your feedback before proceeding: once you hit the Save button,

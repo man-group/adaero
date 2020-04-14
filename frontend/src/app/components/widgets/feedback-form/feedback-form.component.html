@@ -21,7 +21,7 @@
           <textarea *ngIf="!form.readOnly" class="form-control" id="answer{{number + 1}}" [(ngModel)]="row.answer" name="answer{{number + 1}}" rows="6"></textarea>
           <p class="readonly-answer multiline-text" *ngIf="form.readOnly">{{row.answer}}</p>
         </div>
-        <button *ngIf="!form.readOnly" type="submit" class="btn btn-success" [disabled]="!f.form.valid && !this.submitting">Save</button>
+        <button *ngIf="!form.readOnly" type="submit" class="btn btn-success" [disabled]="!f.form.valid && !this.submitting">{{ saveButtonText }}</button>
       </form>
       <p *ngIf="!form.readOnly" id="feedback-form-footer">
         {{ saveCaption }}
