@@ -41,7 +41,7 @@ def get_metadata(request):
     return {
         "metadata": {
             "businessUnit": unit_name,
-            "displayName": display_name,
+            "companyName": display_name,
             "loginPasswordMessage": login_password_message,
             "loginUsernameMessage": login_username_message,
             "passwordlessAccess": is_pwl_access,
