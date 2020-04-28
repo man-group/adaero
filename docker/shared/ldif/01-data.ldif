@@ -26,7 +26,7 @@ gidNumber: 1000
 o: Engineering
 departmentNumber: 123
 title: Software Engineer I
-manager: uid=dthomas,ou=People,dc=example,dc=org
+manager: uid=dthomas-smith,ou=People,dc=example,dc=org
 
 dn: uid=bsmith,ou=People,dc=example,dc=org
 changetype: add
@@ -50,7 +50,7 @@ gidNumber: 1000
 o: Engineering
 departmentNumber: 123
 title: Software Engineer II
-manager: uid=dthomas,ou=People,dc=example,dc=org
+manager: uid=dthomas-smith,ou=People,dc=example,dc=org
 
 dn: uid=cdalton,ou=People,dc=example,dc=org
 changetype: add
@@ -74,22 +74,22 @@ gidNumber: 1000
 o: Engineering
 departmentNumber: 123
 title: Software Engineer III
-manager: uid=dthomas,ou=People,dc=example,dc=org
+manager: uid=dthomas-smith,ou=People,dc=example,dc=org
 
-dn: uid=dthomas,ou=People,dc=example,dc=org
+dn: uid=dthomas-smith,ou=People,dc=example,dc=org
 changetype: add
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: posixAccount
 objectClass: top
-uid: dthomas
-homeDirectory: /home/dthomas
+uid: dthomas-smith
+homeDirectory: /home/dthomas-smith
 userpassword: password
 givenname: Dan
-cn: Dan Thomas
-sn: Thomas
-mail: dthomas@example.com
+cn: Dan Thomas-Smith
+sn: Thomas-Smith
+mail: dthomas-smith@example.com
 l: London
 ou: Accounting
 ou: People

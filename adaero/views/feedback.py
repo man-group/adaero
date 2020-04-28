@@ -17,7 +17,7 @@ from adaero.views import Root
 log = get_logger(__name__)
 
 
-@resource("/api/v1/feedback/{username:\w+}/")
+@resource("/api/v1/feedback/{username:[\w\-]+}/")
 class FeedbackFormResource(Root):
 
     __acl__ = [(Allow, Authenticated, ("read", "update"))]
