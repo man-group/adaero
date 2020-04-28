@@ -46,25 +46,24 @@ The following steps were run on a minimal install of Ubuntu LTS 18.04.4
    
 5. Perform a database migration
    ```
-   configure_db --config adaero/host_example.ini upgrade --revision head
+   configure_db --config host_example.ini upgrade --revision head
    ```
    
 6. Setup a dummy template, 3 question and period data to carry out a feedback cycle.
    ```
-   cd adaero
    python3 tests/scripts/configure_db.py --config host_example.ini add-test-periods
    ```
 
 7. Once fully started, open http://localhost:4200. The table below shows the users 
    and their role within the app. Source is `docker/shared/ldif/01-data.ldif`
 
-   | Username   | Password | Role                          |
-   | ---------- | -------- | ----------------------------- |
-   | alovelace  | password | Employee, managed by dthomas  |
-   | bsmith     | password | Employee, managed by dthomas  |
-   | cdalton    | password | Employee, managed by dthomas  |
-   | dthomas    | password | Employee, managed by eforshaw |
-   | eforshaw   | password | Manager, Talent Manager       |
+   | Username       | Password | Role                                |
+   | -------------- | -------- | ----------------------------------- |
+   | alovelace      | password | Employee, managed by dthomas-smith  |
+   | bsmith         | password | Employee, managed by dthomas-smith  |
+   | cdalton        | password | Employee, managed by dthomas-smith  |
+   | dthomas-smith  | password | Employee, managed by eforshaw       |
+   | eforshaw       | password | Manager, Talent Manager             |
 
 8. Login as `eforshaw`. The "Talent Manager Panel" option should be available on the
    left. Select that, and scroll down to "Generate population CSV template". Enter into the

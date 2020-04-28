@@ -54,7 +54,7 @@ def get_team_stats(request):
     return result
 
 
-@resource("/api/v1/summarise/{username:\w+}/")
+@resource("/api/v1/summarise/{username:[\w\-]+}/")
 class SummariseFeedbackResource(Root):
 
     __acl__ = [
@@ -180,7 +180,7 @@ def put_summary(context, request):
     return update_feedback_form(context, request, True)
 
 
-@resource("/api/v1/feedback-history/{username:\w+}/")
+@resource("/api/v1/feedback-history/{username:[\w\-]+}/")
 class FeedbackHistoryResource(Root):
 
     __acl__ = [(Allow, MANAGER_ROLE, "read"), (Allow, TALENT_MANAGER_ROLE, "read")]
