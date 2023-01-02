@@ -15,7 +15,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/build-angular": "~0.901.0",
+    "@angular-devkit/build-angular": "~0.901.15",
     "@angular/animations": "^9.1.0",
     "@angular/cli": "^9.1.0",
     "@angular/common": "^9.1.0",
@@ -44,7 +44,7 @@
     "@types/jasminewd2": "^2.0.8",
     "@types/node": "^12.11.1",
     "codelyzer": "^5.1.2",
-    "copy-webpack-plugin": "^4.6.0",
+    "copy-webpack-plugin": "^11.0.0",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",
